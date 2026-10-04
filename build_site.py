@@ -6,7 +6,7 @@ This wraps each one in a full document under docs/talks/ and writes the library 
 docs/index.html from site-src/talks.json. The site is plain static files: host the
 docs/ folder anywhere (GitHub Pages, Netlify, a hospital web server).
 """
-import html, json, pathlib, shutil
+import html, json, pathlib, re, shutil
 
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC, OUT = ROOT / "site-src", ROOT / "docs"
@@ -19,9 +19,17 @@ SKELETON = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             'img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>\n')
 
 
-def card(t):
+def page_text(src):
+    """Words a reader sees in a talk, including the choices and tables its script draws."""
+    strings = " ".join(re.findall(r"'([^'\\]*\s[^'\\]*)'", " ".join(re.findall(r"<script>(.*?)</script>", src, re.S))))
+    visible = re.sub(r"<(script|style)\b.*?</\1>", " ", src, flags=re.S)
+    visible = html.unescape(re.sub(r"<[^>]+>", " ", visible))
+    return re.sub(r"\s+", " ", visible + " " + strings)
+
+
+def card(t, src):
     e = html.escape
-    find = " ".join([t["title"], t["topic"], t["summary"], *t.get("tags", [])]).lower()
+    find = " ".join([t["title"], t["topic"], t["summary"], *t.get("tags", []), page_text(src)])
     href = f'talks/{t["slug"]}.html'
     return f'''    <article class="talk" data-find="{e(find)}">
       <div class="eyebrow">{e(t["topic"])}</div>
@@ -40,10 +48,12 @@ def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "talks").mkdir(parents=True)
+    cards = []
     for t in talks:
         body = (ROOT / t["source"]).read_text()
         (OUT / "talks" / f'{t["slug"]}.html').write_text(SKELETON + body + "\n</body></html>\n")
-    page = (SRC / "index.template.html").read_text().replace("<!--TALKS-->", "\n".join(card(t) for t in talks))
+        cards.append(card(t, body))
+    page = (SRC / "index.template.html").read_text().replace("<!--TALKS-->", "\n".join(cards))
     (OUT / "index.html").write_text(page)
     (OUT / ".nojekyll").write_text("")
     (OUT / "robots.txt").write_text("User-agent: *\nDisallow: /\n")

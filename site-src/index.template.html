@@ -19,6 +19,7 @@
   :root { --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E; --blue: #8EC3FF; color-scheme: dark; }
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0; background: var(--board); color: var(--ink); font: 17px/1.55 var(--font-body);
   background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
@@ -61,7 +62,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule)
     <p class="lede">Visual treatment conversations to walk through in the visit and send home as a handout.</p>
   </header>
   <div class="find">
-    <input id="q" type="search" placeholder="Find a talk: cancer type, drug, trial…" aria-label="Find a talk" autocomplete="off">
+    <input id="q" type="search" placeholder="Search talks: cancer type, drug, trial, side effect…" aria-label="Find a talk" autocomplete="off">
     <span class="count" id="count"></span>
   </div>
   <main class="shelf" id="shelf">
@@ -75,11 +76,14 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule)
 </div>
 <script>
 (() => {
+  // Lowercase, drop accents and punctuation, so "CDK4/6", "cdk 4 6" and "Kisqali®" all match.
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
   const q = document.getElementById('q'), cards = [...document.querySelectorAll('.talk')];
+  cards.forEach(c => { c._find = ' ' + norm(c.dataset.find) + ' '; });
   function filter() {
-    const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    const words = norm(q.value).split(' ').filter(Boolean);
     let n = 0;
-    cards.forEach(c => { const hit = words.every(w => c.dataset.find.includes(w)); c.hidden = !hit; if (hit) n++; });
+    cards.forEach(c => { const hit = words.every(w => c._find.includes(' ' + w)); c.hidden = !hit; if (hit) n++; });
     document.getElementById('count').textContent = n + (n === 1 ? ' talk' : ' talks');
     document.getElementById('empty').hidden = n > 0;
   }
