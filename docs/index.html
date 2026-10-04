@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chalk Talks</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: a whiteboard shelf of talks, one card per talk, filtered by a search line. */
+:root {
+  --board: #F6F8F9; --paper: #FFFFFF; --ink: #1C2631; --muted: #56626E; --rule: #D3DCE3; --grid: #E7EDF1; --blue: #1F5CB8;
+  --font-hand: "Kalam", "Comic Neue", "Segoe Print", cursive;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E; --blue: #8EC3FF; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--board); color: var(--ink); font: 17px/1.55 var(--font-body);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px; padding-inline: 16px; padding-block: 40px 56px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--font-hand); font-weight: 700; line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.2rem); }
+h2 { font-size: 1.35rem; }
+p { margin: 0; max-width: 65ch; }
+header { display: grid; gap: 8px; }
+.lede { font-size: 1.1rem; color: var(--muted); }
+.find { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.find input {
+  flex: 1 1 260px; font: inherit; color: inherit; background: var(--paper); border: 1.5px solid var(--rule);
+  border-radius: 10px; padding: 9px 14px;
+}
+.count { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.talk { background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.talk h2 a { color: inherit; text-decoration: none; }
+.talk h2 a:hover { text-decoration: underline; text-decoration-color: var(--blue); }
+.sum { font-size: 15.5px; }
+.meta { color: var(--muted); font-size: 14px; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.btn { font: inherit; font-size: 15px; border: 1.5px solid var(--rule); background: var(--paper); color: inherit; border-radius: 8px; padding: 6px 12px; text-decoration: none; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--ink); color: var(--board); border-color: var(--ink); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.empty { color: var(--muted); }
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Medical oncology</div>
+    <h1>Chalk Talks</h1>
+    <p class="lede">Visual treatment conversations to walk through in the visit and send home as a handout.</p>
+  </header>
+  <div class="find">
+    <input id="q" type="search" placeholder="Find a talk: cancer type, drug, trial…" aria-label="Find a talk" autocomplete="off">
+    <span class="count" id="count"></span>
+  </div>
+  <main class="shelf" id="shelf">
+    <article class="talk" data-find="should i have chemotherapy after surgery? colon cancer · stage iii adjuvant chemotherapy after surgery: no chemo, capecitabine alone, 3 months of capox, or 6 months of folfox/capox, with the 100-person picture and side effects. colon colorectal gi adjuvant chemotherapy folfox capox idea">
+      <div class="eyebrow">Colon cancer · stage III</div>
+      <h2><a href="talks/colon-stage3-adjuvant.html">Should I have chemotherapy after surgery?</a></h2>
+      <p class="sum">Adjuvant chemotherapy after surgery: no chemo, capecitabine alone, 3 months of CAPOX, or 6 months of FOLFOX/CAPOX, with the 100-person picture and side effects.</p>
+      <div class="meta">Updated 2026-10-04</div>
+      <div class="acts">
+        <a class="btn primary" href="talks/colon-stage3-adjuvant.html">Open talk</a>
+        <a class="btn" href="talks/colon-stage3-adjuvant.html?print=blank" target="_blank" rel="noopener">Print blank</a>
+      </div>
+    </article>
+    <article class="talk" data-find="hormone pills after breast cancer: which one, and do i need more? breast cancer · er+, her2−, postmenopausal tamoxifen versus an aromatase inhibitor for low genomic risk disease, and when to add ribociclib (natalee) or abemaciclib (monarche). breast endocrine hormone tamoxifen anastrozole letrozole exemestane cdk4/6 ribociclib abemaciclib oncotype">
+      <div class="eyebrow">Breast cancer · ER+, HER2−, postmenopausal</div>
+      <h2><a href="talks/breast-er-endocrine.html">Hormone pills after breast cancer: which one, and do I need more?</a></h2>
+      <p class="sum">Tamoxifen versus an aromatase inhibitor for low genomic risk disease, and when to add ribociclib (NATALEE) or abemaciclib (monarchE).</p>
+      <div class="meta">Updated 2026-10-04</div>
+      <div class="acts">
+        <a class="btn primary" href="talks/breast-er-endocrine.html">Open talk</a>
+        <a class="btn" href="talks/breast-er-endocrine.html?print=blank" target="_blank" rel="noopener">Print blank</a>
+      </div>
+    </article>
+  </main>
+  <p class="empty" id="empty" hidden>No talks match that search.</p>
+  <footer>
+    <p>Anything typed into a talk (names, notes, plans) stays in that browser tab and is never sent or saved. Use "Print filled" before closing the tab if the patient should take it home.</p>
+    <p>Estimates in each talk come from the trials it cites and describe groups of people. They support, and do not replace, the conversation with the care team.</p>
+  </footer>
+</div>
+<script>
+(() => {
+  const q = document.getElementById('q'), cards = [...document.querySelectorAll('.talk')];
+  function filter() {
+    const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    let n = 0;
+    cards.forEach(c => { const hit = words.every(w => c.dataset.find.includes(w)); c.hidden = !hit; if (hit) n++; });
+    document.getElementById('count').textContent = n + (n === 1 ? ' talk' : ' talks');
+    document.getElementById('empty').hidden = n > 0;
+  }
+  q.addEventListener('input', filter); filter();
+})();
+</script>
+</body>
+</html>

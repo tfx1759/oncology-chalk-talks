@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "colon-stage3-adjuvant",
+    "source": "talks/colon-stage3-adjuvant.html",
+    "title": "Should I have chemotherapy after surgery?",
+    "topic": "Colon cancer · stage III",
+    "summary": "Adjuvant chemotherapy after surgery: no chemo, capecitabine alone, 3 months of CAPOX, or 6 months of FOLFOX/CAPOX, with the 100-person picture and side effects.",
+    "tags": ["colon", "colorectal", "GI", "adjuvant", "chemotherapy", "FOLFOX", "CAPOX", "IDEA"],
+    "updated": "2026-10-04"
+  },
+  {
+    "slug": "breast-er-endocrine",
+    "source": "talks/breast-er-endocrine.html",
+    "title": "Hormone pills after breast cancer: which one, and do I need more?",
+    "topic": "Breast cancer · ER+, HER2−, postmenopausal",
+    "summary": "Tamoxifen versus an aromatase inhibitor for low genomic risk disease, and when to add ribociclib (NATALEE) or abemaciclib (monarchE).",
+    "tags": ["breast", "endocrine", "hormone", "tamoxifen", "anastrozole", "letrozole", "exemestane", "CDK4/6", "ribociclib", "abemaciclib", "Oncotype"],
+    "updated": "2026-10-04"
+  }
+]

@@ -1,0 +1,781 @@
+<title>Colon Cancer Chalk Talk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: one whiteboard column built top to bottom like a chalk talk; a marker layer sits over the whole board. */
+:root {
+  --board: #F6F8F9;
+  --paper: #FFFFFF;
+  --ink: #1C2631;
+  --muted: #56626E;
+  --rule: #D3DCE3;
+  --grid: #E7EDF1;
+  --blue: #1F5CB8;
+  --red: #C23A2E;
+  --green: #2D7A4E;
+  --free: #B8C5CE;
+  --hi: #FFF1B8;
+  --font-hand: "Kalam", "Comic Neue", "Segoe Print", cursive;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E;
+    --blue: #8EC3FF; --red: #FF8E7E; --green: #96DCA6; --free: #4D6159; --hi: #4A4423; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E;
+  --blue: #8EC3FF; --red: #FF8E7E; --green: #96DCA6; --free: #4D6159; --hi: #4A4423; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--board);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font: 17px/1.55 var(--font-body);
+  padding-inline: 16px;
+  padding-block: 0 48px;
+}
+h1, h2, h3 { font-family: var(--font-hand); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); }
+h2 { font-size: clamp(1.5rem, 3.6vw, 1.9rem); }
+h3 { font-size: 1.25rem; }
+p { margin: 0; max-width: 65ch; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* Toolbar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  margin-inline: -16px; padding: 8px 16px;
+  background: color-mix(in srgb, var(--board) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+  font-size: 15px;
+}
+.bar .grp { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.btn {
+  border: 1.5px solid var(--rule); background: var(--paper); border-radius: 8px;
+  padding: 5px 11px; cursor: pointer; line-height: 1.3;
+}
+.btn:hover { border-color: var(--muted); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--board); border-color: var(--ink); }
+.swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1.5px var(--rule); cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--ink); }
+.spacer { flex: 1; }
+.steplabel { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Board */
+.board { position: relative; max-width: 920px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 40px; }
+#ink { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+body.pen #ink { pointer-events: auto; touch-action: none; cursor: crosshair; }
+
+header.top { display: grid; gap: 10px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.who { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 15px; }
+.who label { display: flex; gap: 6px; align-items: baseline; }
+
+.fill {
+  border: none; border-bottom: 1.5px dashed var(--muted); background: transparent;
+  padding: 0 2px; min-width: 0; font-family: var(--font-hand); font-size: 1.1em; color: var(--blue);
+}
+.fill.num { width: 2.6em; text-align: center; }
+.fill.wide { width: 12em; max-width: 100%; }
+
+section.step { display: grid; gap: 14px; scroll-margin-top: 70px; }
+section.step.later { display: none; }
+.sh { display: flex; gap: 12px; align-items: baseline; }
+.n {
+  font-family: var(--font-hand); font-weight: 700; font-size: 1.3rem; color: var(--paper); background: var(--ink);
+  width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; transform: translateY(4px);
+}
+.lede { font-size: 1.05rem; }
+.hand { font-family: var(--font-hand); color: var(--blue); font-size: 1.15em; }
+.note { color: var(--muted); font-size: 15px; }
+mark { background: var(--hi); color: inherit; padding: 0 3px; border-radius: 3px; }
+
+.panel { background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 18px; }
+.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: center; }
+@media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram text { font-family: var(--font-hand); fill: var(--ink); font-size: 17px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); padding: 6px 14px; cursor: pointer; text-align: left;
+}
+.chip small { display: block; color: var(--muted); font-size: 13px; }
+.chip[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+
+/* Options */
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 720px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+  background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 8px;
+  cursor: pointer; text-align: left; align-content: start;
+}
+.opt[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+.opt .how { color: var(--muted); font-size: 15px; }
+.opt ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; font-size: 15.5px; }
+.opt li { display: grid; grid-template-columns: 20px 1fr; gap: 4px; }
+.opt li::before { font-family: var(--font-hand); font-weight: 700; }
+.opt li.pro::before { content: "+"; color: var(--green); }
+.opt li.con::before { content: "\2212"; color: var(--red); }
+.opt li.fit::before { content: "\2192"; color: var(--blue); }
+
+/* Icon array */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.arraywrap { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 720px) { .arraywrap { grid-template-columns: 1fr; } }
+#people { width: 100%; max-width: 340px; height: auto; display: block; }
+.legend { display: grid; gap: 10px; }
+.lg { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: baseline; }
+.lg b { font-family: var(--font-hand); font-size: 1.9rem; line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
+.lg.free b { color: var(--muted); }
+.lg.ben b { color: var(--blue); }
+.lg.rec b { color: var(--red); }
+.say { font-family: var(--font-hand); font-size: 1.25rem; color: var(--ink); border-top: 1.5px dashed var(--rule); padding-top: 10px; max-width: none; }
+
+.compare { display: grid; gap: 8px; }
+.crow { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; font-size: 15px; }
+@media (max-width: 520px) { .crow { grid-template-columns: minmax(0, 1fr) 4.2em; } .crow .track { grid-column: 1 / -1; grid-row: 2; } }
+.track { height: 16px; border-radius: 4px; background: var(--free); display: flex; overflow: hidden; }
+.track i { display: block; height: 100%; }
+.track .b { background: var(--blue); }
+.crow .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--blue); }
+.crow.sel { font-weight: 700; }
+
+.dr { border: 1.5px dashed var(--rule); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; font-size: 15px; }
+.dr .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dr input[type="range"] { flex: 1 1 200px; accent-color: var(--red); }
+.dr output { font-family: var(--font-hand); font-size: 1.3rem; color: var(--red); min-width: 3ch; font-variant-numeric: tabular-nums; }
+
+/* Side-effect table */
+.tablewrap { overflow-x: auto; background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+thead th { font-family: var(--font-hand); font-size: 1.05rem; font-weight: 700; }
+tbody th { font-weight: 700; width: 22%; }
+tr:last-child th, tr:last-child td { border-bottom: none; }
+td.selcol, th.selcol { background: color-mix(in srgb, var(--blue) 9%, transparent); }
+.lvl { display: inline-block; font-weight: 700; }
+.lvl.hi { color: var(--red); }
+.lvl.md { color: var(--ink); }
+.lvl.lo { color: var(--green); }
+
+/* Values & plan */
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+@media (max-width: 620px) { .checks { grid-template-columns: 1fr; } }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.checks input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--blue); }
+textarea.lines {
+  width: 100%; border: none; resize: none; overflow: hidden; padding: 0 2px; min-height: 96px;
+  background: transparent; background-image: linear-gradient(transparent 31px, var(--rule) 32px); background-size: 100% 32px;
+  line-height: 32px; font-family: var(--font-hand); font-size: 1.15rem; color: var(--blue);
+}
+.plan { display: grid; gap: 16px; }
+.plan .pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.call { border: 2px solid var(--red); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.call h3 { color: var(--red); }
+.call ul { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
+.callrow { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+footer { display: grid; gap: 8px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; }
+footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  section.step.reveal { animation: draw-in .45s ease-out; }
+  @keyframes draw-in { from { opacity: .2; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* Handout */
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --board: #FFFFFF; --paper: #FFFFFF; --ink: #111A22; --muted: #4A5560; --rule: #C9D2D9; --grid: #FFFFFF;
+    --blue: #1F5CB8; --red: #B4352A; --green: #2D7A4E; --free: #C3CDD4; --hi: #FFEFA8; color-scheme: light;
+  }
+  body { background: #fff; font-size: 11.5pt; padding: 0; }
+  .bar, .noprint { display: none !important; }
+  section.step.later { display: grid; }
+  .board { gap: 22px; padding-top: 0; max-width: none; }
+  .panel, .opt, .tablewrap, .call, .sh { break-inside: avoid; }
+  .sh { break-after: avoid; }
+  .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arraywrap { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .crow { grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; }
+  .crow .track { grid-column: auto; grid-row: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table { min-width: 0; }
+}
+/* Edit mode */
+body.editing .ek { outline: 1.5px dashed color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 3px; cursor: text; border-radius: 2px; }
+body.editing .ek:focus { outline: 2px solid var(--blue); background: color-mix(in srgb, var(--hi) 60%, transparent); }
+body.editing .ek:empty::before { content: "(empty, click to type)"; color: var(--muted); font-style: italic; }
+.cfg { display: grid; gap: 8px; border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+.cfgrow { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; }
+.cfgrow input { width: 6em; border: 1.5px solid var(--rule); border-radius: 6px; padding: 3px 6px; background: var(--paper); font-variant-numeric: tabular-nums; }
+#saveBtn { background: var(--blue); color: var(--paper); border-color: var(--blue); }
+@media print { body.editing .ek { outline: none; background: none; } }
+a.btn { text-decoration: none; color: inherit; }
+/* Blank handout */
+.blank-only { display: none; }
+body.blankprint .blank-only { display: block; }
+body.blankprint .chip[aria-pressed="true"], body.blankprint .opt[aria-pressed="true"] { border-color: var(--rule); box-shadow: none; }
+body.blankprint td.selcol, body.blankprint th.selcol { background: none; }
+body.blankprint .crow.sel { font-weight: inherit; }
+body.blankprint .verdict, body.blankprint .tag, body.blankprint #ink { display: none; }
+body.blankprint .opt.trial.dim { opacity: 1; }
+body.blankprint .fill.num { width: 4em; }
+@media print { .fill::placeholder { color: transparent; } }
+</style>
+<script type="application/json" id="edits">{"text":{"TH|Oxaliplatin 6 mo|1":"FOLFOX/CAPOX 6 mo"},"settings":{}}</script>
+
+<div class="bar" role="toolbar" aria-label="Chalk talk tools">
+  <div class="grp">
+    <button class="btn" id="penBtn" aria-pressed="false" title="Draw on the page with a marker">Marker</button>
+    <button class="swatch" data-c="blue" aria-pressed="true" aria-label="Blue marker" style="background:var(--blue)"></button>
+    <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
+    <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
+    <button class="btn" id="undoBtn">Undo</button>
+    <button class="btn" id="clearBtn">Clear ink</button>
+  </div>
+  <div class="grp">
+    <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
+    <button class="btn" id="backBtn" hidden>Back</button>
+    <button class="btn" id="nextBtn" hidden>Next</button>
+    <span class="steplabel" id="stepLabel" hidden></span>
+  </div>
+  <div class="grp">
+    <button class="btn" id="editBtn" hidden title="Change any wording or number on this page">Edit</button>
+    <button class="btn" id="saveBtn" hidden>Save changes</button>
+    <button class="btn" id="cancelBtn" hidden>Cancel</button>
+    <span class="steplabel" id="editStatus" aria-live="polite"></span>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn" id="libLink" href="../index.html" hidden>All talks</a>
+  <button class="btn" id="printBlankBtn" hidden title="Print an empty copy to fill in by hand">Print blank</button>
+  <button class="btn" id="printBtn" hidden title="Print this page as filled in">Print filled</button>
+</div>
+
+<main class="board" id="board">
+  <canvas id="ink" aria-hidden="true"></canvas>
+
+  <header class="top">
+    <div class="eyebrow">Stage III colon cancer · after surgery</div>
+    <h1>Should I have chemotherapy after surgery?</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 420 270" role="img" aria-label="Drawing of the colon with the tumor removed and nearby lymph nodes, some containing cancer">
+          <path d="M30 70 C 90 40, 150 46, 210 62 S 330 92, 392 64" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 116 C 90 88, 150 94, 210 110 S 330 140, 392 112" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M196 68 C 214 62, 236 70, 238 88 C 240 104, 218 112, 202 104 C 188 96, 184 74, 196 68 Z" fill="var(--red)" fill-opacity=".85" stroke="var(--red)" stroke-width="2"/>
+          <path d="M128 30 L 128 160 M 300 46 L 300 176" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 6"/>
+          <text x="136" y="28">part removed by surgery</text>
+          <path d="M214 112 C 210 150, 180 170, 150 200 M 214 112 C 230 150, 250 168, 280 196" fill="none" stroke="var(--muted)" stroke-width="2"/>
+          <circle cx="186" cy="152" r="9" fill="var(--red)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="160" cy="186" r="9" fill="var(--red)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="238" cy="154" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="264" cy="182" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="212" cy="176" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <text x="24" y="232">lymph nodes</text>
+          <path d="M100 226 C 120 214, 140 204, 150 194" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+          <g fill="var(--red)">
+            <circle cx="338" cy="210" r="2.6"/><circle cx="356" cy="198" r="2.2"/><circle cx="372" cy="220" r="2.6"/><circle cx="350" cy="230" r="2"/>
+          </g>
+          <text x="226" y="258">tiny cells? too small to see</text>
+          <text x="244" y="58" style="font-size:15px;fill:var(--red)">tumor</text>
+        </svg>
+      </div>
+      <div style="display:grid;gap:12px;min-width:0">
+        <p class="lede">Surgery removed the part of your colon with the tumor and the lymph nodes near it.</p>
+        <p class="lede">Cancer was found in <input class="fill num" id="nodesPos" inputmode="numeric" value="2" aria-label="Number of lymph nodes with cancer"> of <input class="fill num" id="nodesTot" inputmode="numeric" value="18" aria-label="Number of lymph nodes checked"> lymph nodes. That makes it <mark>stage III</mark>.</p>
+        <p class="note">Lymph nodes are small filters along the colon's drainage. Cancer in the nodes tells us cells had started to travel.</p>
+        <div>
+          <div class="eyebrow" style="margin-bottom:6px">Your risk group</div>
+          <div class="chips" id="riskChips">
+            <button class="chip" data-risk="low" aria-pressed="true">Lower-risk stage III<small>T1–T3 and 1–3 nodes (N1)</small></button>
+            <button class="chip" data-risk="high" aria-pressed="false">Higher-risk stage III<small>T4, or 4 or more nodes (N2)</small></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>Why we talk about chemo</h2></div>
+    <div class="panel" style="display:grid;gap:10px">
+      <p class="lede">Surgery took out all the cancer we can see. Sometimes a few cancer cells have already slipped away. They are too small to show on any scan.</p>
+      <p class="lede">Chemo after surgery is a <span class="hand">clean-up crew</span>. Its job is to kill those hidden cells before they grow into a new tumor.</p>
+      <p class="lede">We can't tell who has hidden cells and who doesn't. Some people are already cured by surgery. So we talk in <mark>chances out of 100</mark>.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the side-effect table.</p>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 people like you</h2></div>
+    <p class="note">Five years from now, how many have the cancer come back?</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="note blank-only">Example numbers. Your doctor will mark the ones that fit you.</p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg free"><b id="nFree">0</b><span>cancer-free with surgery alone. They did not need chemo, but we can't know who they are.</span></div>
+        <div class="lg ben"><b id="nBen">0</b><span><strong>cancer-free because of chemo.</strong> These are the people chemo helps.</span></div>
+        <div class="lg rec"><b id="nRec">0</b><span>have the cancer come back even with this treatment.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel compare" id="compare" aria-label="All choices compared">
+      <div class="eyebrow">All choices side by side · people helped out of 100</div>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="row">
+        <label for="base">Chance the cancer comes back within 5 years with surgery alone</label>
+        <input type="range" id="base" min="15" max="80" step="1" value="40">
+        <output id="baseOut" for="base">40%</output>
+      </div>
+      <div class="note">Defaults: 40% lower-risk, 60% higher-risk. Adjust for this patient. Chemo effects use these relative reductions in recurrence: fluoropyrimidine alone about 30% (hazard ratio 0.70); adding oxaliplatin a further 20% (0.80); 3 months of CAPOX matches 6 months in the lower-risk group and is modeled slightly weaker (×1.12) in the higher-risk group.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Side effects to weigh</h2></div>
+    <div class="tablewrap"><table id="fx"></table></div>
+    <p class="note">Most side effects fade after chemo ends. Numbness from oxaliplatin is the one that can last, which is why the shorter course matters. Before starting a 5-FU-type drug, we may check a blood test for DPD deficiency, a rare cause of severe reactions.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Lowering the chance of the cancer coming back as much as I can</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding lasting numbness in my hands and feet</span></label>
+      <label><input type="checkbox" id="v3"><span>Finishing treatment sooner</span></label>
+      <label><input type="checkbox" id="v4"><span>Taking pills at home instead of IV treatment</span></label>
+      <label><input type="checkbox" id="v5"><span>Keeping up with work, family, or hobbies</span></label>
+      <label><input type="checkbox" id="v6"><span>Fewer trips to the clinic</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The choice we made together</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Port placement (if needed)
+Blood tests before first treatment
+Start date: </textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>A fever of 100.4°F (38°C) or higher, or chills</li>
+          <li>Diarrhea 4 or more times a day, or you can't keep fluids down</li>
+          <li>Mouth sores that stop you from eating or drinking</li>
+          <li>Red, peeling, or painful hands or feet that make it hard to walk or use them</li>
+          <li>Chest pain or trouble breathing (call 911)</li>
+        </ul>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers are estimates for people with stage III colon cancer, drawn from large trials and adjusted by your doctor for your situation. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol>
+      <li>Moertel CG et al. 5-FU and levamisole after resection of stage III colon cancer. NEJM 1990;322:352.</li>
+      <li>Twelves C et al. Capecitabine vs 5-FU/LV as adjuvant treatment (X-ACT). NEJM 2005;352:2696.</li>
+      <li>André T et al. Oxaliplatin, 5-FU and LV as adjuvant treatment (MOSAIC). NEJM 2004;350:2343; JCO 2009;27:3109.</li>
+      <li>Haller DG et al. Capecitabine plus oxaliplatin vs 5-FU/LV (NO16968). JCO 2011;29:1465.</li>
+      <li>Grothey A et al. Duration of adjuvant chemotherapy for stage III colon cancer (IDEA). NEJM 2018;378:1177.</li>
+      <li>McCleary NJ et al. Impact of age on oxaliplatin benefit (ACCENT pooled analysis). JCO 2013;31:2600.</li>
+    </ol>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const PRISTINE = document.body.innerHTML;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  let EDITS = {};
+  try { EDITS = JSON.parse($('#edits').textContent) || {}; } catch (e) {}
+  const CFG_DEFAULTS = { baseLow: 40, baseHigh: 60, fp: 0.70, ox: 0.80, short3: 1.12 };
+  const CFG = { ...CFG_DEFAULTS, ...(EDITS.settings || {}) };
+  const CFG_SPEC = [
+    { k: 'baseLow', step: 1, label: 'Default 5-year recurrence without chemo, lower-risk group (%)' },
+    { k: 'baseHigh', step: 1, label: 'Default 5-year recurrence without chemo, higher-risk group (%)' },
+    { k: 'fp', step: 0.01, label: 'Hazard ratio, 5-FU or capecitabine vs surgery alone' },
+    { k: 'ox', step: 0.01, label: 'Hazard ratio, adding oxaliplatin' },
+    { k: 'short3', step: 0.01, label: 'CAPOX 3 vs 6 months in the higher-risk group (multiplier)' },
+  ];
+  const onCfg = k => { if (!k || k === 'baseLow' || k === 'baseHigh') S.base = DEFAULT_BASE[S.risk]; render(); };
+
+  /* ---------- content ---------- */
+  const OPTIONS = [
+    { id: 'none', short: 'No chemo', name: 'No chemo, close follow-up',
+      how: 'Checkups, blood tests (CEA) and CT scans over 5 years',
+      pros: ['No chemo side effects', 'Back to normal life soonest'],
+      cons: ['Highest chance the cancer comes back'],
+      fit: 'People who are too frail for chemo, or who decide the benefit is not worth it to them' },
+    { id: 'cap', short: 'Pills alone', name: 'Capecitabine pills (or 5-FU), 6 months',
+      how: 'Pills twice a day, 2 weeks on and 1 week off. No IV needed',
+      pros: ['At home, no port or pump', 'No lasting nerve damage'],
+      cons: ['Smaller benefit than adding oxaliplatin', 'Sore hands and feet, diarrhea'],
+      fit: 'People over 70, or anyone who wants to avoid oxaliplatin' },
+    { id: 'capox3', short: 'CAPOX 3 mo', name: 'CAPOX, 3 months',
+      how: 'Oxaliplatin IV every 3 weeks (4 doses) plus capecitabine pills',
+      pros: ['Most of the benefit of 6 months', 'Far less lasting numbness', 'Done in 3 months'],
+      cons: ['Some numbness and cold sensitivity', 'In the higher-risk group, slightly less benefit than 6 months'],
+      fit: 'The usual choice for the lower-risk group' },
+    { id: 'ox6', short: 'Oxaliplatin 6 mo', name: 'FOLFOX or CAPOX, 6 months',
+      how: 'FOLFOX: IV every 2 weeks with a 2-day home pump (12 doses). CAPOX: IV every 3 weeks plus pills (8 doses)',
+      pros: ['Largest benefit, especially for the higher-risk group'],
+      cons: ['About half have numbness that gets in the way of daily tasks', 'Longest course, most visits'],
+      fit: 'Often chosen for the higher-risk group' },
+  ];
+
+  const FX = [
+    ['How it is given', ['Visits and scans only', 'Pills at home; clinic every 3 weeks', 'IV every 3 weeks + pills', 'IV every 2–3 weeks; FOLFOX needs a port and pump']],
+    ['Numbness and tingling in hands and feet (nerve damage)', [['lo', 'None'], ['lo', 'Rare'], ['md', 'About 1 in 7 moderate or worse'], ['hi', 'About 1 in 2 moderate or worse; can last months to years']]],
+    ['Cold sensitivity (throat, fingers)', [['lo', 'None'], ['lo', 'None'], ['md', 'Common for a few days after each IV dose'], ['md', 'Common for a few days after each IV dose']]],
+    ['Sore, red hands and feet', [['lo', 'None'], ['hi', 'Common'], ['md', 'Sometimes'], ['md', 'Sometimes (CAPOX)']]],
+    ['Diarrhea, nausea, mouth sores', [['lo', 'None'], ['md', 'Sometimes'], ['md', 'Sometimes'], ['md', 'Sometimes']]],
+    ['Low blood counts, infection risk', [['lo', 'None'], ['lo', 'Uncommon'], ['md', 'Sometimes'], ['md', 'Sometimes; more with FOLFOX']]],
+    ['Tiredness', [['lo', 'None'], ['md', 'Mild to moderate'], ['md', 'Moderate, for 3 months'], ['md', 'Moderate, for 6 months']]],
+  ];
+
+  /* ---------- state ---------- */
+  const DEFAULT_BASE = { get low() { return CFG.baseLow; }, get high() { return CFG.baseHigh; } };
+  const S = { risk: 'low', base: CFG.baseLow, sel: 'capox3', plan: null };
+
+  function hr(id) {
+    if (id === 'none') return 1;
+    if (id === 'cap') return CFG.fp;
+    if (id === 'ox6') return CFG.fp * CFG.ox;
+    if (id === 'capox3') return S.risk === 'high' ? CFG.fp * CFG.ox * CFG.short3 : CFG.fp * CFG.ox;
+  }
+  function outcome(id) {
+    const s0 = 1 - S.base / 100;
+    const recur = Math.round(100 * (1 - Math.pow(s0, hr(id))));
+    const free = 100 - S.base;
+    return { free, ben: S.base - recur, rec: recur };
+  }
+
+  /* ---------- render ---------- */
+  const optsEl = $('#opts'), tabsEl = $('#tabs'), cmpEl = $('#compare'), planEl = $('#planPick');
+  OPTIONS.forEach(o => {
+    const b = document.createElement('div');
+    b.className = 'opt'; b.dataset.id = o.id; b.tabIndex = 0; b.setAttribute('role', 'button');
+    b.onkeydown = e => { if (e.target === b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(o.id); } };
+    b.innerHTML = `<h3>${o.name}</h3><div class="how">${o.how}</div><ul>${
+      o.pros.map(t => `<li class="pro">${t}</li>`).join('')}${
+      o.cons.map(t => `<li class="con">${t}</li>`).join('')}<li class="fit">${o.fit}</li></ul>`;
+    b.onclick = () => select(o.id);
+    optsEl.append(b);
+
+    const t = document.createElement('button');
+    t.className = 'btn'; t.dataset.id = o.id; t.textContent = o.short;
+    t.onclick = () => select(o.id);
+    tabsEl.append(t);
+
+    const row = document.createElement('div');
+    row.className = 'crow'; row.dataset.id = o.id;
+    row.innerHTML = `<span>${o.name}</span><div class="track"><i class="b"></i></div><span class="v"></span>`;
+    cmpEl.append(row);
+
+    const p = document.createElement('button');
+    p.className = 'chip'; p.dataset.id = o.id; p.textContent = o.name; p.setAttribute('aria-pressed', 'false');
+    p.onclick = () => { S.plan = S.plan === o.id ? null : o.id; render(); };
+    planEl.append(p);
+  });
+
+  const fx = $('#fx');
+  fx.innerHTML = `<thead><tr><th></th>${OPTIONS.map(o => `<th data-id="${o.id}">${o.short}</th>`).join('')}</tr></thead><tbody>${
+    FX.map(([label, cells]) => `<tr><th>${label}</th>${cells.map((c, i) =>
+      `<td data-id="${OPTIONS[i].id}">${Array.isArray(c) ? `<span class="lvl ${c[0]}">${c[1]}</span>` : c}</td>`).join('')}</tr>`).join('')
+  }</tbody>`;
+
+  // 10x10 people grid
+  const NS = 'http://www.w3.org/2000/svg', people = $('#people'), figs = [];
+  for (let i = 0; i < 100; i++) {
+    const x = (i % 10) * 34 + 17, y = Math.floor(i / 10) * 34 + 17;
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `translate(${x} ${y})`);
+    g.innerHTML = '<circle cx="0" cy="-8" r="5"/><path d="M-8 12 C-8 0 -5 -1 0 -1 C5 -1 8 0 8 12 Z"/>';
+    people.append(g); figs.push(g);
+  }
+
+  function select(id) { S.sel = id; render(); }
+
+  function render() {
+    $$('#riskChips .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.risk === S.risk));
+    $$('.opt', optsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('.btn', tabsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('[data-id]', fx).forEach(c => c.classList.toggle('selcol', c.dataset.id === S.sel));
+    $$('.chip', planEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.plan));
+    $('#base').value = S.base; $('#baseOut').textContent = S.base + '%';
+
+    const o = outcome(S.sel);
+    figs.forEach((g, i) => {
+      const col = i < o.free ? 'var(--free)' : i < o.free + o.ben ? 'var(--blue)' : 'var(--red)';
+      g.setAttribute('fill', col);
+    });
+    $('#nFree').textContent = o.free; $('#nBen').textContent = o.ben; $('#nRec').textContent = o.rec;
+    const opt = OPTIONS.find(x => x.id === S.sel);
+    $('#say').textContent = S.sel === 'none'
+      ? `Without chemo, about ${o.rec} out of 100 people like you would have the cancer come back.`
+      : `With ${opt.short.replace(' mo', ' months')}, about ${o.ben} more people out of 100 stay cancer-free than with surgery alone.`;
+    $('#peopleDesc').textContent = `${o.free} cancer-free with surgery alone, ${o.ben} cancer-free because of chemo, ${o.rec} with cancer returning.`;
+
+    OPTIONS.forEach(x => {
+      const r = $(`.crow[data-id="${x.id}"]`, cmpEl), oc = outcome(x.id);
+      r.classList.toggle('sel', x.id === S.sel);
+      $('.b', r).style.width = oc.ben + '%';
+      $('.v', r).textContent = x.id === 'none' ? '—' : '+' + oc.ben;
+    });
+    autosize();
+  }
+
+  $$('#riskChips .chip').forEach(c => c.onclick = () => {
+    S.risk = c.dataset.risk; S.base = DEFAULT_BASE[S.risk];
+    if (S.risk === 'high' && S.sel === 'capox3') S.sel = 'ox6';
+    if (S.risk === 'low' && S.sel === 'ox6') S.sel = 'capox3';
+    render();
+  });
+  $('#base').oninput = e => { S.base = +e.target.value; render(); };
+
+  // risk group from node count
+  function nodeRisk() {
+    const n = parseInt($('#nodesPos').value, 10);
+    if (n >= 4 && S.risk !== 'high') $('#riskChips [data-risk="high"]').click();
+  }
+  $('#nodesPos').addEventListener('change', nodeRisk);
+
+  $('#visitDate').value = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+  // grow lined textareas so the handout never clips
+  function autosize() { $$('textarea.lines').forEach(t => { t.style.height = 'auto'; t.style.height = Math.max(64, t.scrollHeight) + 'px'; }); }
+  $$('textarea.lines').forEach(t => t.addEventListener('input', autosize));
+
+  /* ---------- step-by-step ---------- */
+  const steps = $$('section.step');
+  let walk = false, cur = 0;
+  function showSteps() {
+    steps.forEach((s, i) => s.classList.toggle('later', walk && i > cur));
+    ['#backBtn', '#nextBtn', '#stepLabel'].forEach(s => $(s).hidden = !walk);
+    $('#stepLabel').textContent = `${cur + 1} of ${steps.length}`;
+    $('#backBtn').disabled = cur === 0; $('#nextBtn').disabled = cur === steps.length - 1;
+    $('footer').hidden = walk && cur < steps.length - 1;
+    $('#walkBtn').setAttribute('aria-pressed', walk);
+    sizeInk();
+  }
+  $('#walkBtn').onclick = () => { walk = !walk; cur = 0; showSteps(); if (walk) window.scrollTo({ top: 0 }); };
+  $('#nextBtn').onclick = () => {
+    cur = Math.min(cur + 1, steps.length - 1); showSteps();
+    const s = steps[cur]; s.classList.remove('reveal'); void s.offsetWidth; s.classList.add('reveal');
+    s.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  };
+  $('#backBtn').onclick = () => { cur = Math.max(cur - 1, 0); showSteps(); steps[cur].scrollIntoView({ block: 'start' }); };
+
+  /* ---------- marker layer ---------- */
+  const board = $('#board'), ink = $('#ink'), ctx = ink.getContext('2d');
+  let strokes = [], live = null, color = 'blue', W = 1;
+  function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
+  function sizeInk() {
+    const dpr = window.devicePixelRatio || 1;
+    W = board.clientWidth; const H = board.scrollHeight;
+    ink.width = W * dpr; ink.height = H * dpr; ink.style.width = W + 'px'; ink.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
+  }
+  function drawStroke(s) {
+    if (s.pts.length < 1) return;
+    ctx.strokeStyle = tok(s.c); ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.globalAlpha = .9;
+    ctx.beginPath();
+    s.pts.forEach(([x, y], i) => i ? ctx.lineTo(x * W, y * W) : ctx.moveTo(x * W, y * W));
+    if (s.pts.length === 1) ctx.lineTo(s.pts[0][0] * W + .1, s.pts[0][1] * W);
+    ctx.stroke();
+  }
+  function redraw() { ctx.clearRect(0, 0, ink.width, ink.height); strokes.forEach(drawStroke); if (live) drawStroke(live); }
+  function pt(e) { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / W, (e.clientY - r.top) / W]; }
+  ink.addEventListener('pointerdown', e => { live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
+  ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
+  const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
+  ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
+
+  $('#penBtn').onclick = () => {
+    const on = !document.body.classList.contains('pen');
+    document.body.classList.toggle('pen', on); $('#penBtn').setAttribute('aria-pressed', on);
+  };
+  $$('.swatch').forEach(s => s.onclick = () => {
+    color = s.dataset.c; $$('.swatch').forEach(x => x.setAttribute('aria-pressed', x === s));
+    if (!document.body.classList.contains('pen')) $('#penBtn').click();
+  });
+  $('#undoBtn').onclick = () => { strokes.pop(); redraw(); };
+  $('#clearBtn').onclick = () => { strokes = []; redraw(); };
+  new ResizeObserver(sizeInk).observe(board);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('beforeprint', () => { steps.forEach(s => s.classList.remove('later')); $('footer').hidden = false; autosize(); requestAnimationFrame(sizeInk); });
+  window.addEventListener('afterprint', showSteps);
+
+  // printing works when this file is opened directly in a browser
+  // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
+  function printBlank() {
+    const fields = $$('input, textarea', board).filter(el => !el.closest('.dr'));
+    const saved = fields.map(el => el.type === 'checkbox' ? el.checked : el.value);
+    const plan = S.plan, inkWas = strokes;
+    fields.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
+    S.plan = null; strokes = []; document.body.classList.add('blankprint'); render(); redraw();
+    window.addEventListener('afterprint', () => {
+      fields.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
+      S.plan = plan; strokes = inkWas; document.body.classList.remove('blankprint'); render(); redraw();
+    }, { once: true });
+    window.print();
+  }
+  if (window.self === window.top) {
+    $('#printBtn').hidden = $('#printBlankBtn').hidden = false;
+    $('#printBtn').onclick = () => window.print();
+    $('#printBlankBtn').onclick = printBlank;
+    if (/^https?:/.test(location.protocol)) $('#libLink').hidden = false;
+    if (/[?&]print=blank\b/.test(location.search)) document.fonts.ready.then(() => setTimeout(printBlank, 300));
+  }
+
+  render();
+
+  /* ---------- edit mode: change wording and model numbers, then save as a new version ---------- */
+  (() => {
+    const RESET = ':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
+    const ED = { btn: $('#editBtn'), save: $('#saveBtn'), cancel: $('#cancelBtn'), msg: $('#editStatus') };
+    const say = t => { ED.msg.textContent = t; };
+    const SEL = 'h1,h2,h3,p,li,th,td,.how,.eyebrow,.note,.lg span,.checks label > span,.fact > span:first-child';
+    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict') && !el.closest('svg') &&
+      !el.querySelector('input,textarea,button,select') && el.textContent.trim());
+    els = els.filter(el => !els.some(o => o !== el && o.contains(el)));
+
+    // Each piece of text is keyed by its original wording, so saved edits survive later layout changes.
+    const seen = {};
+    els.forEach(el => {
+      const t = el.tagName + '|' + el.textContent.replace(/\s+/g, ' ').trim();
+      seen[t] = (seen[t] || 0) + 1;
+      el._ek = t + '|' + seen[t]; el._def = el.innerHTML.trim(); el.classList.add('ek');
+      const v = EDITS.text && EDITS.text[el._ek];
+      if (typeof v === 'string') el.innerHTML = v;
+      el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && el.isContentEditable) { e.preventDefault(); el.blur(); } });
+    });
+
+    const box = document.createElement('div');
+    box.className = 'cfg'; box.hidden = true;
+    box.innerHTML = '<div class="eyebrow">Model numbers</div>' + CFG_SPEC.map(s =>
+      `<label class="cfgrow"><span>${s.label}</span><input type="number" step="${s.step}" id="cfg-${s.k}" value="${CFG[s.k]}"></label>`).join('');
+    $('#drPanel').append(box);
+    CFG_SPEC.forEach(s => $('#cfg-' + s.k).addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      if (!isNaN(v)) { CFG[s.k] = v; onCfg(s.k); }
+    }));
+
+    const editing = () => document.body.classList.contains('editing');
+    document.addEventListener('click', e => {
+      if (!editing() || !e.target.closest || !e.target.closest('.ek')) return;
+      if (e.target.closest('label')) e.preventDefault();
+      e.stopPropagation();
+    }, true);
+
+    function setEditing(on) {
+      if (on && document.body.classList.contains('pen')) $('#penBtn').click();
+      document.body.classList.toggle('editing', on);
+      els.forEach(el => on ? el.setAttribute('contenteditable', 'true') : el.removeAttribute('contenteditable'));
+      ED.btn.hidden = on; ED.save.hidden = ED.cancel.hidden = !on; box.hidden = !on;
+      if (on) $('#drPanel').hidden = false;
+      sizeInk();
+    }
+
+    let snap = null, art = null;
+    ED.btn.onclick = () => {
+      snap = { html: els.map(el => el.innerHTML), cfg: { ...CFG } };
+      setEditing(true);
+      say('Click any text to change it. Model numbers are in the doctor box.');
+    };
+    ED.cancel.onclick = () => {
+      els.forEach((el, i) => { el.innerHTML = snap.html[i]; });
+      Object.assign(CFG, snap.cfg);
+      CFG_SPEC.forEach(s => { $('#cfg-' + s.k).value = CFG[s.k]; });
+      onCfg(); setEditing(false); say('');
+    };
+    ED.save.onclick = async () => {
+      const text = {}, settings = {};
+      els.forEach(el => { const h = el.innerHTML.replace(/(<br>)+$/, '').trim(); if (h !== el._def) text[el._ek] = h; });
+      Object.keys(CFG_DEFAULTS).forEach(k => { if (CFG[k] !== CFG_DEFAULTS[k]) settings[k] = CFG[k]; });
+      setEditing(false);
+      if (!art) { say('Changes stay until you close this page. Edit from the artifact link to save them for good.'); return; }
+      say('Saving…');
+      try {
+        await art.publish(buildDoc({ text, settings }));
+        say('Saved');
+      } catch (err) {
+        const c = err && err.code;
+        if (c === 'conflict') say('A newer version was saved elsewhere. Loading it now.');
+        else if (c === 'not_writer' || c === 'not_granted') { say('This view is read-only, so changes can’t be saved.'); ED.btn.hidden = true; }
+        else { setEditing(true); say('Couldn’t save (' + (c || 'error') + '). Your changes are still here; try Save again.'); }
+      }
+    };
+
+    function buildDoc(edits) {
+      const json = JSON.stringify(edits).replace(/</g, '\\u003c');
+      const body = PRISTINE.replace(/(<script type="application\/json" id="edits">)[\s\S]*?(<\/script>)/, (m, a, b) => a + json + b);
+      return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' +
+        RESET + '<\/style><\/head><body>' + body + '<\/body><\/html>';
+    }
+
+    async function connect() {
+      if (window.self === window.top) { ED.btn.hidden = false; return; }
+      if (!window.claude || !window.claude.use) return;
+      const a = await window.claude.use('artifact');
+      if (!a) return;
+      const u = await window.claude.use('user');
+      if (u && !(await u.canEdit())) return;
+      art = a; ED.btn.hidden = false;
+    }
+    if (window.claude && window.claude.use) connect(); else window.addEventListener('load', connect, { once: true });
+  })();
+  sizeInk();
+})();
+</script>
