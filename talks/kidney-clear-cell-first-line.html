@@ -1,0 +1,928 @@
+<title>Kidney Cancer Chalk Talk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: one whiteboard column built top to bottom like a chalk talk; a marker layer sits over the whole board. */
+/* On screen the board is always a dark green chalkboard; the printed handout switches to white paper (see Handout). */
+:root {
+  --board: #14261E;
+  --paper: #1B3128;
+  --ink: #F5F7F0;
+  --muted: #CBD6CE;
+  --rule: #456052;
+  --grid: #1A2E25;
+  --blue: #A3CFFF;
+  --red: #FFA392;
+  --green: #A8E6B6;
+  --free: #557063;
+  --hi: #5C5428;
+  --font-hand: "Kalam", "Comic Neue", "Segoe Print", cursive;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--board);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font: 17px/1.55 var(--font-body);
+  padding-inline: 16px;
+  padding-block: 0 48px;
+}
+h1, h2, h3 { font-family: var(--font-hand); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); }
+h2 { font-size: clamp(1.5rem, 3.6vw, 1.9rem); }
+h3 { font-size: 1.25rem; }
+p { margin: 0; max-width: 65ch; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* Toolbar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  margin-inline: -16px; padding: 8px 16px;
+  background: color-mix(in srgb, var(--board) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+  font-size: 15px;
+}
+.bar .grp { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.btn {
+  border: 1.5px solid var(--rule); background: var(--paper); border-radius: 8px;
+  padding: 5px 11px; cursor: pointer; line-height: 1.3;
+}
+.btn:hover { border-color: var(--muted); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--board); border-color: var(--ink); }
+.swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1.5px var(--rule); cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--ink); }
+.spacer { flex: 1; }
+.steplabel { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Board */
+.board { position: relative; max-width: 920px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 40px; }
+#ink { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+body.pen #ink { pointer-events: auto; touch-action: none; cursor: crosshair; }
+
+header.top { display: grid; gap: 10px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.who { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 15px; }
+.who label { display: flex; gap: 6px; align-items: baseline; }
+
+.fill {
+  border: none; border-bottom: 1.5px dashed var(--muted); background: transparent;
+  padding: 0 2px; min-width: 0; font-family: var(--font-hand); font-size: 1.1em; color: var(--blue);
+}
+.fill.num { width: 2.6em; text-align: center; }
+.fill.wide { width: 12em; max-width: 100%; }
+
+section.step { display: grid; gap: 14px; scroll-margin-top: 70px; }
+section.step.later { display: none; }
+.sh { display: flex; gap: 12px; align-items: baseline; }
+.n {
+  font-family: var(--font-hand); font-weight: 700; font-size: 1.3rem; color: var(--paper); background: var(--ink);
+  width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; transform: translateY(4px);
+}
+.lede { font-size: 1.05rem; }
+.hand { font-family: var(--font-hand); color: var(--blue); font-size: 1.15em; }
+.note { color: var(--muted); font-size: 15px; }
+mark { background: var(--hi); color: inherit; padding: 0 3px; border-radius: 3px; }
+
+.panel { background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 18px; }
+.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: center; }
+@media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram text { font-family: var(--font-hand); fill: var(--ink); font-size: 17px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); padding: 6px 14px; cursor: pointer; text-align: left;
+}
+.chip small { display: block; color: var(--muted); font-size: 13px; }
+.chip[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+
+/* Options */
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 720px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+  background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 8px;
+  cursor: pointer; text-align: left; align-content: start;
+}
+.opt[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+.opt .how { color: var(--muted); font-size: 15px; }
+.opt ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; font-size: 15.5px; }
+.opt li { display: grid; grid-template-columns: 20px 1fr; gap: 4px; }
+.opt li::before { font-family: var(--font-hand); font-weight: 700; }
+.opt li.pro::before { content: "+"; color: var(--green); }
+.opt li.con::before { content: "\2212"; color: var(--red); }
+.opt li.fit::before { content: "\2192"; color: var(--blue); }
+
+/* Icon array */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.arraywrap { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 720px) { .arraywrap { grid-template-columns: 1fr; } }
+#people { width: 100%; max-width: 340px; height: auto; display: block; }
+.legend { display: grid; gap: 10px; }
+.lg { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: baseline; }
+.lg b { font-family: var(--font-hand); font-size: 1.9rem; line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
+.lg.free b { color: var(--muted); }
+.lg.ben b { color: var(--blue); }
+.lg.rec b { color: var(--red); }
+.say { font-family: var(--font-hand); font-size: 1.25rem; color: var(--ink); border-top: 1.5px dashed var(--rule); padding-top: 10px; max-width: none; }
+
+.compare { display: grid; gap: 8px; }
+.crow { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; font-size: 15px; }
+@media (max-width: 520px) { .crow { grid-template-columns: minmax(0, 1fr) 4.2em; } .crow .track { grid-column: 1 / -1; grid-row: 2; } }
+.track { height: 16px; border-radius: 4px; background: var(--free); display: flex; overflow: hidden; }
+.track i { display: block; height: 100%; }
+.track .b { background: var(--blue); }
+.crow .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--blue); }
+.crow.sel { font-weight: 700; }
+
+.dr { border: 1.5px dashed var(--rule); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; font-size: 15px; }
+.dr .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dr input[type="range"] { flex: 1 1 200px; accent-color: var(--red); }
+.dr output { font-family: var(--font-hand); font-size: 1.3rem; color: var(--red); min-width: 3ch; font-variant-numeric: tabular-nums; }
+
+/* Side-effect table */
+.tablewrap { overflow-x: auto; background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+thead th { font-family: var(--font-hand); font-size: 1.05rem; font-weight: 700; }
+tbody th { font-weight: 700; width: 22%; }
+tr:last-child th, tr:last-child td { border-bottom: none; }
+td.selcol, th.selcol { background: color-mix(in srgb, var(--blue) 9%, transparent); }
+.lvl { display: inline-block; font-weight: 700; }
+.lvl.hi { color: var(--red); }
+.lvl.md { color: var(--ink); }
+.lvl.lo { color: var(--green); }
+
+/* Values & plan */
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+@media (max-width: 620px) { .checks { grid-template-columns: 1fr; } }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.checks input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--blue); }
+textarea.lines {
+  width: 100%; border: none; resize: none; overflow: hidden; padding: 0 2px; min-height: 96px;
+  background: transparent; background-image: linear-gradient(transparent 31px, var(--rule) 32px); background-size: 100% 32px;
+  line-height: 32px; font-family: var(--font-hand); font-size: 1.15rem; color: var(--blue);
+}
+.plan { display: grid; gap: 16px; }
+.plan .pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.call { border: 2px solid var(--red); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.call h3 { color: var(--red); }
+.call ul { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
+.callrow { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+footer { display: grid; gap: 8px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; }
+footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  section.step.reveal { animation: draw-in .45s ease-out; }
+  @keyframes draw-in { from { opacity: .2; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* Handout */
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --board: #FFFFFF; --paper: #FFFFFF; --ink: #111A22; --muted: #4A5560; --rule: #C9D2D9; --grid: #FFFFFF;
+    --blue: #1F5CB8; --red: #B4352A; --green: #2D7A4E; --free: #C3CDD4; --hi: #FFEFA8; color-scheme: light;
+  }
+  body { background: #fff; font-size: 11.5pt; padding: 0; }
+  .bar, .noprint { display: none !important; }
+  /* Plain block flow on paper, so a heading stays with what follows it and long parts can run onto the next page */
+  .board, section.step, section.step.later { display: block; }
+  .board { padding-top: 0; max-width: none; }
+  .board > * + * { margin-top: 22px; }
+  .board > #ink + * { margin-top: 0; }
+  section.step > * + * { margin-top: 14px; }
+  #ink { width: 100% !important; height: 100% !important; } /* marker layer follows the printed page instead of the screen's size */
+  .panel, .opt, .call, .sh, tr, .fact, .plan > * { break-inside: avoid; }
+  .panel.plan, .panel.facts { display: block; break-inside: auto; }
+  .panel.plan > * + * { margin-top: 16px; }
+  .panel.facts > * + * { margin-top: 8px; }
+  .sh, h3, .eyebrow { break-after: avoid; }
+  .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arraywrap { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .crow { grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; }
+  .crow .track { grid-column: auto; grid-row: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table { min-width: 0; }
+}
+/* Shared talk additions */
+.opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .opts.three { grid-template-columns: 1fr; } }
+.facts { display: grid; gap: 8px; }
+.fact { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-bottom: 1px dotted var(--rule); padding-bottom: 4px; }
+.fact > span:first-child { color: var(--muted); font-size: 15px; }
+.opt.trial { cursor: default; }
+.opt.trial.dim { opacity: .62; }
+.tag { justify-self: start; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; border: 1.5px solid; }
+.tag.yes { color: var(--blue); border-color: var(--blue); }
+.tag.no { color: var(--muted); border-color: var(--rule); }
+.mini { height: 12px; border-radius: 3px; background: var(--rule); display: flex; overflow: hidden; }
+.mini span { width: var(--w); background: var(--free); }
+.mini span.add { background: var(--blue); }
+table.narrow { min-width: 520px; }
+.verdict { border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+@media print { .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } .opt.trial.dim { opacity: .75; } }
+/* Edit mode */
+body.editing .ek { outline: 1.5px dashed color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 3px; cursor: text; border-radius: 2px; }
+body.editing .ek:focus { outline: 2px solid var(--blue); background: color-mix(in srgb, var(--hi) 60%, transparent); }
+body.editing .ek:empty::before { content: "(empty, click to type)"; color: var(--muted); font-style: italic; }
+.cfg { display: grid; gap: 8px; border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+.cfgrow { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; }
+.cfgrow input { width: 6em; border: 1.5px solid var(--rule); border-radius: 6px; padding: 3px 6px; background: var(--paper); font-variant-numeric: tabular-nums; }
+#saveBtn { background: var(--blue); color: var(--paper); border-color: var(--blue); }
+@media print { body.editing .ek { outline: none; background: none; } }
+a.btn { text-decoration: none; color: inherit; }
+/* Blank handout */
+.blank-only { display: none; }
+body.blankprint .blank-only { display: block; }
+body.blankprint .chip[aria-pressed="true"], body.blankprint .opt[aria-pressed="true"] { border-color: var(--rule); box-shadow: none; }
+body.blankprint td.selcol, body.blankprint th.selcol { background: none; }
+body.blankprint .crow.sel { font-weight: inherit; }
+body.blankprint .verdict, body.blankprint .tag, body.blankprint #ink { display: none; }
+body.blankprint .opt.trial.dim { opacity: 1; }
+body.blankprint .fill.num { width: 4em; }
+@media print { .fill::placeholder { color: transparent; } }
+/* Kidney cancer talk: IMDC risk inputs, IO + IO vs IO + TKI, best-response picture and three side-by-side differences */
+.mchips { display: inline-flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mchips .chip { padding: 2px 10px; font-size: 14px; }
+.factgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+@media (max-width: 720px) { .factgrid { grid-template-columns: 1fr; } }
+.volrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between;
+  border-top: 1.5px dashed var(--rule); padding-top: 12px; }
+.volrow .q { font-weight: 700; }
+.opt .trialname { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+.basis { font-size: 15px; color: var(--muted); }
+.reading { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15.5px; }
+.also { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.also .panel { display: grid; gap: 8px; align-content: start; }
+@media (max-width: 720px) { .also { grid-template-columns: 1fr; } }
+.lg.cr b { color: var(--green); }
+.lg.sd b { color: var(--muted); }
+/* Three differences: each a small group of bars on its own scale */
+.diffs { display: grid; gap: 18px; }
+.diff { display: grid; gap: 8px; }
+.diff h3 { font-size: 1.15rem; }
+.diff .why { color: var(--muted); font-size: 15px; max-width: 70ch; }
+.drow { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 5.6em; gap: 10px; align-items: center; font-size: 15px; }
+.drow .dbar { height: 16px; border-radius: 4px; background: color-mix(in srgb, var(--free) 45%, transparent); overflow: hidden; }
+.drow .dbar i { display: block; height: 100%; border-radius: 4px; background: var(--blue); }
+.drow.ref .dbar i { background: var(--free); }
+.drow.ref { color: var(--muted); }
+.drow .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--blue); white-space: nowrap; }
+.drow.ref .v { color: var(--muted); }
+.drow.sel > span:first-child { font-weight: 700; }
+@media (max-width: 520px) { .drow { grid-template-columns: minmax(0, 1fr) 5.6em; } .drow .dbar { grid-column: 1 / -1; grid-row: 2; } }
+@media print {
+  .factgrid, .also { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .volrow, .diff { break-inside: avoid; }
+  .drow { grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 5.6em; }
+  .drow .dbar { grid-column: auto; grid-row: auto; }
+}
+body.blankprint .drow.sel > span:first-child { font-weight: inherit; }
+.drow.bad .dbar i { background: var(--red); }
+.drow.bad .v { color: var(--red); }
+</style>
+<script type="application/json" id="edits">{"text":{},"settings":{}}</script>
+
+<div class="bar" role="toolbar" aria-label="Chalk talk tools">
+  <div class="grp">
+    <button class="btn" id="penBtn" aria-pressed="false" title="Draw on the page with a marker">Marker</button>
+    <button class="swatch" data-c="blue" aria-pressed="true" aria-label="Blue marker" style="background:var(--blue)"></button>
+    <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
+    <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
+    <button class="btn" id="undoBtn">Undo</button>
+    <button class="btn" id="clearBtn" title="Erase the marker and everything typed or ticked on this page">Clear ink</button>
+  </div>
+  <div class="grp">
+    <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
+    <button class="btn" id="backBtn" hidden>Back</button>
+    <button class="btn" id="nextBtn" hidden>Next</button>
+    <span class="steplabel" id="stepLabel" hidden></span>
+  </div>
+  <div class="grp">
+    <button class="btn" id="editBtn" hidden title="Change any wording or number on this page">Edit</button>
+    <button class="btn" id="saveBtn" hidden>Save changes</button>
+    <button class="btn" id="cancelBtn" hidden>Cancel</button>
+    <span class="steplabel" id="editStatus" aria-live="polite"></span>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn" id="libLink" href="../index.html" hidden>All talks</a>
+  <button class="btn" id="printBlankBtn" hidden title="Print an empty copy to fill in by hand">Print blank</button>
+  <button class="btn" id="printBtn" hidden title="Print this page as filled in">Print filled</button>
+</div>
+
+<main class="board" id="board">
+  <canvas id="ink" aria-hidden="true"></canvas>
+
+  <header class="top">
+    <div class="eyebrow">Clear cell kidney cancer that has spread · first treatment</div>
+    <h1>Kidney cancer that has spread: choosing the first treatment</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <p class="lede">The cancer started in the kidney and has spread to other parts of the body. It is the <mark>clear cell</mark> type, the most common kind of kidney cancer.</p>
+    <p class="lede">Treatment usually can't cure it, but today's medicines can keep it under control for years, and for some people much longer. The goal is to help you <span class="hand">live longer and feel well</span>.</p>
+    <div class="panel facts">
+      <div class="eyebrow">Your cancer</div>
+      <div class="factgrid">
+        <label class="fact"><span>Where it has spread</span><span><input class="fill wide" id="sites" autocomplete="off"></span></label>
+        <label class="fact"><span>Kidney removed</span><span><input class="fill wide" id="nephx" style="width:7em" autocomplete="off"></span></label>
+      </div>
+      <div class="eyebrow" style="margin-top:6px">Risk group: six questions doctors use (IMDC)</div>
+      <div class="factgrid" id="imdc">
+        <div class="fact"><span>Less than 1 year from diagnosis to needing treatment</span><span class="mchips" data-k="f1"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>Cancer limits daily activities (Karnofsky under 80%)</span><span class="mchips" data-k="f2"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>Low red blood count (hemoglobin)</span><span class="mchips" data-k="f3"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>High calcium</span><span class="mchips" data-k="f4"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>High neutrophils (a white blood cell)</span><span class="mchips" data-k="f5"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>High platelets</span><span class="mchips" data-k="f6"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+      </div>
+      <div class="volrow">
+        <span class="q">Risk group</span>
+        <span class="tag no" id="riskTag" data-live>Answer the six questions</span>
+        <span class="blank-only">Favorable (0) &nbsp;/&nbsp; Intermediate (1–2) &nbsp;/&nbsp; Poor (3–6)</span>
+      </div>
+      <p class="note">Count the “Yes” answers: none is favorable risk, 1 or 2 is intermediate, 3 or more is poor. The risk group describes how fast the cancer tends to grow, and the studies report results by it.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>How these medicines work</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 460 300" role="img" aria-label="An immune T cell next to a cancer cell. Nivolumab or pembrolizumab release the PD-1 brake where the two cells touch, and ipilimumab releases a second brake, CTLA-4, so the T cell can attack. Below, a blood vessel feeds the cancer, and a TKI pill cuts off that blood supply.">
+          <circle cx="98" cy="160" r="50" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+          <text x="98" y="162" text-anchor="middle">T cell</text>
+          <text x="98" y="182" text-anchor="middle" style="font-size:14px;fill:var(--muted)">(immune cell)</text>
+          <circle cx="350" cy="150" r="62" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+          <text x="350" y="156" text-anchor="middle" style="font-size:15px;fill:var(--muted)">cancer cell</text>
+          <path d="M148 160 L172 160" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <rect x="172" y="153" width="12" height="14" rx="2" fill="var(--ink)"/>
+          <path d="M288 160 L196 160" stroke="var(--red)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="192" cy="160" r="7" fill="var(--red)"/>
+          <path d="M184 126 L184 142 M184 142 L176 150 M184 142 L192 150" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <path d="M62 125 L50 110" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <rect x="41" y="98" width="12" height="13" rx="2" fill="var(--ink)" transform="rotate(-38 47 104)"/>
+          <path d="M36 70 L42 86 M42 86 L36 96 M42 86 L52 92" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <text x="8" y="28" style="fill:var(--blue)">ipilimumab releases</text>
+          <text x="8" y="46" style="fill:var(--blue)">a second brake</text>
+          <text x="8" y="64" style="fill:var(--blue);font-size:14px">(CTLA-4)</text>
+          <text x="196" y="28" style="fill:var(--blue)">nivolumab or pembrolizumab</text>
+          <text x="196" y="46" style="fill:var(--blue)">release the PD-1 brake</text>
+          <path d="M228 52 C 212 80, 196 104, 188 122" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+          <path d="M120 296 C 190 290, 268 262, 312 202" fill="none" stroke="var(--red)" stroke-width="7" stroke-linecap="round" stroke-opacity=".75"/>
+          <path d="M226 258 L248 280 M248 258 L226 280" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+          <text x="118" y="278" text-anchor="end" style="font-size:15px">blood vessel</text>
+          <text x="330" y="250" style="fill:var(--red)">TKI pill cuts off</text>
+          <text x="330" y="268" style="fill:var(--red)">the blood supply</text>
+        </svg>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <p class="lede"><strong>Immunotherapy (IO)</strong> takes the brakes off your immune system so it can attack the cancer. <strong>Nivolumab</strong> (Opdivo) and <strong>pembrolizumab</strong> (Keytruda) release one brake, PD-1. <strong>Ipilimumab</strong> (Yervoy) releases a second brake, CTLA-4.</p>
+        <p class="lede"><strong>Targeted pills (TKIs)</strong> cut off the blood supply the cancer needs to grow: <strong>axitinib</strong> (Inlyta), <strong>cabozantinib</strong> (Cabometyx) and <strong>lenvatinib</strong> (Lenvima).</p>
+        <p class="note">Two immunotherapy drugs together is called <span class="hand">IO + IO</span>. One immunotherapy drug plus a targeted pill is called <span class="hand">IO + TKI</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the table of schedules and side effects.</p>
+    <p class="lede">Both approaches help people live longer than the older pill, sunitinib, and both can shrink tumors a lot. They differ in how fast and how often they shrink the cancer, and in how long the benefit lasts.</p>
+    <p class="verdict" id="verdict" data-live></p>
+    <div class="opts" id="opts"></div>
+    <p class="note">For a few people whose cancer is small and growing slowly, careful watching with regular scans before starting treatment is also an option. Surgery or radiation to a single spot can sometimes help too.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 people starting treatment</h2></div>
+    <p class="note">What happened to the tumors in the studies, at their best point on treatment.</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="basis" id="basis" data-live></p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg cr"><b id="nCr">0</b><span><strong>cancer disappeared on scans.</strong></span></div>
+        <div class="lg ben"><b id="nPr">0</b><span><strong>tumors shrank a lot</strong>, by about a third or more.</span></div>
+        <div class="lg sd"><b id="nSd">0</b><span>tumors stayed about the same size, which still counts as control. A few could not be measured.</span></div>
+        <div class="lg rec"><b id="nPd">0</b><span>cancer grew in spite of treatment, so it was changed.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel diffs" id="diffs">
+      <div class="eyebrow">How the two differ</div>
+      <div class="diff">
+        <h3>1. Shrinking the tumor quickly</h3>
+        <p class="why">IO + TKI shrinks tumors in more people, and fewer see their cancer grow at the first scans. This can matter if the cancer is causing symptoms or growing quickly.</p>
+        <div id="dShrink"></div>
+      </div>
+      <div class="diff">
+        <h3>2. Long-lasting, deep responses</h3>
+        <p class="why">IO + IO shrinks tumors in fewer people, but when it works the benefit often lasts a very long time, sometimes many years. A small but real group stay well controlled long after treatment stops. How long the shrinking lasted, for half the people whose tumors shrank:</p>
+        <div id="dLast"></div>
+      </div>
+      <div class="diff">
+        <h3>3. Living longer</h3>
+        <p class="why">Both help people live longer than the older pill. Across studies their survival is broadly similar, though they have never been compared head to head. Alive at 5 years:</p>
+        <div id="dLive"></div>
+        <p class="note" id="dLiveNote" data-live hidden>For favorable risk, the studies have not yet shown that either approach helps people live longer than the older pill. These people tend to live a long time with any of the treatments.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow" style="margin-bottom:6px">Reading this picture</div>
+      <ul class="reading" id="reading">
+        <li>No study has compared IO + IO with IO + TKI directly. Each was tested against sunitinib in its own study.</li>
+        <li>The IO + TKI numbers blend three studies, one for each pair. The pairs differ a little, mostly in side effects.</li>
+        <li>Results are for the risk group shown above. Fill in part 1 to match your risk group.</li>
+      </ul>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="note" id="drNote">Best response is investigator or IRRC RECIST 1.1 at the latest analysis; “stayed the same” includes not evaluable. IO + IO, CheckMate 214 final, 9.3-year median follow-up (Choueiri, Ann Oncol 2026): ITT ORR 39.5 / CR 12.0 / PD 17.6%; I/P 42.4 / 11.8 / 19.3%; favorable 29.6 / 12.8 / 12.0% (sunitinib 51.6 / 6.5 / 4.8%). Median DOR 76.2 vs 25.1 mo (I/P 82.8); 48% vs 19% of responders still in response at 8 years. OS HR ITT 0.71, I/P 0.69, favorable 0.80 (0.59–1.09); 5-year OS ITT 48 vs 37%, I/P 43 vs 31%; 9-year 31 vs 20%. Treatment-free survival at 42 months, I/P 18% vs 5% (Regan, Clin Cancer Res 2021). IO + TKI is the simple mean of KEYNOTE-426 5-year (Rini, Nat Med 2025), CheckMate 9ER final (Motzer, Ann Oncol 2026) and CLEAR final (Motzer, JCO 2024): ITT ORR 60.6 / 55.7 / 71.3, CR 11.6 / 13.9 / 18.3, PD 11.6 / 6.5 / 5.4%; I/P ORR 56.8 / 52.6 / 72.4 and favorable 68.8 / 66.2 / 68.2% (CLEAR by risk from the interim analysis); CR and PD by risk group are reported only for 9ER (I/P 13.3 / 7.6%, favorable 16.2 / 2.7%), so those cells use 9ER. Median DOR 23.6 / 22.0 / 26.7 mo. OS HR 0.84 / 0.79 / 0.79; 5-year OS 41.9 vs 37.1% (KN-426) and 40.9 vs 35.4% (9ER); CLEAR has no 5-year landmark (4-year 55.9 vs 52.5%). I/P 5-year 38.0 vs 30.4% and 39.2 vs 31.4%. Favorable-risk OS HR 1.10 / 1.08 / 0.94, none significant. Median time to response about 2 to 3 months in all four trials (CLEAR 1.9). Opdivo US label (2026): nivolumab + ipilimumab for intermediate or poor risk only; NCCN 2026 lists it as preferred, including favorable risk.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="tablewrap"><table id="fx" class="narrow"></table></div>
+    <p class="note" id="fxNote">Numbers are people out of 100, at any level unless marked severe. There are no placebo studies here, so the older pill, sunitinib, is the comparison. IO + IO comes from CheckMate 214 and counts side effects judged to be from treatment. IO + TKI is the range across the three studies, some of which counted every side effect whatever the cause, so its numbers may read a little high. Immune side effects can affect any organ and can start months after the last dose. Most are treatable, often with steroids. Tell us early about any side effect: holding a dose or lowering the pill dose usually helps.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Shrinking the cancer quickly, especially if it is causing symptoms</span></label>
+      <label><input type="checkbox" id="v2"><span>A chance of long-lasting control, even after treatment stops</span></label>
+      <label><input type="checkbox" id="v3"><span>Living as long as possible</span></label>
+      <label><input type="checkbox" id="v4"><span>Not taking a pill every day</span></label>
+      <label><input type="checkbox" id="v5"><span>Avoiding daily side effects such as diarrhea and sore hands and feet</span></label>
+      <label><input type="checkbox" id="v6"><span>Avoiding serious immune side effects</span></label>
+      <label><input type="checkbox" id="v7"><span>Fewer clinic visits</span></label>
+      <label><input type="checkbox" id="v8"><span>Cost and what my insurance covers</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>Also part of your care</h2></div>
+    <div class="also">
+      <div class="panel"><h3>Surgery or radiation</h3><p>If the kidney with the tumor is still in place, removing it can help some people. A few spots can sometimes be treated with surgery or focused radiation.</p></div>
+      <div class="panel"><h3>Blood tests and scans</h3><p>Regular blood tests check the thyroid, liver, kidneys and blood sugar for immune side effects. Scans every 2 to 3 months show how the treatment is working.</p></div>
+      <div class="panel"><h3>Blood pressure and your other doctors</h3><p>Targeted pills raise blood pressure, so check it at home. Tell every doctor you are on immunotherapy, because its side effects can look like other illnesses.</p></div>
+      <div class="panel"><h3>If the cancer grows later</h3><p>Other good options remain, including different targeted pills, belzutifan (Welireg) and clinical trials.</p></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" data-step="8" id="s8">
+    <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The first treatment we chose</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Also</div>
+        <div class="checks">
+          <label><input type="checkbox" id="p1"><span>Home blood pressure checks</span></label>
+          <label><input type="checkbox" id="p2"><span>Blood tests before each treatment, including thyroid</span></label>
+          <label><input type="checkbox" id="p3"><span>Talk with a surgeon or radiation doctor</span></label>
+          <label><input type="checkbox" id="p4"><span>Ask about a clinical trial</span></label>
+        </div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Start date:
+Blood tests:
+First scans in:</textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>Diarrhea 4 or more times a day above your usual, or blood or mucus in your stool</li>
+          <li>A new cough, shortness of breath or chest pain (call 911 if severe)</li>
+          <li>Yellow skin or eyes, dark urine, or pain on the right side of your belly</li>
+          <li>Severe tiredness, headaches, dizziness, or feeling very thirsty</li>
+          <li>A fever of 100.4°F (38°C) or higher</li>
+          <li>Blood pressure above the level your team gave you, or a severe headache</li>
+          <li>A rash with blisters, or sores in your mouth that stop you eating or drinking</li>
+        </ul>
+        <p class="note">Immune side effects can start even months after the last dose. Tell any doctor or emergency room that you have had immunotherapy.</p>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers come from large studies of people with clear cell kidney cancer that had spread. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol id="refs">
+      <li>Choueiri TK et al. Nivolumab plus ipilimumab vs sunitinib in advanced renal cell carcinoma (CheckMate 214): final analysis. Ann Oncol 2026;37:960. Tannir NM et al. 8-year follow-up. Ann Oncol 2024;35:1026.</li>
+      <li>Regan MM et al. Treatment-free survival after nivolumab plus ipilimumab vs sunitinib (CheckMate 214). Clin Cancer Res 2021;27:6687.</li>
+      <li>Rini BI et al. Pembrolizumab plus axitinib vs sunitinib (KEYNOTE-426): 5-year analysis. Nat Med 2025;31:3475.</li>
+      <li>Motzer RJ et al. Nivolumab plus cabozantinib vs sunitinib (CheckMate 9ER): final analysis. Ann Oncol 2026;37:33.</li>
+      <li>Motzer RJ et al. Lenvatinib plus pembrolizumab vs sunitinib (CLEAR): final overall survival. J Clin Oncol 2024;42:1222.</li>
+      <li>Heng DYC et al. Prognostic factors for overall survival with targeted therapy in metastatic RCC (IMDC). J Clin Oncol 2009;27:5794.</li>
+      <li>Powles T et al. ESMO Clinical Practice Guideline: renal cell carcinoma. Ann Oncol 2024;35:692. NCCN Guidelines, Kidney Cancer, 2026. Opdivo US prescribing information, 2026.</li>
+    </ol>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const PRISTINE = document.body.innerHTML;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  let EDITS = {};
+  try { EDITS = JSON.parse($('#edits').textContent) || {}; } catch (e) {}
+  // Trial results by IMDC risk group: best response (complete response, objective response, progressive disease, %),
+  // median duration of response (months) and 5-year overall survival (%). IO + TKI blends KEYNOTE-426, CheckMate 9ER and CLEAR.
+  // The doctor can update these in Edit mode.
+  const CFG_DEFAULTS = {
+    ioCrAll: 12, ioOrrAll: 40, ioPdAll: 18, ioCrIp: 12, ioOrrIp: 42, ioPdIp: 19, ioCrFav: 13, ioOrrFav: 30, ioPdFav: 12,
+    tkCrAll: 15, tkOrrAll: 63, tkPdAll: 8, tkCrIp: 13, tkOrrIp: 61, tkPdIp: 8, tkCrFav: 16, tkOrrFav: 68, tkPdFav: 3,
+    ioDor: 76, tkDor: 24,
+    ioOs5All: 48, tkOs5All: 41, suOs5All: 37, ioOs5Ip: 43, tkOs5Ip: 39, suOs5Ip: 31,
+  };
+  const CFG = { ...CFG_DEFAULTS, ...(EDITS.settings || {}) };
+  const GROUPS = { All: 'all risk groups', Ip: 'intermediate or poor risk', Fav: 'favorable risk' };
+  const CFG_SPEC = [];
+  [['io', 'IO + IO'], ['tk', 'IO + TKI']].forEach(([r, nm]) => Object.entries(GROUPS).forEach(([g, gn]) => {
+    CFG_SPEC.push({ k: `${r}Cr${g}`, step: 1, label: `${nm}, ${gn}: cancer disappeared (complete response, %)` });
+    CFG_SPEC.push({ k: `${r}Orr${g}`, step: 1, label: `${nm}, ${gn}: tumors shrank, including disappeared (objective response, %)` });
+    CFG_SPEC.push({ k: `${r}Pd${g}`, step: 1, label: `${nm}, ${gn}: grew despite treatment (progressive disease as best response, %)` });
+  }));
+  CFG_SPEC.push(
+    { k: 'ioDor', step: 1, label: 'IO + IO: median duration of response (months)' },
+    { k: 'tkDor', step: 1, label: 'IO + TKI: median duration of response (months)' },
+    { k: 'ioOs5All', step: 1, label: 'IO + IO, all risk groups: alive at 5 years (%)' },
+    { k: 'tkOs5All', step: 1, label: 'IO + TKI, all risk groups: alive at 5 years (%)' },
+    { k: 'suOs5All', step: 1, label: 'Sunitinib, all risk groups: alive at 5 years (%)' },
+    { k: 'ioOs5Ip', step: 1, label: 'IO + IO, intermediate or poor risk: alive at 5 years (%)' },
+    { k: 'tkOs5Ip', step: 1, label: 'IO + TKI, intermediate or poor risk: alive at 5 years (%)' },
+    { k: 'suOs5Ip', step: 1, label: 'Sunitinib, intermediate or poor risk: alive at 5 years (%)' },
+  );
+  const onCfg = () => render();
+
+  /* ---------- content ---------- */
+  const OPTIONS = [
+    { id: 'io', short: 'IO + IO', name: 'Two immunotherapy drugs (IO + IO)', trial: 'CheckMate 214',
+      how: 'Nivolumab + ipilimumab in a vein every 3 weeks for 4 doses, then nivolumab alone every 2 or 4 weeks',
+      pros: ['When it works, the benefit often lasts for many years', 'A small group stay well controlled long after stopping treatment', 'No daily pill'],
+      cons: ['Shrinks tumors in fewer people, and in about 1 in 5 the cancer grows at first', 'Serious immune side effects are more common, often needing steroids'],
+      fit: 'Intermediate or poor risk, especially when there is time to wait for a response' },
+    { id: 'tk', short: 'IO + TKI', name: 'Immunotherapy + a targeted pill (IO + TKI)', trial: 'KEYNOTE-426 · CheckMate 9ER · CLEAR',
+      how: 'Pembrolizumab + axitinib, nivolumab + cabozantinib, or pembrolizumab + lenvatinib. Immunotherapy in a vein every 2 to 6 weeks, plus a pill every day',
+      pros: ['Shrinks tumors in more people, and usually works faster', 'Few people see their cancer grow at first', 'Works in every risk group'],
+      cons: ['Daily pill side effects: diarrhea, high blood pressure, sore hands and feet, tiredness', 'Responses tend not to last as long once treatment stops'],
+      fit: 'Symptoms or fast growth that need control soon, and favorable risk' },
+  ];
+
+  const FX_COLS = ['io', 'tk'];
+  // People out of 100 with each side effect. IO + IO: CheckMate 214, treatment-related, 8-year report and Yervoy/Opdivo labels.
+  // IO + TKI: range across KEYNOTE-426 (Inlyta label), CheckMate 9ER (Lancet Oncol 2022, Cabometyx label) and CLEAR (NEJM 2021).
+  const FX = [
+    ['How it is given', ['Vein every 3 weeks for 4 doses, then nivolumab every 2 or 4 weeks', 'Vein every 2 to 6 weeks, plus a pill every day']],
+    ['How long', ['Nivolumab continues while it works and is tolerated', 'Immunotherapy for up to 2 years; the pill continues while it works']],
+    ['Serious side effects', [['md', 'About 48 in 100 (older pill: 64)'], ['hi', 'About 63 to 72 in 100 (older pill: 54 to 59)']]],
+    ['Stopped because of side effects', [['md', 'About 24 in 100 stopped both drugs'], ['md', '26 to 37 in 100 stopped one drug; 7 to 13 stopped both']]],
+    ['Needed high-dose steroids', [['hi', 'About 30 to 35 in 100'], ['md', 'About 14 to 22 in 100']]],
+    ['Diarrhea', [['md', '29 in 100; immune colitis in about 10'], ['hi', '56 to 64 in 100']]],
+    ['High blood pressure', [['lo', '2 in 100'], ['hi', '33 to 55 in 100; severe in 13 to 28']]],
+    ['Sore hands and feet, mouth sores', [['lo', 'Hands and feet 1 in 100; mouth sores 5'], ['md', 'Hands and feet 28 to 40 in 100; mouth sores 17 to 35']]],
+    ['Tiredness, poor appetite', [['md', 'Tiredness 38 in 100; poor appetite 14'], ['md', 'Tiredness 27 to 52 in 100; poor appetite 22 to 40']]],
+    ['Thyroid', [['md', 'Underactive in about 17 to 22 in 100; overactive in 12'], ['md', 'Underactive in 35 to 47 in 100']]],
+    ['Liver tests', [['md', 'Rise in about 12 in 100; immune hepatitis in 7'], ['md', 'Rise in 28 to 60 in 100; severe in 6 to 20, most with axitinib']]],
+    ['Itch, rash', [['md', 'Itch 31, rash 23 in 100'], ['md', 'Rash 21 to 27 in 100']]],
+    ['Adrenal or pituitary gland', [['md', 'About 7 and 5 in 100; some need hormone pills for life'], ['lo', 'Adrenal in about 2 to 5 in 100']]],
+    ['Lung inflammation', [['md', 'About 4 to 6 in 100'], ['md', 'About 3 to 4 in 100']]],
+    ['Other', [['md', 'Dose is not lowered; doses are held or stopped instead'], ['md', 'Pill dose lowered in 22 (axitinib) to 69 (lenvatinib) in 100; hoarse voice 12 to 30; with lenvatinib, weight loss and protein in the urine in about 30']]],
+    ['Deaths from side effects', [['md', 'About 1 to 2 in 100'], ['md', 'Under 1 in 100']]],
+  ];
+
+  /* ---------- state ---------- */
+  const FACTORS = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
+  const BLANK = { plan: null, f1: null, f2: null, f3: null, f4: null, f5: null, f6: null };
+  const S = { sel: 'io', ...BLANK };
+
+  // IMDC: 0 risk factors favorable, 1–2 intermediate, 3 or more poor. Waits until it can be decided.
+  function risk() {
+    const yes = FACTORS.filter(k => S[k] === 'yes').length, open = FACTORS.filter(k => S[k] === null).length;
+    if (yes >= 3) return 'poor';
+    if (open) return null;
+    return yes === 0 ? 'fav' : 'int';
+  }
+  const grp = () => ({ fav: 'Fav', int: 'Ip', poor: 'Ip' }[risk()] || 'All');
+  function resp(r, g = grp()) {
+    const cr = CFG[`${r}Cr${g}`], orr = CFG[`${r}Orr${g}`], pd = CFG[`${r}Pd${g}`];
+    return { cr, pr: orr - cr, sd: 100 - orr - pd, pd, orr };
+  }
+
+  /* ---------- render ---------- */
+  const optsEl = $('#opts'), tabsEl = $('#tabs'), planEl = $('#planPick');
+  OPTIONS.forEach(o => {
+    const b = document.createElement('div');
+    b.className = 'opt'; b.dataset.id = o.id; b.tabIndex = 0; b.setAttribute('role', 'button');
+    b.onkeydown = e => { if (e.target === b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(o.id); } };
+    b.innerHTML = `<div class="trialname">${o.trial}</div><h3>${o.name}</h3><div class="how">${o.how}</div><ul>${
+      o.pros.map(t => `<li class="pro">${t}</li>`).join('')}${
+      o.cons.map(t => `<li class="con">${t}</li>`).join('')}<li class="fit">${o.fit}</li></ul>`;
+    b.onclick = () => select(o.id);
+    optsEl.append(b);
+
+    const t = document.createElement('button');
+    t.className = 'btn'; t.dataset.id = o.id; t.textContent = o.short;
+    t.onclick = () => select(o.id);
+    tabsEl.append(t);
+  });
+  ['Nivolumab + ipilimumab', 'Pembrolizumab + axitinib', 'Nivolumab + cabozantinib', 'Pembrolizumab + lenvatinib', 'Watching with scans for now', 'A clinical trial'].forEach(n => {
+    const p = document.createElement('button');
+    p.className = 'chip'; p.dataset.id = n; p.textContent = n; p.setAttribute('aria-pressed', 'false');
+    p.onclick = () => { S.plan = S.plan === n ? null : n; render(); };
+    planEl.append(p);
+  });
+  $$('.mchips').forEach(g => $$('.chip', g).forEach(c => c.onclick = () => {
+    const k = g.dataset.k; S[k] = S[k] === c.dataset.v ? null : c.dataset.v; render();
+  }));
+
+  const fx = $('#fx');
+  fx.innerHTML = `<thead><tr><th></th>${FX_COLS.map(id => `<th data-id="${id}">${OPTIONS.find(o => o.id === id).short}</th>`).join('')}</tr></thead><tbody>${
+    FX.map(([label, cells]) => `<tr><th>${label}</th>${cells.map((c, i) =>
+      `<td data-id="${FX_COLS[i]}">${Array.isArray(c) ? `<span class="lvl ${c[0]}">${c[1]}</span>` : c}</td>`).join('')}</tr>`).join('')
+  }</tbody>`;
+
+  const NS = 'http://www.w3.org/2000/svg', people = $('#people'), figs = [];
+  for (let i = 0; i < 100; i++) {
+    const x = (i % 10) * 34 + 17, y = Math.floor(i / 10) * 34 + 17;
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `translate(${x} ${y})`);
+    g.innerHTML = '<circle cx="0" cy="-8" r="5"/><path d="M-8 12 L-3 -1 L3 -1 L8 12 Z"/>';
+    people.append(g); figs.push(g);
+  }
+
+  // Bars for the three differences. Rows: [label, value, max, unit, ref?, option id]
+  function bars(el, rows) {
+    el.innerHTML = rows.map(([label, v, max, unit, ref, id, bad]) =>
+      `<div class="drow${ref ? ' ref' : ''}${bad ? ' bad' : ''}${id === S.sel ? ' sel' : ''}"><span>${label}</span><div class="dbar"><i style="width:${Math.min(100, v / max * 100)}%"></i></div><span class="v">${v}${unit}</span></div>`).join('');
+  }
+
+  function select(id) { S.sel = id; render(); }
+
+  function render() {
+    const rk = risk(), g = grp();
+    $$('.opt', optsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('.btn', tabsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('[data-id]', fx).forEach(c => c.classList.toggle('selcol', c.dataset.id === S.sel));
+    $$('.chip', planEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.plan));
+    $$('.mchips').forEach(m => $$('.chip', m).forEach(c => c.setAttribute('aria-pressed', S[m.dataset.k] === c.dataset.v)));
+
+    const tag = $('#riskTag');
+    tag.textContent = { fav: 'Favorable risk', int: 'Intermediate risk', poor: 'Poor risk' }[rk] || 'Answer the six questions';
+    tag.className = 'tag ' + (rk ? 'yes' : 'no');
+
+    $('#verdict').innerHTML = rk === 'fav'
+      ? 'For favorable risk: <span class="hand">IO + TKI is used most often.</span> In this group, IO + IO shrank tumors in fewer people than the older pill did, and it is approved in the US only for intermediate or poor risk, though some guidelines list it as an option. Neither approach has yet been shown to help favorable-risk patients live longer than the older pill.'
+      : rk ? `For ${rk === 'int' ? 'intermediate' : 'poor'} risk: <span class="hand">both approaches are good choices.</span> The differences below help decide which fits you.`
+      : 'Answer the six risk questions in part 1 to see which approaches fit your risk group.';
+
+    const o = resp(S.sel), cols = [[o.cr, 'var(--green)'], [o.pr, 'var(--blue)'], [o.sd, 'var(--free)'], [o.pd, 'var(--red)']];
+    let n = 0; const fill = [];
+    cols.forEach(([k, c]) => { for (let i = 0; i < k; i++) fill[n++] = c; });
+    figs.forEach((f, i) => f.setAttribute('fill', fill[i] || 'var(--free)'));
+    $('#nCr').textContent = o.cr; $('#nPr').textContent = o.pr; $('#nSd').textContent = o.sd; $('#nPd').textContent = o.pd;
+    $('#basis').textContent = rk
+      ? `Results for people with ${GROUPS[g]} in the studies.`
+      : `Results for everyone in the studies, all risk groups together. Answer the risk questions in part 1 to fit the picture to you.`;
+    const nm = OPTIONS.find(x => x.id === S.sel).short;
+    $('#say').textContent = `With ${nm}, tumors shrank or disappeared in about ${o.orr} out of 100 people. In about ${o.pd} out of 100, the cancer grew in spite of treatment.`;
+    $('#peopleDesc').textContent = `${o.cr} cancer disappeared, ${o.pr} tumors shrank, ${o.sd} stayed the same, ${o.pd} grew despite treatment.`;
+
+    const a = resp('io'), b = resp('tk');
+    bars($('#dShrink'), [['IO + IO: tumors shrank', a.orr, 100, ' in 100', false, 'io'], ['IO + TKI: tumors shrank', b.orr, 100, ' in 100', false, 'tk'],
+      ['IO + IO: grew at first', a.pd, 100, ' in 100', false, 'io', true], ['IO + TKI: grew at first', b.pd, 100, ' in 100', false, 'tk', true]]);
+    bars($('#dLast'), [['IO + IO', CFG.ioDor, 90, ' months', false, 'io'], ['IO + TKI', CFG.tkDor, 90, ' months', false, 'tk']]);
+    const og = g === 'Fav' ? null : g;
+    $('#dLiveNote').hidden = !!og;
+    $('#dLive').hidden = !og;
+    if (og) bars($('#dLive'), [['IO + IO', CFG['ioOs5' + og], 100, ' in 100', false, 'io'], ['IO + TKI', CFG['tkOs5' + og], 100, ' in 100', false, 'tk'], ['Older pill (sunitinib)', CFG['suOs5' + og], 100, ' in 100', true]]);
+    autosize();
+  }
+
+  $('#visitDate').value = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+  function autosize() { $$('textarea.lines').forEach(t => { t.style.height = 'auto'; t.style.height = Math.max(64, t.scrollHeight) + 'px'; }); }
+  $$('textarea.lines').forEach(t => t.addEventListener('input', autosize));
+
+  /* ---------- step-by-step ---------- */
+  const steps = $$('section.step');
+  let walk = false, cur = 0;
+  function showSteps() {
+    steps.forEach((s, i) => s.classList.toggle('later', walk && i > cur));
+    ['#backBtn', '#nextBtn', '#stepLabel'].forEach(s => $(s).hidden = !walk);
+    $('#stepLabel').textContent = `${cur + 1} of ${steps.length}`;
+    $('#backBtn').disabled = cur === 0; $('#nextBtn').disabled = cur === steps.length - 1;
+    $('footer').hidden = walk && cur < steps.length - 1;
+    $('#walkBtn').setAttribute('aria-pressed', walk);
+    sizeInk();
+  }
+  $('#walkBtn').onclick = () => { walk = !walk; cur = 0; showSteps(); if (walk) window.scrollTo({ top: 0 }); };
+  $('#nextBtn').onclick = () => {
+    cur = Math.min(cur + 1, steps.length - 1); showSteps();
+    const s = steps[cur]; s.classList.remove('reveal'); void s.offsetWidth; s.classList.add('reveal');
+    s.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  };
+  $('#backBtn').onclick = () => { cur = Math.max(cur - 1, 0); showSteps(); steps[cur].scrollIntoView({ block: 'start' }); };
+
+  /* ---------- marker layer ---------- */
+  const board = $('#board'), ink = $('#ink'), ctx = ink.getContext('2d');
+  let strokes = [], live = null, color = 'blue', W = 1, unclear = null;
+  function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
+  function sizeInk() {
+    const dpr = window.devicePixelRatio || 1;
+    W = board.clientWidth; const H = board.scrollHeight;
+    ink.width = W * dpr; ink.height = H * dpr; ink.style.width = W + 'px'; ink.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
+  }
+  function drawStroke(s) {
+    if (s.pts.length < 1) return;
+    ctx.strokeStyle = tok(s.c); ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.globalAlpha = .9;
+    ctx.beginPath();
+    s.pts.forEach(([x, y], i) => i ? ctx.lineTo(x * W, y * W) : ctx.moveTo(x * W, y * W));
+    if (s.pts.length === 1) ctx.lineTo(s.pts[0][0] * W + .1, s.pts[0][1] * W);
+    ctx.stroke();
+  }
+  function redraw() { ctx.clearRect(0, 0, ink.width, ink.height); strokes.forEach(drawStroke); if (live) drawStroke(live); }
+  function pt(e) { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / W, (e.clientY - r.top) / W]; }
+  ink.addEventListener('pointerdown', e => { unclear = null; live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
+  ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
+  const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
+  ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
+  $('#penBtn').onclick = () => {
+    const on = !document.body.classList.contains('pen');
+    document.body.classList.toggle('pen', on); $('#penBtn').setAttribute('aria-pressed', on);
+  };
+  $$('.swatch').forEach(s => s.onclick = () => {
+    color = s.dataset.c; $$('.swatch').forEach(x => x.setAttribute('aria-pressed', x === s));
+    if (!document.body.classList.contains('pen')) $('#penBtn').click();
+  });
+  new ResizeObserver(sizeInk).observe(board);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('beforeprint', () => { steps.forEach(s => s.classList.remove('later')); $('footer').hidden = false; autosize(); requestAnimationFrame(sizeInk); });
+  window.addEventListener('afterprint', showSteps);
+  // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
+  // Everything written on the page: typed fields, ticks, the chosen plan and marker ink.
+  // wipe() empties it and returns a function that puts it all back.
+  function wipe(keep = []) {
+    const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), was = { ...S }, inkWas = strokes;
+    els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
+    Object.assign(S, BLANK); strokes = []; render(); redraw();
+    return () => {
+      els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
+      Object.assign(S, was); strokes = inkWas; render(); redraw();
+    };
+  }
+  // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
+  $('#clearBtn').onclick = () => { unclear = wipe(['visitDate']); };
+  $('#undoBtn').onclick = () => { if (unclear) { unclear(); unclear = null; } else { strokes.pop(); redraw(); } };
+  board.addEventListener('input', () => { unclear = null; });
+  function printBlank() {
+    const restore = wipe(); document.body.classList.add('blankprint'); render();
+    window.addEventListener('afterprint', () => { document.body.classList.remove('blankprint'); restore(); }, { once: true });
+    window.print();
+  }
+  if (window.self === window.top) {
+    $('#printBtn').hidden = $('#printBlankBtn').hidden = false;
+    $('#printBtn').onclick = () => window.print();
+    $('#printBlankBtn').onclick = printBlank;
+    if (/^https?:/.test(location.protocol)) $('#libLink').hidden = false;
+    if (/[?&]print=blank\b/.test(location.search)) document.fonts.ready.then(() => setTimeout(printBlank, 300));
+  }
+
+  render();
+
+  /* ---------- edit mode: change wording and model numbers, then save as a new version ---------- */
+  (() => {
+    const RESET = ':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
+    const ED = { btn: $('#editBtn'), save: $('#saveBtn'), cancel: $('#cancelBtn'), msg: $('#editStatus') };
+    const say = t => { ED.msg.textContent = t; };
+    const SEL = 'h1,h2,h3,p,li,th,td,.how,.eyebrow,.note,.lg span,.checks label > span,.fact > span:first-child';
+    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict,[data-live]') && !el.querySelector('[data-live]') && !el.closest('svg') &&
+      !el.querySelector('input,textarea,button,select') && el.textContent.trim());
+    els = els.filter(el => !els.some(o => o !== el && o.contains(el)));
+
+    // Each piece of text is keyed by its original wording, so saved edits survive later layout changes.
+    const seen = {};
+    els.forEach(el => {
+      const t = el.tagName + '|' + el.textContent.replace(/\s+/g, ' ').trim();
+      seen[t] = (seen[t] || 0) + 1;
+      el._ek = t + '|' + seen[t]; el._def = el.innerHTML.trim(); el.classList.add('ek');
+      const v = EDITS.text && EDITS.text[el._ek];
+      if (typeof v === 'string') el.innerHTML = v;
+      el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && el.isContentEditable) { e.preventDefault(); el.blur(); } });
+    });
+
+    const box = document.createElement('div');
+    box.className = 'cfg'; box.hidden = true;
+    box.innerHTML = '<div class="eyebrow">Model numbers</div>' + CFG_SPEC.map(s =>
+      `<label class="cfgrow"><span>${s.label}</span><input type="number" step="${s.step}" id="cfg-${s.k}" value="${CFG[s.k]}"></label>`).join('');
+    $('#drPanel').append(box);
+    CFG_SPEC.forEach(s => $('#cfg-' + s.k).addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      if (!isNaN(v)) { CFG[s.k] = v; onCfg(s.k); }
+    }));
+
+    const editing = () => document.body.classList.contains('editing');
+    document.addEventListener('click', e => {
+      if (!editing() || !e.target.closest || !e.target.closest('.ek')) return;
+      if (e.target.closest('label')) e.preventDefault();
+      e.stopPropagation();
+    }, true);
+
+    function setEditing(on) {
+      if (on && document.body.classList.contains('pen')) $('#penBtn').click();
+      document.body.classList.toggle('editing', on);
+      els.forEach(el => on ? el.setAttribute('contenteditable', 'true') : el.removeAttribute('contenteditable'));
+      ED.btn.hidden = on; ED.save.hidden = ED.cancel.hidden = !on; box.hidden = !on;
+      if (on) $('#drPanel').hidden = false;
+      sizeInk();
+    }
+
+    let snap = null, art = null;
+    ED.btn.onclick = () => {
+      snap = { html: els.map(el => el.innerHTML), cfg: { ...CFG } };
+      setEditing(true);
+      say('Click any text to change it. Model numbers are in the doctor box.');
+    };
+    ED.cancel.onclick = () => {
+      els.forEach((el, i) => { el.innerHTML = snap.html[i]; });
+      Object.assign(CFG, snap.cfg);
+      CFG_SPEC.forEach(s => { $('#cfg-' + s.k).value = CFG[s.k]; });
+      onCfg(); setEditing(false); say('');
+    };
+    ED.save.onclick = async () => {
+      const text = {}, settings = {};
+      els.forEach(el => { const h = el.innerHTML.replace(/(<br>)+$/, '').trim(); if (h !== el._def) text[el._ek] = h; });
+      Object.keys(CFG_DEFAULTS).forEach(k => { if (CFG[k] !== CFG_DEFAULTS[k]) settings[k] = CFG[k]; });
+      setEditing(false);
+      if (!art) { say('Changes stay until you close this page. Edit from the artifact link to save them for good.'); return; }
+      say('Saving…');
+      try {
+        await art.publish(buildDoc({ text, settings }));
+        say('Saved');
+      } catch (err) {
+        const c = err && err.code;
+        if (c === 'conflict') say('A newer version was saved elsewhere. Loading it now.');
+        else if (c === 'not_writer' || c === 'not_granted') { say('This view is read-only, so changes can’t be saved.'); ED.btn.hidden = true; }
+        else { setEditing(true); say('Couldn’t save (' + (c || 'error') + '). Your changes are still here; try Save again.'); }
+      }
+    };
+
+    function buildDoc(edits) {
+      const json = JSON.stringify(edits).replace(/</g, '\\u003c');
+      const body = PRISTINE.replace(/(<script type="application\/json" id="edits">)[\s\S]*?(<\/script>)/, (m, a, b) => a + json + b);
+      return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' +
+        RESET + '<\/style><\/head><body>' + body + '<\/body><\/html>';
+    }
+
+    async function connect() {
+      if (window.self === window.top) { ED.btn.hidden = false; return; }
+      if (!window.claude || !window.claude.use) return;
+      const a = await window.claude.use('artifact');
+      if (!a) return;
+      const u = await window.claude.use('user');
+      if (u && !(await u.canEdit())) return;
+      art = a; ED.btn.hidden = false;
+    }
+    if (window.claude && window.claude.use) connect(); else window.addEventListener('load', connect, { once: true });
+  })();
+  sizeInk();
+})();
+</script>
