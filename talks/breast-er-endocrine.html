@@ -201,11 +201,19 @@ footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
   }
   body { background: #fff; font-size: 11.5pt; padding: 0; }
   .bar, .noprint { display: none !important; }
-  section.step.later { display: grid; }
-  .board { gap: 22px; padding-top: 0; max-width: none; }
-  .panel, .opt, .tablewrap, .call, .sh { break-inside: avoid; }
-  .sh { break-after: avoid; }
-  .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  /* Plain block flow on paper, so a heading stays with what follows it and long parts can run onto the next page */
+  .board, section.step, section.step.later { display: block; }
+  .board { padding-top: 0; max-width: none; }
+  .board > * + * { margin-top: 22px; }
+  .board > #ink + * { margin-top: 0; }
+  section.step > * + * { margin-top: 14px; }
+  #ink { width: 100% !important; height: 100% !important; } /* marker layer follows the printed page instead of the screen's size */
+  .panel, .opt, .call, .sh, tr, .fact, .plan > * { break-inside: avoid; }
+  .panel.plan, .panel.facts { display: block; break-inside: auto; }
+  .panel.plan > * + * { margin-top: 16px; }
+  .panel.facts > * + * { margin-top: 8px; }
+  .sh, h3, .eyebrow { break-after: avoid; }
+  .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .arraywrap { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
   .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
