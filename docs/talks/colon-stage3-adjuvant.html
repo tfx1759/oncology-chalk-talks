@@ -245,7 +245,7 @@ body.blankprint .fill.num { width: 4em; }
     <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
     <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
     <button class="btn" id="undoBtn">Undo</button>
-    <button class="btn" id="clearBtn">Clear ink</button>
+    <button class="btn" id="clearBtn" title="Erase the marker and everything typed or ticked on this page">Clear ink</button>
   </div>
   <div class="grp">
     <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
@@ -306,7 +306,7 @@ body.blankprint .fill.num { width: 4em; }
       </div>
       <div style="display:grid;gap:12px;min-width:0">
         <p class="lede">Surgery removed the part of your colon with the tumor and the lymph nodes near it.</p>
-        <p class="lede">Cancer was found in <input class="fill num" id="nodesPos" inputmode="numeric" value="2" aria-label="Number of lymph nodes with cancer"> of <input class="fill num" id="nodesTot" inputmode="numeric" value="18" aria-label="Number of lymph nodes checked"> lymph nodes. That makes it <mark>stage III</mark>.</p>
+        <p class="lede">Cancer was found in <input class="fill num" id="nodesPos" inputmode="numeric" aria-label="Number of lymph nodes with cancer"> of <input class="fill num" id="nodesTot" inputmode="numeric" aria-label="Number of lymph nodes checked"> lymph nodes. That makes it <mark>stage III</mark>.</p>
         <p class="note">Lymph nodes are small filters along the colon's drainage. Cancer in the nodes tells us cells had started to travel.</p>
         <div>
           <div class="eyebrow" style="margin-bottom:6px">Your risk group</div>
@@ -618,7 +618,7 @@ Start date: </textarea></label>
 
   /* ---------- marker layer ---------- */
   const board = $('#board'), ink = $('#ink'), ctx = ink.getContext('2d');
-  let strokes = [], live = null, color = 'blue', W = 1;
+  let strokes = [], live = null, color = 'blue', W = 1, unclear = null;
   function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
   function sizeInk() {
     const dpr = window.devicePixelRatio || 1;
@@ -636,7 +636,7 @@ Start date: </textarea></label>
   }
   function redraw() { ctx.clearRect(0, 0, ink.width, ink.height); strokes.forEach(drawStroke); if (live) drawStroke(live); }
   function pt(e) { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / W, (e.clientY - r.top) / W]; }
-  ink.addEventListener('pointerdown', e => { live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
+  ink.addEventListener('pointerdown', e => { unclear = null; live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
   ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
   const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
   ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
@@ -649,8 +649,6 @@ Start date: </textarea></label>
     color = s.dataset.c; $$('.swatch').forEach(x => x.setAttribute('aria-pressed', x === s));
     if (!document.body.classList.contains('pen')) $('#penBtn').click();
   });
-  $('#undoBtn').onclick = () => { strokes.pop(); redraw(); };
-  $('#clearBtn').onclick = () => { strokes = []; redraw(); };
   new ResizeObserver(sizeInk).observe(board);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
   new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -659,16 +657,25 @@ Start date: </textarea></label>
 
   // printing works when this file is opened directly in a browser
   // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
+  // Everything written on the page: typed fields, ticks, the chosen plan and marker ink.
+  // wipe() empties it and returns a function that puts it all back.
+  function wipe(keep = []) {
+    const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), plan = S.plan, inkWas = strokes;
+    els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
+    S.plan = null; strokes = []; render(); redraw();
+    return () => {
+      els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
+      S.plan = plan; strokes = inkWas; render(); redraw();
+    };
+  }
+  // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
+  $('#clearBtn').onclick = () => { unclear = wipe(['visitDate']); };
+  $('#undoBtn').onclick = () => { if (unclear) { unclear(); unclear = null; } else { strokes.pop(); redraw(); } };
+  board.addEventListener('input', () => { unclear = null; });
   function printBlank() {
-    const fields = $$('input, textarea', board).filter(el => !el.closest('.dr'));
-    const saved = fields.map(el => el.type === 'checkbox' ? el.checked : el.value);
-    const plan = S.plan, inkWas = strokes;
-    fields.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
-    S.plan = null; strokes = []; document.body.classList.add('blankprint'); render(); redraw();
-    window.addEventListener('afterprint', () => {
-      fields.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
-      S.plan = plan; strokes = inkWas; document.body.classList.remove('blankprint'); render(); redraw();
-    }, { once: true });
+    const restore = wipe(); document.body.classList.add('blankprint'); render();
+    window.addEventListener('afterprint', () => { document.body.classList.remove('blankprint'); restore(); }, { once: true });
     window.print();
   }
   if (window.self === window.top) {

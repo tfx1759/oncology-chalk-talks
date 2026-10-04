@@ -262,7 +262,7 @@ body.blankprint .fill.num { width: 4em; }
     <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
     <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
     <button class="btn" id="undoBtn">Undo</button>
-    <button class="btn" id="clearBtn">Clear ink</button>
+    <button class="btn" id="clearBtn" title="Erase the marker and everything typed or ticked on this page">Clear ink</button>
   </div>
   <div class="grp">
     <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
@@ -301,11 +301,11 @@ body.blankprint .fill.num { width: 4em; }
     <div class="two">
       <div class="panel facts">
         <div class="eyebrow">Your cancer</div>
-        <label class="fact"><span>Tumor size</span><span><input class="fill num" id="size" inputmode="decimal" value="1.6"> cm</span></label>
-        <label class="fact"><span>Lymph nodes with cancer</span><span><input class="fill num" id="nodes" inputmode="numeric" value="0"> of <input class="fill num" id="nodesTot" inputmode="numeric" value="2" aria-label="Lymph nodes checked"></span></label>
-        <label class="fact"><span>Grade (1 slow – 3 fast)</span><span><input class="fill num" id="grade" inputmode="numeric" value="2"></span></label>
-        <label class="fact"><span>Ki-67 (how fast cells divide)</span><span><input class="fill num" id="ki67" inputmode="numeric" value="10"> %</span></label>
-        <label class="fact"><span>Tumor gene test score (Oncotype DX)</span><span><input class="fill num" id="rs" inputmode="numeric" value="14"></span></label>
+        <label class="fact"><span>Tumor size</span><span><input class="fill num" id="size" inputmode="decimal"> cm</span></label>
+        <label class="fact"><span>Lymph nodes with cancer</span><span><input class="fill num" id="nodes" inputmode="numeric"> of <input class="fill num" id="nodesTot" inputmode="numeric" aria-label="Lymph nodes checked"></span></label>
+        <label class="fact"><span>Grade (1 slow – 3 fast)</span><span><input class="fill num" id="grade" inputmode="numeric"></span></label>
+        <label class="fact"><span>Ki-67 (how fast cells divide)</span><span><input class="fill num" id="ki67" inputmode="numeric"> %</span></label>
+        <label class="fact"><span>Tumor gene test score (Oncotype DX)</span><span><input class="fill num" id="rs" inputmode="numeric"></span></label>
         <div class="fact"><span>Estrogen receptor (ER)</span><span class="hand">positive</span></div>
         <div class="fact"><span>HER2</span><span class="hand">negative</span></div>
       </div>
@@ -605,7 +605,7 @@ Plan for: 5 years</textarea></label>
     const size = num('size'), n = num('nodes'), g = num('grade'), ki = num('ki67'), rs = num('rs');
     const natalee = n >= 1 || size > 5 || (size > 2 && (g >= 3 || (g === 2 && (ki >= 20 || rs >= 26))));
     const monarch = n >= 4 || (n >= 1 && (g >= 3 || size >= 5));
-    return { natalee, monarch, rs };
+    return { natalee, monarch, rs, known: size !== null && n !== null && g !== null };
   }
 
   function render() {
@@ -631,13 +631,18 @@ Plan for: 5 years</textarea></label>
     });
 
     const t = trials();
-    const tag = (el, ok) => { el.textContent = ok ? 'Matches who was in this study' : 'You would not have qualified'; el.className = 'tag ' + (ok ? 'yes' : 'no'); };
+    const tag = (el, ok) => {
+      el.textContent = !t.known ? 'Fill in part 1 to check' : ok ? 'Matches who was in this study' : 'You would not have qualified';
+      el.className = 'tag ' + (ok && t.known ? 'yes' : 'no');
+    };
     tag($('#tagNat'), t.natalee); tag($('#tagMon'), t.monarch);
-    $('#tNat').classList.toggle('dim', !t.natalee); $('#tMon').classList.toggle('dim', !t.monarch);
-    $('#verdict').innerHTML = !t.natalee && !t.monarch
+    $('#tNat').classList.toggle('dim', t.known && !t.natalee); $('#tMon').classList.toggle('dim', t.known && !t.monarch);
+    $('#verdict').innerHTML = !t.known
+      ? 'Fill in the tumor size, lymph nodes and grade in part 1 to see whether these studies apply to your cancer.'
+      : !t.natalee && !t.monarch
       ? 'For your cancer: <span class="hand">a hormone pill alone is the standard.</span> Your cancer is lower risk than the women in these studies.'
       : `For your cancer: <span class="hand">this is worth discussing.</span> Your cancer matches who was in ${t.natalee && t.monarch ? 'both studies' : t.natalee ? 'the ribociclib study' : 'the abemaciclib study'}.`;
-    $('#rsLine').hidden = !(t.rs !== null && t.rs <= 25);
+    $('#rsLine').hidden = t.rs !== null && t.rs > 25;
     autosize();
   }
 
@@ -670,7 +675,7 @@ Plan for: 5 years</textarea></label>
 
   /* ---------- marker layer ---------- */
   const board = $('#board'), ink = $('#ink'), ctx = ink.getContext('2d');
-  let strokes = [], live = null, color = 'blue', W = 1;
+  let strokes = [], live = null, color = 'blue', W = 1, unclear = null;
   function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
   function sizeInk() {
     const dpr = window.devicePixelRatio || 1;
@@ -688,7 +693,7 @@ Plan for: 5 years</textarea></label>
   }
   function redraw() { ctx.clearRect(0, 0, ink.width, ink.height); strokes.forEach(drawStroke); if (live) drawStroke(live); }
   function pt(e) { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / W, (e.clientY - r.top) / W]; }
-  ink.addEventListener('pointerdown', e => { live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
+  ink.addEventListener('pointerdown', e => { unclear = null; live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
   ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
   const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
   ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
@@ -700,24 +705,31 @@ Plan for: 5 years</textarea></label>
     color = s.dataset.c; $$('.swatch').forEach(x => x.setAttribute('aria-pressed', x === s));
     if (!document.body.classList.contains('pen')) $('#penBtn').click();
   });
-  $('#undoBtn').onclick = () => { strokes.pop(); redraw(); };
-  $('#clearBtn').onclick = () => { strokes = []; redraw(); };
   new ResizeObserver(sizeInk).observe(board);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
   new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   window.addEventListener('beforeprint', () => { steps.forEach(s => s.classList.remove('later')); $('footer').hidden = false; autosize(); requestAnimationFrame(sizeInk); });
   window.addEventListener('afterprint', showSteps);
   // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
+  // Everything written on the page: typed fields, ticks, the chosen plan and marker ink.
+  // wipe() empties it and returns a function that puts it all back.
+  function wipe(keep = []) {
+    const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), plan = S.plan, inkWas = strokes;
+    els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
+    S.plan = null; strokes = []; render(); redraw();
+    return () => {
+      els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
+      S.plan = plan; strokes = inkWas; render(); redraw();
+    };
+  }
+  // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
+  $('#clearBtn').onclick = () => { unclear = wipe(['visitDate']); };
+  $('#undoBtn').onclick = () => { if (unclear) { unclear(); unclear = null; } else { strokes.pop(); redraw(); } };
+  board.addEventListener('input', () => { unclear = null; });
   function printBlank() {
-    const fields = $$('input, textarea', board).filter(el => !el.closest('.dr'));
-    const saved = fields.map(el => el.type === 'checkbox' ? el.checked : el.value);
-    const plan = S.plan, inkWas = strokes;
-    fields.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
-    S.plan = null; strokes = []; document.body.classList.add('blankprint'); render(); redraw();
-    window.addEventListener('afterprint', () => {
-      fields.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
-      S.plan = plan; strokes = inkWas; document.body.classList.remove('blankprint'); render(); redraw();
-    }, { once: true });
+    const restore = wipe(); document.body.classList.add('blankprint'); render();
+    window.addEventListener('afterprint', () => { document.body.classList.remove('blankprint'); restore(); }, { once: true });
     window.print();
   }
   if (window.self === window.top) {
