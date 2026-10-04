@@ -4,30 +4,22 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Kalam:wght@400;700&display=swap">
 <style>
 /* Layout: one whiteboard column built top to bottom like a chalk talk; a marker layer sits over the whole board. */
+/* On screen the board is always a dark green chalkboard; the printed handout switches to white paper (see Handout). */
 :root {
-  --board: #F6F8F9;
-  --paper: #FFFFFF;
-  --ink: #1C2631;
-  --muted: #56626E;
-  --rule: #D3DCE3;
-  --grid: #E7EDF1;
-  --blue: #1F5CB8;
-  --red: #C23A2E;
-  --green: #2D7A4E;
-  --free: #B8C5CE;
-  --hi: #FFF1B8;
+  --board: #14261E;
+  --paper: #1B3128;
+  --ink: #F5F7F0;
+  --muted: #CBD6CE;
+  --rule: #456052;
+  --grid: #1A2E25;
+  --blue: #A3CFFF;
+  --red: #FFA392;
+  --green: #A8E6B6;
+  --free: #557063;
+  --hi: #5C5428;
   --font-hand: "Kalam", "Comic Neue", "Segoe Print", cursive;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E;
-    --blue: #8EC3FF; --red: #FF8E7E; --green: #96DCA6; --free: #4D6159; --hi: #4A4423; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --board: #1C2925; --paper: #22322C; --ink: #EDF0E8; --muted: #A7B4AC; --rule: #3B4C45; --grid: #24342E;
-  --blue: #8EC3FF; --red: #FF8E7E; --green: #96DCA6; --free: #4D6159; --hi: #4A4423; color-scheme: dark;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -439,7 +431,7 @@ body.blankprint .callout { display: none; }
 
   <!-- 5 -->
   <section class="step" data-step="5" id="s5">
-    <div class="sh"><span class="n">5</span><h2>Side effects to weigh</h2></div>
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
     <div class="tablewrap"><table id="fx"></table></div>
     <p class="note">“More in 100” is the added risk compared with women taking a placebo (a dummy pill) in large trials: NSABP B-24 and P-1 for tamoxifen, TAM-01 for low-dose tamoxifen, and IBIS-II for anastrozole. Many of these, like hot flashes and aches, are common on a placebo too. Most side effects ease after the first few months. If one pill doesn't suit you, switching often helps, so tell us rather than stopping.</p>
   </section>
