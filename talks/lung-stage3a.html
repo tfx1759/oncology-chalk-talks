@@ -1,0 +1,906 @@
+<title>Lung Cancer Stage IIIA Chalk Talk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: one whiteboard column built top to bottom like a chalk talk; a marker layer sits over the whole board. */
+/* On screen the board is always a dark green chalkboard; the printed handout switches to white paper (see Handout). */
+:root {
+  --board: #14261E;
+  --paper: #1B3128;
+  --ink: #F5F7F0;
+  --muted: #CBD6CE;
+  --rule: #456052;
+  --grid: #1A2E25;
+  --blue: #A3CFFF;
+  --red: #FFA392;
+  --green: #A8E6B6;
+  --free: #557063;
+  --hi: #5C5428;
+  --font-hand: "Kalam", "Comic Neue", "Segoe Print", cursive;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--board);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font: 17px/1.55 var(--font-body);
+  padding-inline: 16px;
+  padding-block: 0 48px;
+}
+h1, h2, h3 { font-family: var(--font-hand); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); }
+h2 { font-size: clamp(1.5rem, 3.6vw, 1.9rem); }
+h3 { font-size: 1.25rem; }
+p { margin: 0; max-width: 65ch; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* Toolbar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  margin-inline: -16px; padding: 8px 16px;
+  background: color-mix(in srgb, var(--board) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+  font-size: 15px;
+}
+.bar .grp { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.btn {
+  border: 1.5px solid var(--rule); background: var(--paper); border-radius: 8px;
+  padding: 5px 11px; cursor: pointer; line-height: 1.3;
+}
+.btn:hover { border-color: var(--muted); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--board); border-color: var(--ink); }
+.swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--paper); box-shadow: 0 0 0 1.5px var(--rule); cursor: pointer; padding: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--ink); }
+.spacer { flex: 1; }
+.steplabel { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Board */
+.board { position: relative; max-width: 920px; margin: 0 auto; padding-top: 28px; display: flex; flex-direction: column; gap: 40px; }
+#ink { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+body.pen #ink { pointer-events: auto; touch-action: none; cursor: crosshair; }
+
+header.top { display: grid; gap: 10px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.who { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 15px; }
+.who label { display: flex; gap: 6px; align-items: baseline; }
+
+.fill {
+  border: none; border-bottom: 1.5px dashed var(--muted); background: transparent;
+  padding: 0 2px; min-width: 0; font-family: var(--font-hand); font-size: 1.1em; color: var(--blue);
+}
+.fill.num { width: 2.6em; text-align: center; }
+.fill.wide { width: 12em; max-width: 100%; }
+
+section.step { display: grid; gap: 14px; scroll-margin-top: 70px; }
+section.step.later { display: none; }
+.sh { display: flex; gap: 12px; align-items: baseline; }
+.n {
+  font-family: var(--font-hand); font-weight: 700; font-size: 1.3rem; color: var(--paper); background: var(--ink);
+  width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; transform: translateY(4px);
+}
+.lede { font-size: 1.05rem; }
+.hand { font-family: var(--font-hand); color: var(--blue); font-size: 1.15em; }
+.note { color: var(--muted); font-size: 15px; }
+mark { background: var(--hi); color: inherit; padding: 0 3px; border-radius: 3px; }
+
+.panel { background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 18px; }
+.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: center; }
+@media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram text { font-family: var(--font-hand); fill: var(--ink); font-size: 17px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1.5px solid var(--rule); border-radius: 999px; background: var(--paper); padding: 6px 14px; cursor: pointer; text-align: left;
+}
+.chip small { display: block; color: var(--muted); font-size: 13px; }
+.chip[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+
+/* Options */
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 720px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+  background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 8px;
+  cursor: pointer; text-align: left; align-content: start;
+}
+.opt[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 1.5px var(--blue); }
+.opt .how { color: var(--muted); font-size: 15px; }
+.opt ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; font-size: 15.5px; }
+.opt li { display: grid; grid-template-columns: 20px 1fr; gap: 4px; }
+.opt li::before { font-family: var(--font-hand); font-weight: 700; }
+.opt li.pro::before { content: "+"; color: var(--green); }
+.opt li.con::before { content: "\2212"; color: var(--red); }
+.opt li.fit::before { content: "\2192"; color: var(--blue); }
+
+/* Icon array */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.arraywrap { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 720px) { .arraywrap { grid-template-columns: 1fr; } }
+#people { width: 100%; max-width: 340px; height: auto; display: block; }
+.legend { display: grid; gap: 10px; }
+.lg { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: baseline; }
+.lg b { font-family: var(--font-hand); font-size: 1.9rem; line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
+.lg.free b { color: var(--muted); }
+.lg.ben b { color: var(--blue); }
+.lg.rec b { color: var(--red); }
+.say { font-family: var(--font-hand); font-size: 1.25rem; color: var(--ink); border-top: 1.5px dashed var(--rule); padding-top: 10px; max-width: none; }
+
+.compare { display: grid; gap: 8px; }
+.crow { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; font-size: 15px; }
+@media (max-width: 520px) { .crow { grid-template-columns: minmax(0, 1fr) 4.2em; } .crow .track { grid-column: 1 / -1; grid-row: 2; } }
+.track { height: 16px; border-radius: 4px; background: var(--free); display: flex; overflow: hidden; }
+.track i { display: block; height: 100%; }
+.track .b { background: var(--blue); }
+.crow .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--blue); }
+.crow.sel { font-weight: 700; }
+
+.dr { border: 1.5px dashed var(--rule); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; font-size: 15px; }
+.dr .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.dr input[type="range"] { flex: 1 1 200px; accent-color: var(--red); }
+.dr output { font-family: var(--font-hand); font-size: 1.3rem; color: var(--red); min-width: 3ch; font-variant-numeric: tabular-nums; }
+
+/* Side-effect table */
+.tablewrap { overflow-x: auto; background: var(--paper); border: 1.5px solid var(--rule); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+thead th { font-family: var(--font-hand); font-size: 1.05rem; font-weight: 700; }
+tbody th { font-weight: 700; width: 22%; }
+tr:last-child th, tr:last-child td { border-bottom: none; }
+td.selcol, th.selcol { background: color-mix(in srgb, var(--blue) 9%, transparent); }
+.lvl { display: inline-block; font-weight: 700; }
+.lvl.hi { color: var(--red); }
+.lvl.md { color: var(--ink); }
+.lvl.lo { color: var(--green); }
+
+/* Values & plan */
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+@media (max-width: 620px) { .checks { grid-template-columns: 1fr; } }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.checks input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--blue); }
+textarea.lines {
+  width: 100%; border: none; resize: none; overflow: hidden; padding: 0 2px; min-height: 96px;
+  background: transparent; background-image: linear-gradient(transparent 31px, var(--rule) 32px); background-size: 100% 32px;
+  line-height: 32px; font-family: var(--font-hand); font-size: 1.15rem; color: var(--blue);
+}
+.plan { display: grid; gap: 16px; }
+.plan .pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.call { border: 2px solid var(--red); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.call h3 { color: var(--red); }
+.call ul { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
+.callrow { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+footer { display: grid; gap: 8px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; }
+footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  section.step.reveal { animation: draw-in .45s ease-out; }
+  @keyframes draw-in { from { opacity: .2; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* Handout */
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --board: #FFFFFF; --paper: #FFFFFF; --ink: #111A22; --muted: #4A5560; --rule: #C9D2D9; --grid: #FFFFFF;
+    --blue: #1F5CB8; --red: #B4352A; --green: #2D7A4E; --free: #C3CDD4; --hi: #FFEFA8; color-scheme: light;
+  }
+  body { background: #fff; font-size: 11.5pt; padding: 0; }
+  .bar, .noprint { display: none !important; }
+  /* Plain block flow on paper, so a heading stays with what follows it and long parts can run onto the next page */
+  .board, section.step, section.step.later { display: block; }
+  .board { padding-top: 0; max-width: none; }
+  .board > * + * { margin-top: 22px; }
+  .board > #ink + * { margin-top: 0; }
+  section.step > * + * { margin-top: 14px; }
+  #ink { width: 100% !important; height: 100% !important; } /* marker layer follows the printed page instead of the screen's size */
+  .panel, .opt, .call, .sh, tr, .fact, .plan > * { break-inside: avoid; }
+  .panel.plan, .panel.facts { display: block; break-inside: auto; }
+  .panel.plan > * + * { margin-top: 16px; }
+  .panel.facts > * + * { margin-top: 8px; }
+  .sh, h3, .eyebrow { break-after: avoid; }
+  .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arraywrap { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .crow { grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 4.2em; }
+  .crow .track { grid-column: auto; grid-row: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table { min-width: 0; }
+}
+/* Shared components used by several talks */
+.opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .opts.three { grid-template-columns: 1fr; } }
+.facts { display: grid; gap: 8px; }
+.fact { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-bottom: 1px dotted var(--rule); padding-bottom: 4px; }
+.fact > span:first-child { color: var(--muted); font-size: 15px; }
+.opt.trial { cursor: default; }
+.opt.trial.dim { opacity: .62; }
+.tag { justify-self: start; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; border: 1.5px solid; }
+.tag.yes { color: var(--blue); border-color: var(--blue); }
+.tag.no { color: var(--muted); border-color: var(--rule); }
+.mini { height: 12px; border-radius: 3px; background: var(--rule); display: flex; overflow: hidden; }
+.mini span { width: var(--w); background: var(--free); }
+.mini span.add { background: var(--blue); }
+table.narrow { min-width: 520px; }
+.verdict { border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+@media print { .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } .opt.trial.dim { opacity: .75; } }
+/* Edit mode */
+body.editing .ek { outline: 1.5px dashed color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 3px; cursor: text; border-radius: 2px; }
+body.editing .ek:focus { outline: 2px solid var(--blue); background: color-mix(in srgb, var(--hi) 60%, transparent); }
+body.editing .ek:empty::before { content: "(empty, click to type)"; color: var(--muted); font-style: italic; }
+.cfg { display: grid; gap: 8px; border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+.cfgrow { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; }
+.cfgrow input { width: 6em; border: 1.5px solid var(--rule); border-radius: 6px; padding: 3px 6px; background: var(--paper); font-variant-numeric: tabular-nums; }
+#saveBtn { background: var(--blue); color: var(--paper); border-color: var(--blue); }
+@media print { body.editing .ek { outline: none; background: none; } }
+a.btn { text-decoration: none; color: inherit; }
+/* Blank handout */
+.blank-only { display: none; }
+body.blankprint .blank-only { display: block; }
+body.blankprint .chip[aria-pressed="true"], body.blankprint .opt[aria-pressed="true"] { border-color: var(--rule); box-shadow: none; }
+body.blankprint td.selcol, body.blankprint th.selcol { background: none; }
+body.blankprint .crow.sel { font-weight: inherit; }
+body.blankprint .verdict, body.blankprint .tag, body.blankprint #ink { display: none; }
+body.blankprint .opt.trial.dim { opacity: 1; }
+body.blankprint .fill.num { width: 4em; }
+@media print { .fill::placeholder { color: transparent; } }
+/* lung-stage3a */
+/* Stage IIIA lung talk: two decision questions, chemoradiation vs surgery, 5-year survival picture and three side-by-side differences */
+.mchips { display: inline-flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mchips .chip { padding: 2px 10px; font-size: 14px; }
+.factgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+@media (max-width: 720px) { .factgrid { grid-template-columns: 1fr; } }
+.volrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between;
+  border-top: 1.5px dashed var(--rule); padding-top: 12px; }
+.volrow .q { font-weight: 700; }
+.opt .trialname { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+.basis { font-size: 15px; color: var(--muted); }
+.reading { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15.5px; }
+.also { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.also .panel { display: grid; gap: 8px; align-content: start; }
+@media (max-width: 720px) { .also { grid-template-columns: 1fr; } }
+.lg.cr b { color: var(--green); }
+.lg.sd b { color: var(--muted); }
+/* Three differences: each a small group of bars on its own scale */
+.diffs { display: grid; gap: 18px; }
+.diff { display: grid; gap: 8px; }
+.diff h3 { font-size: 1.15rem; }
+.diff .why { color: var(--muted); font-size: 15px; max-width: 70ch; }
+.drow { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 5.6em; gap: 10px; align-items: center; font-size: 15px; }
+.drow .dbar { height: 16px; border-radius: 4px; background: color-mix(in srgb, var(--free) 45%, transparent); overflow: hidden; }
+.drow .dbar i { display: block; height: 100%; border-radius: 4px; background: var(--blue); }
+.drow.ref .dbar i { background: var(--free); }
+.drow.ref { color: var(--muted); }
+.drow .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; color: var(--blue); white-space: nowrap; }
+.drow.ref .v { color: var(--muted); }
+.drow.sel > span:first-child { font-weight: 700; }
+@media (max-width: 520px) { .drow { grid-template-columns: minmax(0, 1fr) 5.6em; } .drow .dbar { grid-column: 1 / -1; grid-row: 2; } }
+@media print {
+  .factgrid, .also { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .volrow, .diff { break-inside: avoid; }
+  .drow { grid-template-columns: minmax(0, 210px) minmax(0, 1fr) 5.6em; }
+  .drow .dbar { grid-column: auto; grid-row: auto; }
+}
+body.blankprint .drow.sel > span:first-child { font-weight: inherit; }
+.drow.bad .dbar i { background: var(--red); }
+.drow.bad .v { color: var(--red); }
+.factgrid .fact { flex-wrap: wrap; min-width: 0; }
+.factgrid .fact > span:first-child { min-width: 0; }
+.diagram svg { width: 100%; height: auto; }
+</style>
+<script type="application/json" id="edits">{"text":{},"settings":{}}</script>
+
+<div class="bar" role="toolbar" aria-label="Chalk talk tools">
+  <div class="grp">
+    <button class="btn" id="penBtn" aria-pressed="false" title="Draw on the page with a marker">Marker</button>
+    <button class="swatch" data-c="blue" aria-pressed="true" aria-label="Blue marker" style="background:var(--blue)"></button>
+    <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
+    <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
+    <button class="btn" id="undoBtn">Undo</button>
+    <button class="btn" id="clearBtn" title="Erase the marker and everything typed or ticked on this page">Clear ink</button>
+  </div>
+  <div class="grp">
+    <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
+    <button class="btn" id="backBtn" hidden>Back</button>
+    <button class="btn" id="nextBtn" hidden>Next</button>
+    <span class="steplabel" id="stepLabel" hidden></span>
+  </div>
+  <div class="grp">
+    <button class="btn" id="editBtn" hidden title="Change any wording or number on this page">Edit</button>
+    <button class="btn" id="saveBtn" hidden>Save changes</button>
+    <button class="btn" id="cancelBtn" hidden>Cancel</button>
+    <span class="steplabel" id="editStatus" aria-live="polite"></span>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn" id="libLink" href="../index.html" hidden>All talks</a>
+  <button class="btn" id="printBlankBtn" hidden title="Print an empty copy to fill in by hand">Print blank</button>
+  <button class="btn" id="printBtn" hidden title="Print this page as filled in">Print filled</button>
+</div>
+
+<main class="board" id="board">
+  <canvas id="ink" aria-hidden="true"></canvas>
+
+  <header class="top">
+    <div class="eyebrow">Non-small cell lung cancer · stage IIIA · treatment aiming for cure</div>
+    <h1>Stage III lung cancer: radiation or surgery?</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <p class="lede">The cancer started in the lung. It is <mark>stage IIIA</mark>: it has reached lymph nodes in the chest or grown large, but scans show <strong>no spread to other parts of the body</strong>.</p>
+    <p class="lede">That matters: the goal of treatment is <span class="hand">cure</span>. Every approach combines several treatments, and immunotherapy now adds to the chance of cure.</p>
+    <div class="panel facts">
+      <div class="eyebrow">Your cancer</div>
+      <div class="factgrid">
+        <label class="fact"><span>Type (adenocarcinoma, squamous…)</span><span><input class="fill wide" id="histo" autocomplete="off"></span></label>
+        <label class="fact"><span>Tumor size</span><span><input class="fill wide" id="tsize" style="width:7em" autocomplete="off"></span></label>
+        <label class="fact"><span>Lymph nodes with cancer</span><span><input class="fill wide" id="nodes" autocomplete="off"></span></label>
+        <label class="fact"><span>PD-L1 level</span><span><input class="fill wide" id="pdl1" style="width:7em" autocomplete="off"></span></label>
+      </div>
+      <div class="eyebrow" style="margin-top:6px">Two questions decide which approaches fit you</div>
+      <div class="factgrid">
+        <div class="fact"><span>Gene changes in the cancer (EGFR, ALK and others)</span><span class="mchips" data-k="drv"><button class="chip" data-v="neg" aria-pressed="false">None found</button><button class="chip" data-v="pos" aria-pressed="false">Found</button><button class="chip" data-v="wait" aria-pressed="false">Results pending</button></span></div>
+        <div class="fact"><span>Can the tumor and nodes be removed by surgery, and are you fit for it?</span><span class="mchips" data-k="surg"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button><button class="chip" data-v="maybe" aria-pressed="false">Not sure yet</button></span></div>
+      </div>
+      <div class="volrow">
+        <span class="q">Approaches open to you</span>
+        <span class="tag no" id="fitTag" data-live>Answer the two questions</span>
+        <span class="blank-only">Both &nbsp;/&nbsp; Chemoradiation &nbsp;/&nbsp; Targeted pill &nbsp;/&nbsp; Waiting for tests</span>
+      </div>
+      <p class="note">Immunotherapy works poorly, and can add side effects, when the cancer is driven by certain gene changes such as EGFR or ALK. Those cancers are treated with targeted pills instead. Whether surgery is possible is decided by a lung surgeon, often with a team review (tumor board), using scans, lymph node biopsies and breathing tests.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>How the two approaches work</h2></div>
+    <div class="panel diagram">
+      <svg viewBox="0 0 640 262" role="img" aria-label="Two timelines. Top: chemotherapy and radiation together for about 6 weeks, then durvalumab immunotherapy for 1 year. Bottom: chemotherapy plus immunotherapy for 3 or 4 cycles over 9 to 12 weeks, then surgery, then immunotherapy for about 1 year in some plans.">
+        <text x="8" y="26" style="font-weight:700">Option A</text>
+        <rect x="8" y="40" width="200" height="44" rx="8" fill="var(--paper)" stroke="var(--red)" stroke-width="3"/>
+        <text x="108" y="60" text-anchor="middle">Chemo + radiation</text>
+        <text x="108" y="77" text-anchor="middle" style="font-size:14px;fill:var(--muted)">together, about 6 weeks</text>
+        <path d="M214 62 L238 62" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="248" y="40" width="384" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3"/>
+        <text x="440" y="60" text-anchor="middle" style="fill:var(--blue)">Durvalumab (immunotherapy)</text>
+        <text x="440" y="77" text-anchor="middle" style="font-size:14px;fill:var(--muted)">vein every 2 or 4 weeks for 1 year</text>
+        <text x="8" y="136" style="font-weight:700">Option B</text>
+        <rect x="8" y="150" width="200" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3"/>
+        <text x="108" y="170" text-anchor="middle" style="fill:var(--blue)">Chemo + immunotherapy</text>
+        <text x="108" y="187" text-anchor="middle" style="font-size:14px;fill:var(--muted)">3 or 4 cycles, 9 to 12 weeks</text>
+        <path d="M214 172 L238 172" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="248" y="150" width="120" height="44" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+        <text x="308" y="177" text-anchor="middle">Surgery</text>
+        <path d="M374 172 L398 172" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="408" y="150" width="224" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3" stroke-dasharray="7 5"/>
+        <text x="520" y="170" text-anchor="middle" style="fill:var(--blue)">Immunotherapy</text>
+        <text x="520" y="187" text-anchor="middle" style="font-size:14px;fill:var(--muted)">about 1 year, in some plans</text>
+        <text x="8" y="230" style="font-size:15px;fill:var(--muted)">Radiation and surgery treat the cancer in the chest.</text>
+        <text x="8" y="250" style="font-size:15px;fill:var(--muted)">Chemo and immunotherapy treat cancer cells anywhere in the body.</text>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--ink)"/></marker></defs>
+      </svg>
+    </div>
+    <p class="lede"><strong>Immunotherapy</strong> takes a brake (PD-1 or PD-L1) off your immune system so it can find and attack cancer cells. <strong>Durvalumab</strong> (Imfinzi), <strong>pembrolizumab</strong> (Keytruda) and <strong>nivolumab</strong> (Opdivo) all work this way.</p>
+    <p class="note">In option B, giving treatment <span class="hand">before</span> surgery shrinks the cancer and lets us see how well it worked: in about 1 in 5 people, no living cancer is left when the surgeon removes it.</p>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the table of schedules and side effects.</p>
+    <p class="lede">Both approaches aim for cure, and in each, adding immunotherapy helped more people live longer than the older treatment. They have <strong>never been compared with each other</strong> in a study.</p>
+    <p class="verdict" id="verdict" data-live></p>
+    <div class="opts" id="opts"></div>
+    <p class="note">If a gene change such as EGFR or ALK is found, immunotherapy is usually left out. A targeted pill is added instead: osimertinib (Tagrisso) after chemoradiation or after surgery for EGFR, or alectinib (Alecensa) after surgery for ALK. If neither approach is safe, chemo and radiation can be given one after the other, or radiation alone.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 people</h2></div>
+    <p class="note">Alive 5 years later, in the study of each approach, compared with the older treatment in that same study.</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="basis" id="basis" data-live></p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg cr"><b id="nBase">0</b><span><strong>alive at 5 years with the older treatment</strong> (no immunotherapy).</span></div>
+        <div class="lg ben"><b id="nAdd">0</b><span><strong>more alive at 5 years</strong> when immunotherapy was added.</span></div>
+        <div class="lg free"><b id="nRest">0</b><span>did not live 5 years, most often because the cancer came back.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel diffs" id="diffs">
+      <div class="eyebrow">Each approach against its own older treatment</div>
+      <div class="diff">
+        <h3>1. Living longer</h3>
+        <p class="why">Alive at 5 years. Grey bars are the older treatment in the same study.</p>
+        <div id="dLive"></div>
+      </div>
+      <div class="diff">
+        <h3>2. Staying free of cancer</h3>
+        <p class="why">Alive with the cancer not back or growing, at 5 years.</p>
+        <div id="dFree"></div>
+      </div>
+      <div class="diff">
+        <h3>3. What happens on the way to surgery (option B only)</h3>
+        <p class="why">Most people reach surgery. Those with no living cancer left at surgery do especially well.</p>
+        <div id="dSurg"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow" style="margin-bottom:6px">Reading this picture</div>
+      <ul class="reading">
+        <li><strong>Do not compare option A with option B directly.</strong> The studies enrolled different people. Option B studies included smaller, earlier cancers (stage II) and only people a surgeon judged could have surgery. Option A counted only people who had already finished chemoradiation without the cancer growing.</li>
+        <li>Option B blends two studies, CheckMate 816 and KEYNOTE-671. AEGEAN, a third study, gave similar early results but has not yet reported 5-year survival.</li>
+        <li>What the studies show is that adding immunotherapy helps in both approaches. Which approach suits you depends mostly on your surgeon's view and your health.</li>
+      </ul>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="note" id="drNote">PACIFIC (unresectable stage III, PS 0–1, no progression after ≥2 cycles platinum concurrent with 54–66 Gy; durvalumab 10 mg/kg q2w or placebo up to 12 months, started 1–42 days after RT), 5-year update (Spigel, JCO 2022): OS 42.9 vs 33.4%, HR 0.72 (0.59–0.89), median 47.5 vs 29.1 mo; PFS 33.1 vs 19.0%, HR 0.55. Option B blends the two trials with 5-year data. CheckMate 816 (stage IB–IIIA AJCC 7, 3 cycles nivolumab + chemo vs chemo, no adjuvant IO; known EGFR/ALK excluded): pCR 24.0 vs 2.2%; surgery 83.2 vs 75.4%; final OS (Forde, NEJM 2025) 5-year 65.4 vs 55.0%, HR 0.72 (0.52–1.00); 5-year EFS 49.2 vs 34.4%, HR 0.68; reported OS benefit mainly in PD-L1 ≥1%. KEYNOTE-671 (stage II–IIIB N2, 4 cycles pembrolizumab or placebo + cisplatin doublet, then 13 cycles adjuvant; EGFR/ALK not excluded, about 3–4% each): pCR 18.1 vs 4.0%; surgery 82.1 vs 79.4%; 36-month OS 71 vs 64%, HR 0.72 (Spicer, Lancet 2024); 5-year OS 64.6 vs 53.6%, HR 0.74, EFS 49.9 vs 26.5% (ESMO 2025 LBA, taken from meeting reports). AEGEAN (stage IIA–IIIB, 4 cycles durvalumab or placebo + chemo, then 12 cycles adjuvant; EGFR/ALK excluded): pCR 17.2 vs 4.3%; 24-month EFS 63.3 vs 52.4%, HR 0.68 (Heymach, NEJM 2023); OS immature. Blends are simple means: OS 65 vs 54, EFS 50 vs 30, pCR 20 (all three trials) vs 4, reached surgery 82 vs 78. CheckMate 77T (perioperative nivolumab) is a fourth option of the same kind. EGFR: PACIFIC EGFR subgroup showed no clear benefit (n=35; PFS HR 0.91, OS HR 1.02); LAURA osimertinib after CRT, PFS HR 0.16 (Lu, NEJM 2024). ADAURA and ALINA support adjuvant osimertinib and alectinib. NCCN advises at least EGFR, ALK and PD-L1 testing before choosing perioperative therapy for resectable IB–IIIB. Note: EMA restricts durvalumab after CRT to PD-L1 ≥1%; the FDA label does not.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="tablewrap"><table id="fx" class="narrow"></table></div>
+    <p class="note" id="fxNote">Rows marked “added by immunotherapy” compare immunotherapy with a placebo or with the same treatment without immunotherapy, so they show the extra risk on top of what chemo, radiation or surgery already cause. Option A comes from PACIFIC (durvalumab vs placebo after chemoradiation). Option B comes from KEYNOTE-671 and AEGEAN (immunotherapy vs placebo, both with the same chemo and surgery) and CheckMate 816 (vs chemo alone). Immune side effects can affect any organ and can start months after the last dose. Most are treatable, often with steroids. Tell us early about any side effect.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Having the tumor physically removed</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding an operation and time in hospital</span></label>
+      <label><input type="checkbox" id="v3"><span>Avoiding radiation to the chest</span></label>
+      <label><input type="checkbox" id="v4"><span>Knowing how well treatment worked, from the surgery</span></label>
+      <label><input type="checkbox" id="v5"><span>A shorter total time on treatment</span></label>
+      <label><input type="checkbox" id="v6"><span>Keeping as much breathing ability as possible</span></label>
+      <label><input type="checkbox" id="v7"><span>Fewer clinic visits and less travel</span></label>
+      <label><input type="checkbox" id="v8"><span>Cost and what my insurance covers</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>Also part of your care</h2></div>
+    <div class="also">
+      <div class="panel"><h3>Tests before we start</h3><p>A PET scan and brain MRI make sure the cancer has not spread. A biopsy of the chest lymph nodes (often by bronchoscopy) confirms the stage. Gene tests on the tumor (EGFR, ALK and others) and PD-L1 come back in 1 to 3 weeks.</p></div>
+      <div class="panel"><h3>A team decision</h3><p>A lung surgeon, a radiation doctor and your oncologist review your case together. Breathing tests and a heart check show whether surgery is safe.</p></div>
+      <div class="panel"><h3>Stopping smoking</h3><p>If you smoke, stopping now lowers the risk of problems after surgery and radiation and helps treatment work. We can help with medicines and counseling.</p></div>
+      <div class="panel"><h3>After treatment</h3><p>CT scans every few months for the first years watch for the cancer coming back. Staying active and breathing exercises help recovery.</p></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" data-step="8" id="s8">
+    <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The approach we chose</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Also</div>
+        <div class="checks">
+          <label><input type="checkbox" id="p1"><span>PET scan and brain MRI</span></label>
+          <label><input type="checkbox" id="p2"><span>Gene tests and PD-L1 on the tumor</span></label>
+          <label><input type="checkbox" id="p3"><span>See a lung surgeon</span></label>
+          <label><input type="checkbox" id="p4"><span>See a radiation doctor</span></label>
+          <label><input type="checkbox" id="p5"><span>Breathing tests</span></label>
+          <label><input type="checkbox" id="p6"><span>Help to stop smoking</span></label>
+        </div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Tests:
+Appointments:
+Start date:</textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>A fever of 100.4°F (38°C) or higher</li>
+          <li>A new or worse cough, shortness of breath or chest pain (call 911 if severe)</li>
+          <li>Pain on swallowing that stops you eating or drinking</li>
+          <li>Diarrhea 4 or more times a day above your usual, or blood in your stool</li>
+          <li>Coughing up blood</li>
+          <li>Yellow skin or eyes, or dark urine</li>
+          <li>Severe tiredness, headaches or dizziness</li>
+        </ul>
+        <p class="note">Immune side effects can start even months after the last dose. Tell any doctor or emergency room that you have had immunotherapy.</p>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers come from large studies of people with stage II or III non-small cell lung cancer. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol id="refs">
+      <li>Antonia SJ et al. Durvalumab after chemoradiotherapy in stage III non-small-cell lung cancer (PACIFIC). N Engl J Med 2017;377:1919. Spigel DR et al. Five-year survival outcomes from PACIFIC. J Clin Oncol 2022;40:1301. Imfinzi US prescribing information.</li>
+      <li>Forde PM et al. Neoadjuvant nivolumab plus chemotherapy in resectable lung cancer (CheckMate 816). N Engl J Med 2022;386:1973. Forde PM et al. Overall survival with neoadjuvant nivolumab plus chemotherapy. N Engl J Med 2025.</li>
+      <li>Wakelee H et al. Perioperative pembrolizumab for early-stage non-small-cell lung cancer (KEYNOTE-671). N Engl J Med 2023;389:491. Spicer JD et al. Overall survival in KEYNOTE-671. Lancet 2024;404:1240. 5-year update, ESMO 2025.</li>
+      <li>Heymach JV et al. Perioperative durvalumab for resectable non-small-cell lung cancer (AEGEAN). N Engl J Med 2023;389:1672.</li>
+      <li>Cascone T et al. Perioperative nivolumab in resectable lung cancer (CheckMate 77T). N Engl J Med 2024;390:1756.</li>
+      <li>Lu S et al. Osimertinib after chemoradiotherapy in stage III EGFR-mutated NSCLC (LAURA). N Engl J Med 2024;391:585. Naidoo J et al. PACIFIC EGFR subgroup. J Thorac Oncol 2023. Tsuboi M et al. ADAURA overall survival. N Engl J Med 2023;389:137. Wu YL et al. Alectinib in resected ALK-positive NSCLC (ALINA). N Engl J Med 2024;390:1265.</li>
+      <li>Bradley JD et al. Standard-dose vs high-dose conformal radiotherapy with concurrent chemotherapy (RTOG 0617). Lancet Oncol 2015;16:187. Society of Thoracic Surgeons General Thoracic Surgery Database. Liberman M et al. Surgical outcomes in KEYNOTE-671. Ann Thorac Surg 2026. NCCN Guidelines, Non-Small Cell Lung Cancer, 2026.</li>
+    </ol>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const PRISTINE = document.body.innerHTML;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  let EDITS = {};
+  try { EDITS = JSON.parse($('#edits').textContent) || {}; } catch (e) {}
+  // Trial results, % of people. A = PACIFIC 5-year (chemoradiation then durvalumab vs placebo).
+  // B = simple mean of CheckMate 816 final and KEYNOTE-671 5-year (chemo-immunotherapy before surgery vs chemo alone);
+  // pCR and reaching surgery also include AEGEAN. The doctor can update these in Edit mode.
+  const CFG_DEFAULTS = {
+    aOs: 43, aOsC: 33, aPfs: 33, aPfsC: 19,
+    bOs: 65, bOsC: 54, bEfs: 50, bEfsC: 30,
+    bPcr: 20, bPcrC: 4, bSurg: 82, bSurgC: 78,
+  };
+  const CFG = { ...CFG_DEFAULTS, ...(EDITS.settings || {}) };
+  const CFG_SPEC = [
+    { k: 'aOs', step: 1, label: 'A, chemoradiation then durvalumab: alive at 5 years (%)' },
+    { k: 'aOsC', step: 1, label: 'A, chemoradiation alone (placebo): alive at 5 years (%)' },
+    { k: 'aPfs', step: 1, label: 'A, durvalumab: alive without progression at 5 years (%)' },
+    { k: 'aPfsC', step: 1, label: 'A, placebo: alive without progression at 5 years (%)' },
+    { k: 'bOs', step: 1, label: 'B, chemo-immunotherapy then surgery: alive at 5 years (%)' },
+    { k: 'bOsC', step: 1, label: 'B, chemo then surgery: alive at 5 years (%)' },
+    { k: 'bEfs', step: 1, label: 'B, chemo-immunotherapy: event-free at 5 years (%)' },
+    { k: 'bEfsC', step: 1, label: 'B, chemo alone: event-free at 5 years (%)' },
+    { k: 'bPcr', step: 1, label: 'B, chemo-immunotherapy: no living cancer at surgery (pCR, %)' },
+    { k: 'bPcrC', step: 1, label: 'B, chemo alone: no living cancer at surgery (pCR, %)' },
+    { k: 'bSurg', step: 1, label: 'B, chemo-immunotherapy: reached surgery (%)' },
+    { k: 'bSurgC', step: 1, label: 'B, chemo alone: reached surgery (%)' },
+  ];
+  const onCfg = () => render();
+
+  /* ---------- content ---------- */
+  const OPTIONS = [
+    { id: 'a', short: 'A: Chemoradiation', name: 'Chemo + radiation, then durvalumab', trial: 'PACIFIC',
+      how: 'Chemo with daily radiation (Monday to Friday) for about 6 weeks, then durvalumab in a vein every 2 or 4 weeks for 1 year',
+      pros: ['No operation', 'Works when surgery is not possible or not safe', 'Durvalumab after chemoradiation raised 5-year survival by about 10 in 100'],
+      cons: ['Radiation can cause painful swallowing and lung inflammation', 'About a year and a half of treatment in all', 'Durvalumab is only given if the cancer has not grown during chemoradiation'],
+      fit: 'When surgery is not possible, or would mean removing a whole lung' },
+    { id: 'b', short: 'B: Surgery', name: 'Chemo-immunotherapy, then surgery', trial: 'CheckMate 816 · KEYNOTE-671 · AEGEAN',
+      how: 'Chemo + immunotherapy (nivolumab, pembrolizumab or durvalumab) in a vein every 3 weeks for 3 or 4 cycles, then surgery, with or without immunotherapy for about 1 year after',
+      pros: ['The tumor is removed and checked, so we learn how well treatment worked', 'In about 1 in 5 people no living cancer is left at surgery', 'Immunotherapy raised 5-year survival by about 10 in 100'],
+      cons: ['Needs an operation, a hospital stay and weeks of recovery', 'About 1 in 5 do not reach surgery, from side effects, cancer growth or other reasons', 'Only for people a surgeon judges can safely have the cancer removed'],
+      fit: 'When a surgeon judges the cancer can be fully removed and you are fit for surgery' },
+  ];
+
+  const FX_COLS = ['a', 'b'];
+  // People out of 100. "Added by immunotherapy" rows are immunotherapy minus placebo or chemo alone in the same trial.
+  // A: PACIFIC (Antonia NEJM 2017; Imfinzi label). B: KEYNOTE-671 (Wakelee NEJM 2023), AEGEAN (Heymach NEJM 2023), CheckMate 816 (Forde NEJM 2022).
+  const FX = [
+    ['How it is given', ['Chemo weekly or every 3 to 4 weeks, with radiation 5 days a week; then a vein drip every 2 or 4 weeks', 'Vein drip every 3 weeks for 3 or 4 cycles; surgery about 4 to 6 weeks later; then a drip every 3 or 4 weeks in some plans']],
+    ['How long', ['About 6 weeks, then 1 year of durvalumab', 'About 3 months, surgery and recovery, then about 1 year in some plans']],
+    ['From the main treatment itself', [['md', 'Painful swallowing from radiation is common; severe in about 7 in 100. Tiredness, low blood counts, skin redness'], ['md', 'Chemo: tiredness, nausea, low blood counts. Surgery: a few days in hospital, weeks of recovery; about 1 in 100 die within 30 days of a lobectomy']]],
+    ['Serious side effects added by immunotherapy', [['lo', 'About 4 more in 100 (30 vs 26 with placebo)'], ['lo', 'About the same to 7 more in 100 (33 to 45 vs 37 to 43)']]],
+    ['Stopped because of side effects', [['md', 'About 5 more in 100 (15 vs 10 with placebo)'], ['md', 'About 6 in 100 could not have surgery because of side effects (4 without immunotherapy)']]],
+    ['Lung inflammation (pneumonitis)', [['md', 'About 9 more in 100 (34 vs 25, mostly from radiation); severe in about 1 more'], ['lo', 'About 4 more in 100 (6 vs 2)']]],
+    ['Thyroid', [['md', 'Underactive in about 10 more in 100 (12 vs 2)'], ['md', 'Underactive in about 9 more in 100 (11 vs 2)']]],
+    ['Rash, itch', [['md', 'Rash about 11 more in 100; itch about 6 more'], ['md', 'Not reported separately in the main papers']]],
+    ['Any immune side effect', [['md', 'About 16 more in 100 (24 vs 8)'], ['md', 'About 14 more in 100 (24 to 25 vs 10 to 11)']]],
+    ['Deaths from side effects', [['md', 'About 4 to 6 in 100 in both groups, mostly lung problems after radiation'], ['md', 'About 1 to 2 in 100 in both groups']]],
+  ];
+
+  /* ---------- state ---------- */
+  const BLANK = { plan: null, drv: null, surg: null };
+  const S = { sel: 'a', ...BLANK };
+
+  // Which approaches are open. Waits until both answers are in, except when a gene change is found.
+  function fit() {
+    if (S.drv === 'pos') return 'tgt';
+    if (S.drv === null || S.surg === null) return null;
+    if (S.drv === 'wait') return 'wait';
+    return { yes: 'both', no: 'crt', maybe: 'review' }[S.surg];
+  }
+
+  /* ---------- render ---------- */
+  const optsEl = $('#opts'), tabsEl = $('#tabs'), planEl = $('#planPick');
+  OPTIONS.forEach(o => {
+    const b = document.createElement('div');
+    b.className = 'opt'; b.dataset.id = o.id; b.tabIndex = 0; b.setAttribute('role', 'button');
+    b.onkeydown = e => { if (e.target === b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(o.id); } };
+    b.innerHTML = `<div class="trialname">${o.trial}</div><h3>${o.name}</h3><div class="how">${o.how}</div><ul>${
+      o.pros.map(t => `<li class="pro">${t}</li>`).join('')}${
+      o.cons.map(t => `<li class="con">${t}</li>`).join('')}<li class="fit">${o.fit}</li></ul>`;
+    b.onclick = () => select(o.id);
+    optsEl.append(b);
+
+    const t = document.createElement('button');
+    t.className = 'btn'; t.dataset.id = o.id; t.textContent = o.short;
+    t.onclick = () => select(o.id);
+    tabsEl.append(t);
+  });
+  ['Chemoradiation, then durvalumab', 'Chemo-immunotherapy, then surgery', 'Targeted pill plan (gene change found)', 'Chemo and radiation one after the other', 'A clinical trial', 'Still deciding'].forEach(n => {
+    const p = document.createElement('button');
+    p.className = 'chip'; p.dataset.id = n; p.textContent = n; p.setAttribute('aria-pressed', 'false');
+    p.onclick = () => { S.plan = S.plan === n ? null : n; render(); };
+    planEl.append(p);
+  });
+  $$('.mchips').forEach(g => $$('.chip', g).forEach(c => c.onclick = () => {
+    const k = g.dataset.k; S[k] = S[k] === c.dataset.v ? null : c.dataset.v; render();
+  }));
+
+  const fx = $('#fx');
+  fx.innerHTML = `<thead><tr><th></th>${FX_COLS.map(id => `<th data-id="${id}">${OPTIONS.find(o => o.id === id).name}</th>`).join('')}</tr></thead><tbody>${
+    FX.map(([label, cells]) => `<tr><th>${label}</th>${cells.map((c, i) =>
+      `<td data-id="${FX_COLS[i]}">${Array.isArray(c) ? `<span class="lvl ${c[0]}">${c[1]}</span>` : c}</td>`).join('')}</tr>`).join('')
+  }</tbody>`;
+
+  const NS = 'http://www.w3.org/2000/svg', people = $('#people'), figs = [];
+  for (let i = 0; i < 100; i++) {
+    const x = (i % 10) * 34 + 17, y = Math.floor(i / 10) * 34 + 17;
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `translate(${x} ${y})`);
+    g.innerHTML = '<circle cx="0" cy="-8" r="5"/><path d="M-8 12 L-3 -1 L3 -1 L8 12 Z"/>';
+    people.append(g); figs.push(g);
+  }
+
+  // Rows: [label, value, max, unit, ref (older treatment, grey), option id]
+  function bars(el, rows) {
+    el.innerHTML = rows.map(([label, v, max, unit, ref, id]) =>
+      `<div class="drow${ref ? ' ref' : ''}${id === S.sel ? ' sel' : ''}"><span>${label}</span><div class="dbar"><i style="width:${Math.min(100, v / max * 100)}%"></i></div><span class="v">${v}${unit}</span></div>`).join('');
+  }
+
+  function select(id) { S.sel = id; render(); }
+
+  const FIT = {
+    both: ['Both approaches', 'Both approaches are open to you. <span class="hand">The choice depends on what matters to you</span> and on the team’s view of how much surgery would be needed.'],
+    crt: ['Chemoradiation', 'Surgery is not an option, so <span class="hand">chemo and radiation, then durvalumab for a year</span>, is the standard approach.'],
+    review: ['Both, pending review', 'Both may be open. <span class="hand">A surgeon’s opinion and a team review come first</span>, then we can choose together.'],
+    tgt: ['Targeted pill', 'A gene change was found, so <span class="hand">immunotherapy is usually left out</span>. We would pair chemoradiation or surgery with a targeted pill instead (see below).'],
+    wait: ['Waiting for tests', 'The gene tests should come back <span class="hand">before we start immunotherapy</span>, because a gene change would change the plan.'],
+  };
+
+  function render() {
+    const f = fit();
+    $$('.opt', optsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('.btn', tabsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
+    $$('[data-id]', fx).forEach(c => c.classList.toggle('selcol', c.dataset.id === S.sel));
+    $$('.chip', planEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.plan));
+    $$('.mchips').forEach(m => $$('.chip', m).forEach(c => c.setAttribute('aria-pressed', S[m.dataset.k] === c.dataset.v)));
+
+    const tag = $('#fitTag');
+    tag.textContent = f ? FIT[f][0] : 'Answer the two questions';
+    tag.className = 'tag ' + (f ? 'yes' : 'no');
+    $('#verdict').innerHTML = f ? FIT[f][1] : 'Answer the two questions in part 1 to see which approaches fit you.';
+
+    const a = S.sel === 'a', os = a ? CFG.aOs : CFG.bOs, base = a ? CFG.aOsC : CFG.bOsC, add = Math.max(0, os - base), rest = 100 - base - add;
+    figs.forEach((g, i) => g.setAttribute('fill', i < base ? 'var(--green)' : i < base + add ? 'var(--blue)' : 'var(--free)'));
+    $('#nBase').textContent = base; $('#nAdd').textContent = add; $('#nRest').textContent = rest;
+    $('#basis').textContent = a
+      ? 'Option A, PACIFIC: people who had finished chemoradiation without the cancer growing, then durvalumab or a placebo.'
+      : 'Option B, CheckMate 816 and KEYNOTE-671 together: people with stage II or III cancer that a surgeon could remove, treated with or without immunotherapy.';
+    $('#say').textContent = `With ${a ? 'chemoradiation then durvalumab' : 'chemo-immunotherapy then surgery'}, about ${os} out of 100 people were alive at 5 years, compared with ${base} with the older treatment in the same study.`;
+    $('#peopleDesc').textContent = `${base} alive with the older treatment, ${add} more alive with immunotherapy, ${rest} did not live 5 years.`;
+
+    bars($('#dLive'), [['A: + durvalumab', CFG.aOs, 100, ' in 100', false, 'a'], ['A: chemoradiation alone', CFG.aOsC, 100, ' in 100', true],
+      ['B: chemo-immunotherapy', CFG.bOs, 100, ' in 100', false, 'b'], ['B: chemo alone', CFG.bOsC, 100, ' in 100', true]]);
+    bars($('#dFree'), [['A: + durvalumab', CFG.aPfs, 100, ' in 100', false, 'a'], ['A: chemoradiation alone', CFG.aPfsC, 100, ' in 100', true],
+      ['B: chemo-immunotherapy', CFG.bEfs, 100, ' in 100', false, 'b'], ['B: chemo alone', CFG.bEfsC, 100, ' in 100', true]]);
+    bars($('#dSurg'), [['Reached surgery', CFG.bSurg, 100, ' in 100', false, 'b'], ['Reached surgery, chemo alone', CFG.bSurgC, 100, ' in 100', true],
+      ['No living cancer left', CFG.bPcr, 100, ' in 100', false, 'b'], ['No living cancer, chemo alone', CFG.bPcrC, 100, ' in 100', true]]);
+    autosize();
+  }
+
+  $('#visitDate').value = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+  function autosize() { $$('textarea.lines').forEach(t => { t.style.height = 'auto'; t.style.height = Math.max(64, t.scrollHeight) + 'px'; }); }
+  $$('textarea.lines').forEach(t => t.addEventListener('input', autosize));
+
+  /* ---------- step-by-step ---------- */
+  const steps = $$('section.step');
+  let walk = false, cur = 0;
+  function showSteps() {
+    steps.forEach((s, i) => s.classList.toggle('later', walk && i > cur));
+    ['#backBtn', '#nextBtn', '#stepLabel'].forEach(s => $(s).hidden = !walk);
+    $('#stepLabel').textContent = `${cur + 1} of ${steps.length}`;
+    $('#backBtn').disabled = cur === 0; $('#nextBtn').disabled = cur === steps.length - 1;
+    $('footer').hidden = walk && cur < steps.length - 1;
+    $('#walkBtn').setAttribute('aria-pressed', walk);
+    sizeInk();
+  }
+  $('#walkBtn').onclick = () => { walk = !walk; cur = 0; showSteps(); if (walk) window.scrollTo({ top: 0 }); };
+  $('#nextBtn').onclick = () => {
+    cur = Math.min(cur + 1, steps.length - 1); showSteps();
+    const s = steps[cur]; s.classList.remove('reveal'); void s.offsetWidth; s.classList.add('reveal');
+    s.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  };
+  $('#backBtn').onclick = () => { cur = Math.max(cur - 1, 0); showSteps(); steps[cur].scrollIntoView({ block: 'start' }); };
+
+  /* ---------- marker layer ---------- */
+  const board = $('#board'), ink = $('#ink'), ctx = ink.getContext('2d');
+  let strokes = [], live = null, color = 'blue', W = 1, unclear = null;
+  function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
+  function sizeInk() {
+    const dpr = window.devicePixelRatio || 1;
+    W = board.clientWidth; const H = board.scrollHeight;
+    ink.width = W * dpr; ink.height = H * dpr; ink.style.width = W + 'px'; ink.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
+  }
+  function drawStroke(s) {
+    if (s.pts.length < 1) return;
+    ctx.strokeStyle = tok(s.c); ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.globalAlpha = .9;
+    ctx.beginPath();
+    s.pts.forEach(([x, y], i) => i ? ctx.lineTo(x * W, y * W) : ctx.moveTo(x * W, y * W));
+    if (s.pts.length === 1) ctx.lineTo(s.pts[0][0] * W + .1, s.pts[0][1] * W);
+    ctx.stroke();
+  }
+  function redraw() { ctx.clearRect(0, 0, ink.width, ink.height); strokes.forEach(drawStroke); if (live) drawStroke(live); }
+  function pt(e) { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / W, (e.clientY - r.top) / W]; }
+  ink.addEventListener('pointerdown', e => { unclear = null; live = { c: color, pts: [pt(e)] }; ink.setPointerCapture(e.pointerId); e.preventDefault(); });
+  ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
+  const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
+  ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
+  $('#penBtn').onclick = () => {
+    const on = !document.body.classList.contains('pen');
+    document.body.classList.toggle('pen', on); $('#penBtn').setAttribute('aria-pressed', on);
+  };
+  $$('.swatch').forEach(s => s.onclick = () => {
+    color = s.dataset.c; $$('.swatch').forEach(x => x.setAttribute('aria-pressed', x === s));
+    if (!document.body.classList.contains('pen')) $('#penBtn').click();
+  });
+  new ResizeObserver(sizeInk).observe(board);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('beforeprint', () => { steps.forEach(s => s.classList.remove('later')); $('footer').hidden = false; autosize(); requestAnimationFrame(sizeInk); });
+  window.addEventListener('afterprint', showSteps);
+  // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
+  // Everything written on the page: typed fields, ticks, the chosen plan and marker ink.
+  // wipe() empties it and returns a function that puts it all back.
+  function wipe(keep = []) {
+    const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), was = { ...S }, inkWas = strokes;
+    els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
+    Object.assign(S, BLANK); strokes = []; render(); redraw();
+    return () => {
+      els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
+      Object.assign(S, was); strokes = inkWas; render(); redraw();
+    };
+  }
+  // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
+  $('#clearBtn').onclick = () => { unclear = wipe(['visitDate']); };
+  $('#undoBtn').onclick = () => { if (unclear) { unclear(); unclear = null; } else { strokes.pop(); redraw(); } };
+  board.addEventListener('input', () => { unclear = null; });
+  function printBlank() {
+    const restore = wipe(); document.body.classList.add('blankprint'); render();
+    window.addEventListener('afterprint', () => { document.body.classList.remove('blankprint'); restore(); }, { once: true });
+    window.print();
+  }
+  if (window.self === window.top) {
+    $('#printBtn').hidden = $('#printBlankBtn').hidden = false;
+    $('#printBtn').onclick = () => window.print();
+    $('#printBlankBtn').onclick = printBlank;
+    if (/^https?:/.test(location.protocol)) $('#libLink').hidden = false;
+    if (/[?&]print=blank\b/.test(location.search)) document.fonts.ready.then(() => setTimeout(printBlank, 300));
+  }
+
+  render();
+
+  /* ---------- edit mode: change wording and model numbers, then save as a new version ---------- */
+  (() => {
+    const RESET = ':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
+    const ED = { btn: $('#editBtn'), save: $('#saveBtn'), cancel: $('#cancelBtn'), msg: $('#editStatus') };
+    const say = t => { ED.msg.textContent = t; };
+    const SEL = 'h1,h2,h3,p,li,th,td,.how,.eyebrow,.note,.lg span,.checks label > span,.fact > span:first-child';
+    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict,[data-live]') && !el.querySelector('[data-live]') && !el.closest('svg') &&
+      !el.querySelector('input,textarea,button,select') && el.textContent.trim());
+    els = els.filter(el => !els.some(o => o !== el && o.contains(el)));
+
+    // Each piece of text is keyed by its original wording, so saved edits survive later layout changes.
+    const seen = {};
+    els.forEach(el => {
+      const t = el.tagName + '|' + el.textContent.replace(/\s+/g, ' ').trim();
+      seen[t] = (seen[t] || 0) + 1;
+      el._ek = t + '|' + seen[t]; el._def = el.innerHTML.trim(); el.classList.add('ek');
+      const v = EDITS.text && EDITS.text[el._ek];
+      if (typeof v === 'string') el.innerHTML = v;
+      el.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')); });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && el.isContentEditable) { e.preventDefault(); el.blur(); } });
+    });
+
+    const box = document.createElement('div');
+    box.className = 'cfg'; box.hidden = true;
+    box.innerHTML = '<div class="eyebrow">Model numbers</div>' + CFG_SPEC.map(s =>
+      `<label class="cfgrow"><span>${s.label}</span><input type="number" step="${s.step}" id="cfg-${s.k}" value="${CFG[s.k]}"></label>`).join('');
+    $('#drPanel').append(box);
+    CFG_SPEC.forEach(s => $('#cfg-' + s.k).addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      if (!isNaN(v)) { CFG[s.k] = v; onCfg(s.k); }
+    }));
+
+    const editing = () => document.body.classList.contains('editing');
+    document.addEventListener('click', e => {
+      if (!editing() || !e.target.closest || !e.target.closest('.ek')) return;
+      if (e.target.closest('label')) e.preventDefault();
+      e.stopPropagation();
+    }, true);
+
+    function setEditing(on) {
+      if (on && document.body.classList.contains('pen')) $('#penBtn').click();
+      document.body.classList.toggle('editing', on);
+      els.forEach(el => on ? el.setAttribute('contenteditable', 'true') : el.removeAttribute('contenteditable'));
+      ED.btn.hidden = on; ED.save.hidden = ED.cancel.hidden = !on; box.hidden = !on;
+      if (on) $('#drPanel').hidden = false;
+      sizeInk();
+    }
+
+    let snap = null, art = null;
+    ED.btn.onclick = () => {
+      snap = { html: els.map(el => el.innerHTML), cfg: { ...CFG } };
+      setEditing(true);
+      say('Click any text to change it. Model numbers are in the doctor box.');
+    };
+    ED.cancel.onclick = () => {
+      els.forEach((el, i) => { el.innerHTML = snap.html[i]; });
+      Object.assign(CFG, snap.cfg);
+      CFG_SPEC.forEach(s => { $('#cfg-' + s.k).value = CFG[s.k]; });
+      onCfg(); setEditing(false); say('');
+    };
+    ED.save.onclick = async () => {
+      const text = {}, settings = {};
+      els.forEach(el => { const h = el.innerHTML.replace(/(<br>)+$/, '').trim(); if (h !== el._def) text[el._ek] = h; });
+      Object.keys(CFG_DEFAULTS).forEach(k => { if (CFG[k] !== CFG_DEFAULTS[k]) settings[k] = CFG[k]; });
+      setEditing(false);
+      if (!art) { say('Changes stay until you close this page. Edit from the artifact link to save them for good.'); return; }
+      say('Saving…');
+      try {
+        await art.publish(buildDoc({ text, settings }));
+        say('Saved');
+      } catch (err) {
+        const c = err && err.code;
+        if (c === 'conflict') say('A newer version was saved elsewhere. Loading it now.');
+        else if (c === 'not_writer' || c === 'not_granted') { say('This view is read-only, so changes can’t be saved.'); ED.btn.hidden = true; }
+        else { setEditing(true); say('Couldn’t save (' + (c || 'error') + '). Your changes are still here; try Save again.'); }
+      }
+    };
+
+    function buildDoc(edits) {
+      const json = JSON.stringify(edits).replace(/</g, '\\u003c');
+      const body = PRISTINE.replace(/(<script type="application\/json" id="edits">)[\s\S]*?(<\/script>)/, (m, a, b) => a + json + b);
+      return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' +
+        RESET + '<\/style><\/head><body>' + body + '<\/body><\/html>';
+    }
+
+    async function connect() {
+      if (window.self === window.top) { ED.btn.hidden = false; return; }
+      if (!window.claude || !window.claude.use) return;
+      const a = await window.claude.use('artifact');
+      if (!a) return;
+      const u = await window.claude.use('user');
+      if (u && !(await u.canEdit())) return;
+      art = a; ED.btn.hidden = false;
+    }
+    if (window.claude && window.claude.use) connect(); else window.addEventListener('load', connect, { once: true });
+  })();
+  sizeInk();
+})();
+</script>

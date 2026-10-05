@@ -1,84 +1,68 @@
-  // Trial results by IMDC risk group: best response (complete response, objective response, progressive disease, %),
-  // median duration of response (months) and 5-year overall survival (%). IO + TKI blends KEYNOTE-426, CheckMate 9ER and CLEAR.
-  // The doctor can update these in Edit mode.
+  // Trial results, % of people. A = PACIFIC 5-year (chemoradiation then durvalumab vs placebo).
+  // B = simple mean of CheckMate 816 final and KEYNOTE-671 5-year (chemo-immunotherapy before surgery vs chemo alone);
+  // pCR and reaching surgery also include AEGEAN. The doctor can update these in Edit mode.
   const CFG_DEFAULTS = {
-    ioCrAll: 12, ioOrrAll: 40, ioPdAll: 18, ioCrIp: 12, ioOrrIp: 42, ioPdIp: 19, ioCrFav: 13, ioOrrFav: 30, ioPdFav: 12,
-    tkCrAll: 15, tkOrrAll: 63, tkPdAll: 8, tkCrIp: 13, tkOrrIp: 61, tkPdIp: 8, tkCrFav: 16, tkOrrFav: 68, tkPdFav: 3,
-    ioDor: 76, tkDor: 24,
-    ioOs5All: 48, tkOs5All: 41, suOs5All: 37, ioOs5Ip: 43, tkOs5Ip: 39, suOs5Ip: 31,
+    aOs: 43, aOsC: 33, aPfs: 33, aPfsC: 19,
+    bOs: 65, bOsC: 54, bEfs: 50, bEfsC: 30,
+    bPcr: 20, bPcrC: 4, bSurg: 82, bSurgC: 78,
   };
   const CFG = { ...CFG_DEFAULTS, ...(EDITS.settings || {}) };
-  const GROUPS = { All: 'all risk groups', Ip: 'intermediate or poor risk', Fav: 'favorable risk' };
-  const CFG_SPEC = [];
-  [['io', 'IO + IO'], ['tk', 'IO + TKI']].forEach(([r, nm]) => Object.entries(GROUPS).forEach(([g, gn]) => {
-    CFG_SPEC.push({ k: `${r}Cr${g}`, step: 1, label: `${nm}, ${gn}: cancer disappeared (complete response, %)` });
-    CFG_SPEC.push({ k: `${r}Orr${g}`, step: 1, label: `${nm}, ${gn}: tumors shrank, including disappeared (objective response, %)` });
-    CFG_SPEC.push({ k: `${r}Pd${g}`, step: 1, label: `${nm}, ${gn}: grew despite treatment (progressive disease as best response, %)` });
-  }));
-  CFG_SPEC.push(
-    { k: 'ioDor', step: 1, label: 'IO + IO: median duration of response (months)' },
-    { k: 'tkDor', step: 1, label: 'IO + TKI: median duration of response (months)' },
-    { k: 'ioOs5All', step: 1, label: 'IO + IO, all risk groups: alive at 5 years (%)' },
-    { k: 'tkOs5All', step: 1, label: 'IO + TKI, all risk groups: alive at 5 years (%)' },
-    { k: 'suOs5All', step: 1, label: 'Sunitinib, all risk groups: alive at 5 years (%)' },
-    { k: 'ioOs5Ip', step: 1, label: 'IO + IO, intermediate or poor risk: alive at 5 years (%)' },
-    { k: 'tkOs5Ip', step: 1, label: 'IO + TKI, intermediate or poor risk: alive at 5 years (%)' },
-    { k: 'suOs5Ip', step: 1, label: 'Sunitinib, intermediate or poor risk: alive at 5 years (%)' },
-  );
+  const CFG_SPEC = [
+    { k: 'aOs', step: 1, label: 'A, chemoradiation then durvalumab: alive at 5 years (%)' },
+    { k: 'aOsC', step: 1, label: 'A, chemoradiation alone (placebo): alive at 5 years (%)' },
+    { k: 'aPfs', step: 1, label: 'A, durvalumab: alive without progression at 5 years (%)' },
+    { k: 'aPfsC', step: 1, label: 'A, placebo: alive without progression at 5 years (%)' },
+    { k: 'bOs', step: 1, label: 'B, chemo-immunotherapy then surgery: alive at 5 years (%)' },
+    { k: 'bOsC', step: 1, label: 'B, chemo then surgery: alive at 5 years (%)' },
+    { k: 'bEfs', step: 1, label: 'B, chemo-immunotherapy: event-free at 5 years (%)' },
+    { k: 'bEfsC', step: 1, label: 'B, chemo alone: event-free at 5 years (%)' },
+    { k: 'bPcr', step: 1, label: 'B, chemo-immunotherapy: no living cancer at surgery (pCR, %)' },
+    { k: 'bPcrC', step: 1, label: 'B, chemo alone: no living cancer at surgery (pCR, %)' },
+    { k: 'bSurg', step: 1, label: 'B, chemo-immunotherapy: reached surgery (%)' },
+    { k: 'bSurgC', step: 1, label: 'B, chemo alone: reached surgery (%)' },
+  ];
   const onCfg = () => render();
 
   /* ---------- content ---------- */
   const OPTIONS = [
-    { id: 'io', short: 'IO + IO', name: 'Two immunotherapy drugs (IO + IO)', trial: 'CheckMate 214',
-      how: 'Nivolumab + ipilimumab in a vein every 3 weeks for 4 doses, then nivolumab alone every 2 or 4 weeks',
-      pros: ['When it works, the benefit often lasts for many years', 'A small group stay well controlled long after stopping treatment', 'No daily pill'],
-      cons: ['Shrinks tumors in fewer people, and in about 1 in 5 the cancer grows at first', 'Serious immune side effects are more common, often needing steroids'],
-      fit: 'Intermediate or poor risk, especially when there is time to wait for a response' },
-    { id: 'tk', short: 'IO + TKI', name: 'Immunotherapy + a targeted pill (IO + TKI)', trial: 'KEYNOTE-426 · CheckMate 9ER · CLEAR',
-      how: 'Pembrolizumab + axitinib, nivolumab + cabozantinib, or pembrolizumab + lenvatinib. Immunotherapy in a vein every 2 to 6 weeks, plus a pill every day',
-      pros: ['Shrinks tumors in more people, and usually works faster', 'Few people see their cancer grow at first', 'Works in every risk group'],
-      cons: ['Daily pill side effects: diarrhea, high blood pressure, sore hands and feet, tiredness', 'Responses tend not to last as long once treatment stops'],
-      fit: 'Symptoms or fast growth that need control soon, and favorable risk' },
+    { id: 'a', short: 'A: Chemoradiation', name: 'Chemo + radiation, then durvalumab', trial: 'PACIFIC',
+      how: 'Chemo with daily radiation (Monday to Friday) for about 6 weeks, then durvalumab in a vein every 2 or 4 weeks for 1 year',
+      pros: ['No operation', 'Works when surgery is not possible or not safe', 'Durvalumab after chemoradiation raised 5-year survival by about 10 in 100'],
+      cons: ['Radiation can cause painful swallowing and lung inflammation', 'About a year and a half of treatment in all', 'Durvalumab is only given if the cancer has not grown during chemoradiation'],
+      fit: 'When surgery is not possible, or would mean removing a whole lung' },
+    { id: 'b', short: 'B: Surgery', name: 'Chemo-immunotherapy, then surgery', trial: 'CheckMate 816 · KEYNOTE-671 · AEGEAN',
+      how: 'Chemo + immunotherapy (nivolumab, pembrolizumab or durvalumab) in a vein every 3 weeks for 3 or 4 cycles, then surgery, with or without immunotherapy for about 1 year after',
+      pros: ['The tumor is removed and checked, so we learn how well treatment worked', 'In about 1 in 5 people no living cancer is left at surgery', 'Immunotherapy raised 5-year survival by about 10 in 100'],
+      cons: ['Needs an operation, a hospital stay and weeks of recovery', 'About 1 in 5 do not reach surgery, from side effects, cancer growth or other reasons', 'Only for people a surgeon judges can safely have the cancer removed'],
+      fit: 'When a surgeon judges the cancer can be fully removed and you are fit for surgery' },
   ];
 
-  const FX_COLS = ['io', 'tk'];
-  // People out of 100 with each side effect. IO + IO: CheckMate 214, treatment-related, 8-year report and Yervoy/Opdivo labels.
-  // IO + TKI: range across KEYNOTE-426 (Inlyta label), CheckMate 9ER (Lancet Oncol 2022, Cabometyx label) and CLEAR (NEJM 2021).
+  const FX_COLS = ['a', 'b'];
+  // People out of 100. "Added by immunotherapy" rows are immunotherapy minus placebo or chemo alone in the same trial.
+  // A: PACIFIC (Antonia NEJM 2017; Imfinzi label). B: KEYNOTE-671 (Wakelee NEJM 2023), AEGEAN (Heymach NEJM 2023), CheckMate 816 (Forde NEJM 2022).
   const FX = [
-    ['How it is given', ['Vein every 3 weeks for 4 doses, then nivolumab every 2 or 4 weeks', 'Vein every 2 to 6 weeks, plus a pill every day']],
-    ['How long', ['Nivolumab continues while it works and is tolerated', 'Immunotherapy for up to 2 years; the pill continues while it works']],
-    ['Serious side effects', [['md', 'About 48 in 100 (older pill: 64)'], ['hi', 'About 63 to 72 in 100 (older pill: 54 to 59)']]],
-    ['Stopped because of side effects', [['md', 'About 24 in 100 stopped both drugs'], ['md', '26 to 37 in 100 stopped one drug; 7 to 13 stopped both']]],
-    ['Needed high-dose steroids', [['hi', 'About 30 to 35 in 100'], ['md', 'About 14 to 22 in 100']]],
-    ['Diarrhea', [['md', '29 in 100; immune colitis in about 10'], ['hi', '56 to 64 in 100']]],
-    ['High blood pressure', [['lo', '2 in 100'], ['hi', '33 to 55 in 100; severe in 13 to 28']]],
-    ['Sore hands and feet, mouth sores', [['lo', 'Hands and feet 1 in 100; mouth sores 5'], ['md', 'Hands and feet 28 to 40 in 100; mouth sores 17 to 35']]],
-    ['Tiredness, poor appetite', [['md', 'Tiredness 38 in 100; poor appetite 14'], ['md', 'Tiredness 27 to 52 in 100; poor appetite 22 to 40']]],
-    ['Thyroid', [['md', 'Underactive in about 17 to 22 in 100; overactive in 12'], ['md', 'Underactive in 35 to 47 in 100']]],
-    ['Liver tests', [['md', 'Rise in about 12 in 100; immune hepatitis in 7'], ['md', 'Rise in 28 to 60 in 100; severe in 6 to 20, most with axitinib']]],
-    ['Itch, rash', [['md', 'Itch 31, rash 23 in 100'], ['md', 'Rash 21 to 27 in 100']]],
-    ['Adrenal or pituitary gland', [['md', 'About 7 and 5 in 100; some need hormone pills for life'], ['lo', 'Adrenal in about 2 to 5 in 100']]],
-    ['Lung inflammation', [['md', 'About 4 to 6 in 100'], ['md', 'About 3 to 4 in 100']]],
-    ['Other', [['md', 'Dose is not lowered; doses are held or stopped instead'], ['md', 'Pill dose lowered in 22 (axitinib) to 69 (lenvatinib) in 100; hoarse voice 12 to 30; with lenvatinib, weight loss and protein in the urine in about 30']]],
-    ['Deaths from side effects', [['md', 'About 1 to 2 in 100'], ['md', 'Under 1 in 100']]],
+    ['How it is given', ['Chemo weekly or every 3 to 4 weeks, with radiation 5 days a week; then a vein drip every 2 or 4 weeks', 'Vein drip every 3 weeks for 3 or 4 cycles; surgery about 4 to 6 weeks later; then a drip every 3 or 4 weeks in some plans']],
+    ['How long', ['About 6 weeks, then 1 year of durvalumab', 'About 3 months, surgery and recovery, then about 1 year in some plans']],
+    ['From the main treatment itself', [['md', 'Painful swallowing from radiation is common; severe in about 7 in 100. Tiredness, low blood counts, skin redness'], ['md', 'Chemo: tiredness, nausea, low blood counts. Surgery: a few days in hospital, weeks of recovery; about 1 in 100 die within 30 days of a lobectomy']]],
+    ['Serious side effects added by immunotherapy', [['lo', 'About 4 more in 100 (30 vs 26 with placebo)'], ['lo', 'About the same to 7 more in 100 (33 to 45 vs 37 to 43)']]],
+    ['Stopped because of side effects', [['md', 'About 5 more in 100 (15 vs 10 with placebo)'], ['md', 'About 6 in 100 could not have surgery because of side effects (4 without immunotherapy)']]],
+    ['Lung inflammation (pneumonitis)', [['md', 'About 9 more in 100 (34 vs 25, mostly from radiation); severe in about 1 more'], ['lo', 'About 4 more in 100 (6 vs 2)']]],
+    ['Thyroid', [['md', 'Underactive in about 10 more in 100 (12 vs 2)'], ['md', 'Underactive in about 9 more in 100 (11 vs 2)']]],
+    ['Rash, itch', [['md', 'Rash about 11 more in 100; itch about 6 more'], ['md', 'Not reported separately in the main papers']]],
+    ['Any immune side effect', [['md', 'About 16 more in 100 (24 vs 8)'], ['md', 'About 14 more in 100 (24 to 25 vs 10 to 11)']]],
+    ['Deaths from side effects', [['md', 'About 4 to 6 in 100 in both groups, mostly lung problems after radiation'], ['md', 'About 1 to 2 in 100 in both groups']]],
   ];
 
   /* ---------- state ---------- */
-  const FACTORS = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
-  const BLANK = { plan: null, f1: null, f2: null, f3: null, f4: null, f5: null, f6: null };
-  const S = { sel: 'io', ...BLANK };
+  const BLANK = { plan: null, drv: null, surg: null };
+  const S = { sel: 'a', ...BLANK };
 
-  // IMDC: 0 risk factors favorable, 1–2 intermediate, 3 or more poor. Waits until it can be decided.
-  function risk() {
-    const yes = FACTORS.filter(k => S[k] === 'yes').length, open = FACTORS.filter(k => S[k] === null).length;
-    if (yes >= 3) return 'poor';
-    if (open) return null;
-    return yes === 0 ? 'fav' : 'int';
-  }
-  const grp = () => ({ fav: 'Fav', int: 'Ip', poor: 'Ip' }[risk()] || 'All');
-  function resp(r, g = grp()) {
-    const cr = CFG[`${r}Cr${g}`], orr = CFG[`${r}Orr${g}`], pd = CFG[`${r}Pd${g}`];
-    return { cr, pr: orr - cr, sd: 100 - orr - pd, pd, orr };
+  // Which approaches are open. Waits until both answers are in, except when a gene change is found.
+  function fit() {
+    if (S.drv === 'pos') return 'tgt';
+    if (S.drv === null || S.surg === null) return null;
+    if (S.drv === 'wait') return 'wait';
+    return { yes: 'both', no: 'crt', maybe: 'review' }[S.surg];
   }
 
   /* ---------- render ---------- */
@@ -98,7 +82,7 @@
     t.onclick = () => select(o.id);
     tabsEl.append(t);
   });
-  ['Nivolumab + ipilimumab', 'Pembrolizumab + axitinib', 'Nivolumab + cabozantinib', 'Pembrolizumab + lenvatinib', 'Watching with scans for now', 'A clinical trial'].forEach(n => {
+  ['Chemoradiation, then durvalumab', 'Chemo-immunotherapy, then surgery', 'Targeted pill plan (gene change found)', 'Chemo and radiation one after the other', 'A clinical trial', 'Still deciding'].forEach(n => {
     const p = document.createElement('button');
     p.className = 'chip'; p.dataset.id = n; p.textContent = n; p.setAttribute('aria-pressed', 'false');
     p.onclick = () => { S.plan = S.plan === n ? null : n; render(); };
@@ -109,7 +93,7 @@
   }));
 
   const fx = $('#fx');
-  fx.innerHTML = `<thead><tr><th></th>${FX_COLS.map(id => `<th data-id="${id}">${OPTIONS.find(o => o.id === id).short}</th>`).join('')}</tr></thead><tbody>${
+  fx.innerHTML = `<thead><tr><th></th>${FX_COLS.map(id => `<th data-id="${id}">${OPTIONS.find(o => o.id === id).name}</th>`).join('')}</tr></thead><tbody>${
     FX.map(([label, cells]) => `<tr><th>${label}</th>${cells.map((c, i) =>
       `<td data-id="${FX_COLS[i]}">${Array.isArray(c) ? `<span class="lvl ${c[0]}">${c[1]}</span>` : c}</td>`).join('')}</tr>`).join('')
   }</tbody>`;
@@ -123,51 +107,50 @@
     people.append(g); figs.push(g);
   }
 
-  // Bars for the three differences. Rows: [label, value, max, unit, ref?, option id]
+  // Rows: [label, value, max, unit, ref (older treatment, grey), option id]
   function bars(el, rows) {
-    el.innerHTML = rows.map(([label, v, max, unit, ref, id, bad]) =>
-      `<div class="drow${ref ? ' ref' : ''}${bad ? ' bad' : ''}${id === S.sel ? ' sel' : ''}"><span>${label}</span><div class="dbar"><i style="width:${Math.min(100, v / max * 100)}%"></i></div><span class="v">${v}${unit}</span></div>`).join('');
+    el.innerHTML = rows.map(([label, v, max, unit, ref, id]) =>
+      `<div class="drow${ref ? ' ref' : ''}${id === S.sel ? ' sel' : ''}"><span>${label}</span><div class="dbar"><i style="width:${Math.min(100, v / max * 100)}%"></i></div><span class="v">${v}${unit}</span></div>`).join('');
   }
 
   function select(id) { S.sel = id; render(); }
 
+  const FIT = {
+    both: ['Both approaches', 'Both approaches are open to you. <span class="hand">The choice depends on what matters to you</span> and on the team’s view of how much surgery would be needed.'],
+    crt: ['Chemoradiation', 'Surgery is not an option, so <span class="hand">chemo and radiation, then durvalumab for a year</span>, is the standard approach.'],
+    review: ['Both, pending review', 'Both may be open. <span class="hand">A surgeon’s opinion and a team review come first</span>, then we can choose together.'],
+    tgt: ['Targeted pill', 'A gene change was found, so <span class="hand">immunotherapy is usually left out</span>. We would pair chemoradiation or surgery with a targeted pill instead (see below).'],
+    wait: ['Waiting for tests', 'The gene tests should come back <span class="hand">before we start immunotherapy</span>, because a gene change would change the plan.'],
+  };
+
   function render() {
-    const rk = risk(), g = grp();
+    const f = fit();
     $$('.opt', optsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
     $$('.btn', tabsEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.sel));
     $$('[data-id]', fx).forEach(c => c.classList.toggle('selcol', c.dataset.id === S.sel));
     $$('.chip', planEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.id === S.plan));
     $$('.mchips').forEach(m => $$('.chip', m).forEach(c => c.setAttribute('aria-pressed', S[m.dataset.k] === c.dataset.v)));
 
-    const tag = $('#riskTag');
-    tag.textContent = { fav: 'Favorable risk', int: 'Intermediate risk', poor: 'Poor risk' }[rk] || 'Answer the six questions';
-    tag.className = 'tag ' + (rk ? 'yes' : 'no');
+    const tag = $('#fitTag');
+    tag.textContent = f ? FIT[f][0] : 'Answer the two questions';
+    tag.className = 'tag ' + (f ? 'yes' : 'no');
+    $('#verdict').innerHTML = f ? FIT[f][1] : 'Answer the two questions in part 1 to see which approaches fit you.';
 
-    $('#verdict').innerHTML = rk === 'fav'
-      ? 'For favorable risk: <span class="hand">IO + TKI is used most often.</span> In this group, IO + IO shrank tumors in fewer people than the older pill did, and it is approved in the US only for intermediate or poor risk, though some guidelines list it as an option. Neither approach has yet been shown to help favorable-risk patients live longer than the older pill.'
-      : rk ? `For ${rk === 'int' ? 'intermediate' : 'poor'} risk: <span class="hand">both approaches are good choices.</span> The differences below help decide which fits you.`
-      : 'Answer the six risk questions in part 1 to see which approaches fit your risk group.';
+    const a = S.sel === 'a', os = a ? CFG.aOs : CFG.bOs, base = a ? CFG.aOsC : CFG.bOsC, add = Math.max(0, os - base), rest = 100 - base - add;
+    figs.forEach((g, i) => g.setAttribute('fill', i < base ? 'var(--green)' : i < base + add ? 'var(--blue)' : 'var(--free)'));
+    $('#nBase').textContent = base; $('#nAdd').textContent = add; $('#nRest').textContent = rest;
+    $('#basis').textContent = a
+      ? 'Option A, PACIFIC: people who had finished chemoradiation without the cancer growing, then durvalumab or a placebo.'
+      : 'Option B, CheckMate 816 and KEYNOTE-671 together: people with stage II or III cancer that a surgeon could remove, treated with or without immunotherapy.';
+    $('#say').textContent = `With ${a ? 'chemoradiation then durvalumab' : 'chemo-immunotherapy then surgery'}, about ${os} out of 100 people were alive at 5 years, compared with ${base} with the older treatment in the same study.`;
+    $('#peopleDesc').textContent = `${base} alive with the older treatment, ${add} more alive with immunotherapy, ${rest} did not live 5 years.`;
 
-    const o = resp(S.sel), cols = [[o.cr, 'var(--green)'], [o.pr, 'var(--blue)'], [o.sd, 'var(--free)'], [o.pd, 'var(--red)']];
-    let n = 0; const fill = [];
-    cols.forEach(([k, c]) => { for (let i = 0; i < k; i++) fill[n++] = c; });
-    figs.forEach((f, i) => f.setAttribute('fill', fill[i] || 'var(--free)'));
-    $('#nCr').textContent = o.cr; $('#nPr').textContent = o.pr; $('#nSd').textContent = o.sd; $('#nPd').textContent = o.pd;
-    $('#basis').textContent = rk
-      ? `Results for people with ${GROUPS[g]} in the studies.`
-      : `Results for everyone in the studies, all risk groups together. Answer the risk questions in part 1 to fit the picture to you.`;
-    const nm = OPTIONS.find(x => x.id === S.sel).short;
-    $('#say').textContent = `With ${nm}, tumors shrank or disappeared in about ${o.orr} out of 100 people. In about ${o.pd} out of 100, the cancer grew in spite of treatment.`;
-    $('#peopleDesc').textContent = `${o.cr} cancer disappeared, ${o.pr} tumors shrank, ${o.sd} stayed the same, ${o.pd} grew despite treatment.`;
-
-    const a = resp('io'), b = resp('tk');
-    bars($('#dShrink'), [['IO + IO: tumors shrank', a.orr, 100, ' in 100', false, 'io'], ['IO + TKI: tumors shrank', b.orr, 100, ' in 100', false, 'tk'],
-      ['IO + IO: grew at first', a.pd, 100, ' in 100', false, 'io', true], ['IO + TKI: grew at first', b.pd, 100, ' in 100', false, 'tk', true]]);
-    bars($('#dLast'), [['IO + IO', CFG.ioDor, 90, ' months', false, 'io'], ['IO + TKI', CFG.tkDor, 90, ' months', false, 'tk']]);
-    const og = g === 'Fav' ? null : g;
-    $('#dLiveNote').hidden = !!og;
-    $('#dLive').hidden = !og;
-    if (og) bars($('#dLive'), [['IO + IO', CFG['ioOs5' + og], 100, ' in 100', false, 'io'], ['IO + TKI', CFG['tkOs5' + og], 100, ' in 100', false, 'tk'], ['Older pill (sunitinib)', CFG['suOs5' + og], 100, ' in 100', true]]);
+    bars($('#dLive'), [['A: + durvalumab', CFG.aOs, 100, ' in 100', false, 'a'], ['A: chemoradiation alone', CFG.aOsC, 100, ' in 100', true],
+      ['B: chemo-immunotherapy', CFG.bOs, 100, ' in 100', false, 'b'], ['B: chemo alone', CFG.bOsC, 100, ' in 100', true]]);
+    bars($('#dFree'), [['A: + durvalumab', CFG.aPfs, 100, ' in 100', false, 'a'], ['A: chemoradiation alone', CFG.aPfsC, 100, ' in 100', true],
+      ['B: chemo-immunotherapy', CFG.bEfs, 100, ' in 100', false, 'b'], ['B: chemo alone', CFG.bEfsC, 100, ' in 100', true]]);
+    bars($('#dSurg'), [['Reached surgery', CFG.bSurg, 100, ' in 100', false, 'b'], ['Reached surgery, chemo alone', CFG.bSurgC, 100, ' in 100', true],
+      ['No living cancer left', CFG.bPcr, 100, ' in 100', false, 'b'], ['No living cancer, chemo alone', CFG.bPcrC, 100, ' in 100', true]]);
     autosize();
   }
 

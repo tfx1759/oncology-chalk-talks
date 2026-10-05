@@ -1,6 +1,6 @@
   <header class="top">
-    <div class="eyebrow">Clear cell kidney cancer that has spread · first treatment</div>
-    <h1>Kidney cancer that has spread: choosing the first treatment</h1>
+    <div class="eyebrow">Non-small cell lung cancer · stage IIIA · treatment aiming for cure</div>
+    <h1>Stage III lung cancer: radiation or surgery?</h1>
     <div class="who">
       <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
       <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
@@ -11,128 +11,117 @@
   <!-- 1 -->
   <section class="step" data-step="1" id="s1">
     <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
-    <p class="lede">The cancer started in the kidney and has spread to other parts of the body. It is the <mark>clear cell</mark> type, the most common kind of kidney cancer.</p>
-    <p class="lede">Treatment usually can't cure it, but today's medicines can keep it under control for years, and for some people much longer. The goal is to help you <span class="hand">live longer and feel well</span>.</p>
+    <p class="lede">The cancer started in the lung. It is <mark>stage IIIA</mark>: it has reached lymph nodes in the chest or grown large, but scans show <strong>no spread to other parts of the body</strong>.</p>
+    <p class="lede">That matters: the goal of treatment is <span class="hand">cure</span>. Every approach combines several treatments, and immunotherapy now adds to the chance of cure.</p>
     <div class="panel facts">
       <div class="eyebrow">Your cancer</div>
       <div class="factgrid">
-        <label class="fact"><span>Where it has spread</span><span><input class="fill wide" id="sites" autocomplete="off"></span></label>
-        <label class="fact"><span>Kidney removed</span><span><input class="fill wide" id="nephx" style="width:7em" autocomplete="off"></span></label>
+        <label class="fact"><span>Type (adenocarcinoma, squamous…)</span><span><input class="fill wide" id="histo" autocomplete="off"></span></label>
+        <label class="fact"><span>Tumor size</span><span><input class="fill wide" id="tsize" style="width:7em" autocomplete="off"></span></label>
+        <label class="fact"><span>Lymph nodes with cancer</span><span><input class="fill wide" id="nodes" autocomplete="off"></span></label>
+        <label class="fact"><span>PD-L1 level</span><span><input class="fill wide" id="pdl1" style="width:7em" autocomplete="off"></span></label>
       </div>
-      <div class="eyebrow" style="margin-top:6px">Risk group: six questions doctors use (IMDC)</div>
-      <div class="factgrid" id="imdc">
-        <div class="fact"><span>Less than 1 year from diagnosis to needing treatment</span><span class="mchips" data-k="f1"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
-        <div class="fact"><span>Cancer limits daily activities (Karnofsky under 80%)</span><span class="mchips" data-k="f2"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
-        <div class="fact"><span>Low red blood count (hemoglobin)</span><span class="mchips" data-k="f3"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
-        <div class="fact"><span>High calcium</span><span class="mchips" data-k="f4"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
-        <div class="fact"><span>High neutrophils (a white blood cell)</span><span class="mchips" data-k="f5"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
-        <div class="fact"><span>High platelets</span><span class="mchips" data-k="f6"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+      <div class="eyebrow" style="margin-top:6px">Two questions decide which approaches fit you</div>
+      <div class="factgrid">
+        <div class="fact"><span>Gene changes in the cancer (EGFR, ALK and others)</span><span class="mchips" data-k="drv"><button class="chip" data-v="neg" aria-pressed="false">None found</button><button class="chip" data-v="pos" aria-pressed="false">Found</button><button class="chip" data-v="wait" aria-pressed="false">Results pending</button></span></div>
+        <div class="fact"><span>Can the tumor and nodes be removed by surgery, and are you fit for it?</span><span class="mchips" data-k="surg"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button><button class="chip" data-v="maybe" aria-pressed="false">Not sure yet</button></span></div>
       </div>
       <div class="volrow">
-        <span class="q">Risk group</span>
-        <span class="tag no" id="riskTag" data-live>Answer the six questions</span>
-        <span class="blank-only">Favorable (0) &nbsp;/&nbsp; Intermediate (1–2) &nbsp;/&nbsp; Poor (3–6)</span>
+        <span class="q">Approaches open to you</span>
+        <span class="tag no" id="fitTag" data-live>Answer the two questions</span>
+        <span class="blank-only">Both &nbsp;/&nbsp; Chemoradiation &nbsp;/&nbsp; Targeted pill &nbsp;/&nbsp; Waiting for tests</span>
       </div>
-      <p class="note">Count the “Yes” answers: none is favorable risk, 1 or 2 is intermediate, 3 or more is poor. The risk group describes how fast the cancer tends to grow, and the studies report results by it.</p>
+      <p class="note">Immunotherapy works poorly, and can add side effects, when the cancer is driven by certain gene changes such as EGFR or ALK. Those cancers are treated with targeted pills instead. Whether surgery is possible is decided by a lung surgeon, often with a team review (tumor board), using scans, lymph node biopsies and breathing tests.</p>
     </div>
   </section>
 
   <!-- 2 -->
   <section class="step" data-step="2" id="s2">
-    <div class="sh"><span class="n">2</span><h2>How these medicines work</h2></div>
-    <div class="two">
-      <div class="panel diagram">
-        <svg viewBox="0 0 460 300" role="img" aria-label="An immune T cell next to a cancer cell. Nivolumab or pembrolizumab release the PD-1 brake where the two cells touch, and ipilimumab releases a second brake, CTLA-4, so the T cell can attack. Below, a blood vessel feeds the cancer, and a TKI pill cuts off that blood supply.">
-          <circle cx="98" cy="160" r="50" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
-          <text x="98" y="162" text-anchor="middle">T cell</text>
-          <text x="98" y="182" text-anchor="middle" style="font-size:14px;fill:var(--muted)">(immune cell)</text>
-          <circle cx="350" cy="150" r="62" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
-          <text x="350" y="156" text-anchor="middle" style="font-size:15px;fill:var(--muted)">cancer cell</text>
-          <path d="M148 160 L172 160" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-          <rect x="172" y="153" width="12" height="14" rx="2" fill="var(--ink)"/>
-          <path d="M288 160 L196 160" stroke="var(--red)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="192" cy="160" r="7" fill="var(--red)"/>
-          <path d="M184 126 L184 142 M184 142 L176 150 M184 142 L192 150" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <path d="M62 125 L50 110" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-          <rect x="41" y="98" width="12" height="13" rx="2" fill="var(--ink)" transform="rotate(-38 47 104)"/>
-          <path d="M36 70 L42 86 M42 86 L36 96 M42 86 L52 92" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <text x="8" y="28" style="fill:var(--blue)">ipilimumab releases</text>
-          <text x="8" y="46" style="fill:var(--blue)">a second brake</text>
-          <text x="8" y="64" style="fill:var(--blue);font-size:14px">(CTLA-4)</text>
-          <text x="196" y="28" style="fill:var(--blue)">nivolumab or pembrolizumab</text>
-          <text x="196" y="46" style="fill:var(--blue)">release the PD-1 brake</text>
-          <path d="M228 52 C 212 80, 196 104, 188 122" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
-          <path d="M120 296 C 190 290, 268 262, 312 202" fill="none" stroke="var(--red)" stroke-width="7" stroke-linecap="round" stroke-opacity=".75"/>
-          <path d="M226 258 L248 280 M248 258 L226 280" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
-          <text x="118" y="278" text-anchor="end" style="font-size:15px">blood vessel</text>
-          <text x="330" y="250" style="fill:var(--red)">TKI pill cuts off</text>
-          <text x="330" y="268" style="fill:var(--red)">the blood supply</text>
-        </svg>
-      </div>
-      <div style="display:grid;gap:10px;min-width:0">
-        <p class="lede"><strong>Immunotherapy (IO)</strong> takes the brakes off your immune system so it can attack the cancer. <strong>Nivolumab</strong> (Opdivo) and <strong>pembrolizumab</strong> (Keytruda) release one brake, PD-1. <strong>Ipilimumab</strong> (Yervoy) releases a second brake, CTLA-4.</p>
-        <p class="lede"><strong>Targeted pills (TKIs)</strong> cut off the blood supply the cancer needs to grow: <strong>axitinib</strong> (Inlyta), <strong>cabozantinib</strong> (Cabometyx) and <strong>lenvatinib</strong> (Lenvima).</p>
-        <p class="note">Two immunotherapy drugs together is called <span class="hand">IO + IO</span>. One immunotherapy drug plus a targeted pill is called <span class="hand">IO + TKI</span>.</p>
-      </div>
+    <div class="sh"><span class="n">2</span><h2>How the two approaches work</h2></div>
+    <div class="panel diagram">
+      <svg viewBox="0 0 640 262" role="img" aria-label="Two timelines. Top: chemotherapy and radiation together for about 6 weeks, then durvalumab immunotherapy for 1 year. Bottom: chemotherapy plus immunotherapy for 3 or 4 cycles over 9 to 12 weeks, then surgery, then immunotherapy for about 1 year in some plans.">
+        <text x="8" y="26" style="font-weight:700">Option A</text>
+        <rect x="8" y="40" width="200" height="44" rx="8" fill="var(--paper)" stroke="var(--red)" stroke-width="3"/>
+        <text x="108" y="60" text-anchor="middle">Chemo + radiation</text>
+        <text x="108" y="77" text-anchor="middle" style="font-size:14px;fill:var(--muted)">together, about 6 weeks</text>
+        <path d="M214 62 L238 62" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="248" y="40" width="384" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3"/>
+        <text x="440" y="60" text-anchor="middle" style="fill:var(--blue)">Durvalumab (immunotherapy)</text>
+        <text x="440" y="77" text-anchor="middle" style="font-size:14px;fill:var(--muted)">vein every 2 or 4 weeks for 1 year</text>
+        <text x="8" y="136" style="font-weight:700">Option B</text>
+        <rect x="8" y="150" width="200" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3"/>
+        <text x="108" y="170" text-anchor="middle" style="fill:var(--blue)">Chemo + immunotherapy</text>
+        <text x="108" y="187" text-anchor="middle" style="font-size:14px;fill:var(--muted)">3 or 4 cycles, 9 to 12 weeks</text>
+        <path d="M214 172 L238 172" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="248" y="150" width="120" height="44" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+        <text x="308" y="177" text-anchor="middle">Surgery</text>
+        <path d="M374 172 L398 172" stroke="var(--ink)" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="408" y="150" width="224" height="44" rx="8" fill="var(--paper)" stroke="var(--blue)" stroke-width="3" stroke-dasharray="7 5"/>
+        <text x="520" y="170" text-anchor="middle" style="fill:var(--blue)">Immunotherapy</text>
+        <text x="520" y="187" text-anchor="middle" style="font-size:14px;fill:var(--muted)">about 1 year, in some plans</text>
+        <text x="8" y="230" style="font-size:15px;fill:var(--muted)">Radiation and surgery treat the cancer in the chest.</text>
+        <text x="8" y="250" style="font-size:15px;fill:var(--muted)">Chemo and immunotherapy treat cancer cells anywhere in the body.</text>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--ink)"/></marker></defs>
+      </svg>
     </div>
+    <p class="lede"><strong>Immunotherapy</strong> takes a brake (PD-1 or PD-L1) off your immune system so it can find and attack cancer cells. <strong>Durvalumab</strong> (Imfinzi), <strong>pembrolizumab</strong> (Keytruda) and <strong>nivolumab</strong> (Opdivo) all work this way.</p>
+    <p class="note">In option B, giving treatment <span class="hand">before</span> surgery shrinks the cancer and lets us see how well it worked: in about 1 in 5 people, no living cancer is left when the surgeon removes it.</p>
   </section>
 
   <!-- 3 -->
   <section class="step" data-step="3" id="s3">
     <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
     <p class="note noprint">Tap a choice to see it in the picture below and in the table of schedules and side effects.</p>
-    <p class="lede">Both approaches help people live longer than the older pill, sunitinib, and both can shrink tumors a lot. They differ in how fast and how often they shrink the cancer, and in how long the benefit lasts.</p>
+    <p class="lede">Both approaches aim for cure, and in each, adding immunotherapy helped more people live longer than the older treatment. They have <strong>never been compared with each other</strong> in a study.</p>
     <p class="verdict" id="verdict" data-live></p>
     <div class="opts" id="opts"></div>
-    <p class="note">For a few people whose cancer is small and growing slowly, careful watching with regular scans before starting treatment is also an option. Surgery or radiation to a single spot can sometimes help too.</p>
+    <p class="note">If a gene change such as EGFR or ALK is found, immunotherapy is usually left out. A targeted pill is added instead: osimertinib (Tagrisso) after chemoradiation or after surgery for EGFR, or alectinib (Alecensa) after surgery for ALK. If neither approach is safe, chemo and radiation can be given one after the other, or radiation alone.</p>
   </section>
 
   <!-- 4 -->
   <section class="step" data-step="4" id="s4">
-    <div class="sh"><span class="n">4</span><h2>Out of 100 people starting treatment</h2></div>
-    <p class="note">What happened to the tumors in the studies, at their best point on treatment.</p>
+    <div class="sh"><span class="n">4</span><h2>Out of 100 people</h2></div>
+    <p class="note">Alive 5 years later, in the study of each approach, compared with the older treatment in that same study.</p>
     <div class="tabs" id="tabs"></div>
     <p class="basis" id="basis" data-live></p>
     <div class="panel arraywrap">
       <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
       <div class="legend" style="min-width:0">
-        <div class="lg cr"><b id="nCr">0</b><span><strong>cancer disappeared on scans.</strong></span></div>
-        <div class="lg ben"><b id="nPr">0</b><span><strong>tumors shrank a lot</strong>, by about a third or more.</span></div>
-        <div class="lg sd"><b id="nSd">0</b><span>tumors stayed about the same size, which still counts as control. A few could not be measured.</span></div>
-        <div class="lg rec"><b id="nPd">0</b><span>cancer grew in spite of treatment, so it was changed.</span></div>
+        <div class="lg cr"><b id="nBase">0</b><span><strong>alive at 5 years with the older treatment</strong> (no immunotherapy).</span></div>
+        <div class="lg ben"><b id="nAdd">0</b><span><strong>more alive at 5 years</strong> when immunotherapy was added.</span></div>
+        <div class="lg free"><b id="nRest">0</b><span>did not live 5 years, most often because the cancer came back.</span></div>
         <p class="say" id="say"></p>
       </div>
     </div>
     <div class="panel diffs" id="diffs">
-      <div class="eyebrow">How the two differ</div>
+      <div class="eyebrow">Each approach against its own older treatment</div>
       <div class="diff">
-        <h3>1. Shrinking the tumor quickly</h3>
-        <p class="why">IO + TKI shrinks tumors in more people, and fewer see their cancer grow at the first scans. This can matter if the cancer is causing symptoms or growing quickly.</p>
-        <div id="dShrink"></div>
-      </div>
-      <div class="diff">
-        <h3>2. Long-lasting, deep responses</h3>
-        <p class="why">IO + IO shrinks tumors in fewer people, but when it works the benefit often lasts a very long time, sometimes many years. A small but real group stay well controlled long after treatment stops. How long the shrinking lasted, for half the people whose tumors shrank:</p>
-        <div id="dLast"></div>
-      </div>
-      <div class="diff">
-        <h3>3. Living longer</h3>
-        <p class="why">Both help people live longer than the older pill. Across studies their survival is broadly similar, though they have never been compared head to head. Alive at 5 years:</p>
+        <h3>1. Living longer</h3>
+        <p class="why">Alive at 5 years. Grey bars are the older treatment in the same study.</p>
         <div id="dLive"></div>
-        <p class="note" id="dLiveNote" data-live hidden>For favorable risk, the studies have not yet shown that either approach helps people live longer than the older pill. These people tend to live a long time with any of the treatments.</p>
+      </div>
+      <div class="diff">
+        <h3>2. Staying free of cancer</h3>
+        <p class="why">Alive with the cancer not back or growing, at 5 years.</p>
+        <div id="dFree"></div>
+      </div>
+      <div class="diff">
+        <h3>3. What happens on the way to surgery (option B only)</h3>
+        <p class="why">Most people reach surgery. Those with no living cancer left at surgery do especially well.</p>
+        <div id="dSurg"></div>
       </div>
     </div>
     <div class="panel">
       <div class="eyebrow" style="margin-bottom:6px">Reading this picture</div>
-      <ul class="reading" id="reading">
-        <li>No study has compared IO + IO with IO + TKI directly. Each was tested against sunitinib in its own study.</li>
-        <li>The IO + TKI numbers blend three studies, one for each pair. The pairs differ a little, mostly in side effects.</li>
-        <li>Results are for the risk group shown above. Fill in part 1 to match your risk group.</li>
+      <ul class="reading">
+        <li><strong>Do not compare option A with option B directly.</strong> The studies enrolled different people. Option B studies included smaller, earlier cancers (stage II) and only people a surgeon judged could have surgery. Option A counted only people who had already finished chemoradiation without the cancer growing.</li>
+        <li>Option B blends two studies, CheckMate 816 and KEYNOTE-671. AEGEAN, a third study, gave similar early results but has not yet reported 5-year survival.</li>
+        <li>What the studies show is that adding immunotherapy helps in both approaches. Which approach suits you depends mostly on your surgeon's view and your health.</li>
       </ul>
     </div>
     <div class="dr noprint" id="drPanel">
       <div class="eyebrow">For your doctor</div>
-      <div class="note" id="drNote">Best response is investigator or IRRC RECIST 1.1 at the latest analysis; “stayed the same” includes not evaluable. IO + IO, CheckMate 214 final, 9.3-year median follow-up (Choueiri, Ann Oncol 2026): ITT ORR 39.5 / CR 12.0 / PD 17.6%; I/P 42.4 / 11.8 / 19.3%; favorable 29.6 / 12.8 / 12.0% (sunitinib 51.6 / 6.5 / 4.8%). Median DOR 76.2 vs 25.1 mo (I/P 82.8); 48% vs 19% of responders still in response at 8 years. OS HR ITT 0.71, I/P 0.69, favorable 0.80 (0.59–1.09); 5-year OS ITT 48 vs 37%, I/P 43 vs 31%; 9-year 31 vs 20%. Treatment-free survival at 42 months, I/P 18% vs 5% (Regan, Clin Cancer Res 2021). IO + TKI is the simple mean of KEYNOTE-426 5-year (Rini, Nat Med 2025), CheckMate 9ER final (Motzer, Ann Oncol 2026) and CLEAR final (Motzer, JCO 2024): ITT ORR 60.6 / 55.7 / 71.3, CR 11.6 / 13.9 / 18.3, PD 11.6 / 6.5 / 5.4%; I/P ORR 56.8 / 52.6 / 72.4 and favorable 68.8 / 66.2 / 68.2% (CLEAR by risk from the interim analysis); CR and PD by risk group are reported only for 9ER (I/P 13.3 / 7.6%, favorable 16.2 / 2.7%), so those cells use 9ER. Median DOR 23.6 / 22.0 / 26.7 mo. OS HR 0.84 / 0.79 / 0.79; 5-year OS 41.9 vs 37.1% (KN-426) and 40.9 vs 35.4% (9ER); CLEAR has no 5-year landmark (4-year 55.9 vs 52.5%). I/P 5-year 38.0 vs 30.4% and 39.2 vs 31.4%. Favorable-risk OS HR 1.10 / 1.08 / 0.94, none significant. Median time to response about 2 to 3 months in all four trials (CLEAR 1.9). Opdivo US label (2026): nivolumab + ipilimumab for intermediate or poor risk only; NCCN 2026 lists it as preferred, including favorable risk.</div>
+      <div class="note" id="drNote">PACIFIC (unresectable stage III, PS 0–1, no progression after ≥2 cycles platinum concurrent with 54–66 Gy; durvalumab 10 mg/kg q2w or placebo up to 12 months, started 1–42 days after RT), 5-year update (Spigel, JCO 2022): OS 42.9 vs 33.4%, HR 0.72 (0.59–0.89), median 47.5 vs 29.1 mo; PFS 33.1 vs 19.0%, HR 0.55. Option B blends the two trials with 5-year data. CheckMate 816 (stage IB–IIIA AJCC 7, 3 cycles nivolumab + chemo vs chemo, no adjuvant IO; known EGFR/ALK excluded): pCR 24.0 vs 2.2%; surgery 83.2 vs 75.4%; final OS (Forde, NEJM 2025) 5-year 65.4 vs 55.0%, HR 0.72 (0.52–1.00); 5-year EFS 49.2 vs 34.4%, HR 0.68; reported OS benefit mainly in PD-L1 ≥1%. KEYNOTE-671 (stage II–IIIB N2, 4 cycles pembrolizumab or placebo + cisplatin doublet, then 13 cycles adjuvant; EGFR/ALK not excluded, about 3–4% each): pCR 18.1 vs 4.0%; surgery 82.1 vs 79.4%; 36-month OS 71 vs 64%, HR 0.72 (Spicer, Lancet 2024); 5-year OS 64.6 vs 53.6%, HR 0.74, EFS 49.9 vs 26.5% (ESMO 2025 LBA, taken from meeting reports). AEGEAN (stage IIA–IIIB, 4 cycles durvalumab or placebo + chemo, then 12 cycles adjuvant; EGFR/ALK excluded): pCR 17.2 vs 4.3%; 24-month EFS 63.3 vs 52.4%, HR 0.68 (Heymach, NEJM 2023); OS immature. Blends are simple means: OS 65 vs 54, EFS 50 vs 30, pCR 20 (all three trials) vs 4, reached surgery 82 vs 78. CheckMate 77T (perioperative nivolumab) is a fourth option of the same kind. EGFR: PACIFIC EGFR subgroup showed no clear benefit (n=35; PFS HR 0.91, OS HR 1.02); LAURA osimertinib after CRT, PFS HR 0.16 (Lu, NEJM 2024). ADAURA and ALINA support adjuvant osimertinib and alectinib. NCCN advises at least EGFR, ALK and PD-L1 testing before choosing perioperative therapy for resectable IB–IIIB. Note: EMA restricts durvalumab after CRT to PD-L1 ≥1%; the FDA label does not.</div>
     </div>
   </section>
 
@@ -140,20 +129,20 @@
   <section class="step" data-step="5" id="s5">
     <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
     <div class="tablewrap"><table id="fx" class="narrow"></table></div>
-    <p class="note" id="fxNote">Numbers are people out of 100, at any level unless marked severe. There are no placebo studies here, so the older pill, sunitinib, is the comparison. IO + IO comes from CheckMate 214 and counts side effects judged to be from treatment. IO + TKI is the range across the three studies, some of which counted every side effect whatever the cause, so its numbers may read a little high. Immune side effects can affect any organ and can start months after the last dose. Most are treatable, often with steroids. Tell us early about any side effect: holding a dose or lowering the pill dose usually helps.</p>
+    <p class="note" id="fxNote">Rows marked “added by immunotherapy” compare immunotherapy with a placebo or with the same treatment without immunotherapy, so they show the extra risk on top of what chemo, radiation or surgery already cause. Option A comes from PACIFIC (durvalumab vs placebo after chemoradiation). Option B comes from KEYNOTE-671 and AEGEAN (immunotherapy vs placebo, both with the same chemo and surgery) and CheckMate 816 (vs chemo alone). Immune side effects can affect any organ and can start months after the last dose. Most are treatable, often with steroids. Tell us early about any side effect.</p>
   </section>
 
   <!-- 6 -->
   <section class="step" data-step="6" id="s6">
     <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
     <div class="panel checks" id="vals">
-      <label><input type="checkbox" id="v1"><span>Shrinking the cancer quickly, especially if it is causing symptoms</span></label>
-      <label><input type="checkbox" id="v2"><span>A chance of long-lasting control, even after treatment stops</span></label>
-      <label><input type="checkbox" id="v3"><span>Living as long as possible</span></label>
-      <label><input type="checkbox" id="v4"><span>Not taking a pill every day</span></label>
-      <label><input type="checkbox" id="v5"><span>Avoiding daily side effects such as diarrhea and sore hands and feet</span></label>
-      <label><input type="checkbox" id="v6"><span>Avoiding serious immune side effects</span></label>
-      <label><input type="checkbox" id="v7"><span>Fewer clinic visits</span></label>
+      <label><input type="checkbox" id="v1"><span>Having the tumor physically removed</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding an operation and time in hospital</span></label>
+      <label><input type="checkbox" id="v3"><span>Avoiding radiation to the chest</span></label>
+      <label><input type="checkbox" id="v4"><span>Knowing how well treatment worked, from the surgery</span></label>
+      <label><input type="checkbox" id="v5"><span>A shorter total time on treatment</span></label>
+      <label><input type="checkbox" id="v6"><span>Keeping as much breathing ability as possible</span></label>
+      <label><input type="checkbox" id="v7"><span>Fewer clinic visits and less travel</span></label>
       <label><input type="checkbox" id="v8"><span>Cost and what my insurance covers</span></label>
     </div>
     <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
@@ -163,10 +152,10 @@
   <section class="step" data-step="7" id="s7">
     <div class="sh"><span class="n">7</span><h2>Also part of your care</h2></div>
     <div class="also">
-      <div class="panel"><h3>Surgery or radiation</h3><p>If the kidney with the tumor is still in place, removing it can help some people. A few spots can sometimes be treated with surgery or focused radiation.</p></div>
-      <div class="panel"><h3>Blood tests and scans</h3><p>Regular blood tests check the thyroid, liver, kidneys and blood sugar for immune side effects. Scans every 2 to 3 months show how the treatment is working.</p></div>
-      <div class="panel"><h3>Blood pressure and your other doctors</h3><p>Targeted pills raise blood pressure, so check it at home. Tell every doctor you are on immunotherapy, because its side effects can look like other illnesses.</p></div>
-      <div class="panel"><h3>If the cancer grows later</h3><p>Other good options remain, including different targeted pills, belzutifan (Welireg) and clinical trials.</p></div>
+      <div class="panel"><h3>Tests before we start</h3><p>A PET scan and brain MRI make sure the cancer has not spread. A biopsy of the chest lymph nodes (often by bronchoscopy) confirms the stage. Gene tests on the tumor (EGFR, ALK and others) and PD-L1 come back in 1 to 3 weeks.</p></div>
+      <div class="panel"><h3>A team decision</h3><p>A lung surgeon, a radiation doctor and your oncologist review your case together. Breathing tests and a heart check show whether surgery is safe.</p></div>
+      <div class="panel"><h3>Stopping smoking</h3><p>If you smoke, stopping now lowers the risk of problems after surgery and radiation and helps treatment work. We can help with medicines and counseling.</p></div>
+      <div class="panel"><h3>After treatment</h3><p>CT scans every few months for the first years watch for the cancer coming back. Staying active and breathing exercises help recovery.</p></div>
     </div>
   </section>
 
@@ -175,34 +164,36 @@
     <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
     <div class="panel plan">
       <div>
-        <div class="eyebrow" style="margin-bottom:6px">The first treatment we chose</div>
+        <div class="eyebrow" style="margin-bottom:6px">The approach we chose</div>
         <div class="pick chips" id="planPick"></div>
       </div>
       <div>
         <div class="eyebrow" style="margin-bottom:6px">Also</div>
         <div class="checks">
-          <label><input type="checkbox" id="p1"><span>Home blood pressure checks</span></label>
-          <label><input type="checkbox" id="p2"><span>Blood tests before each treatment, including thyroid</span></label>
-          <label><input type="checkbox" id="p3"><span>Talk with a surgeon or radiation doctor</span></label>
-          <label><input type="checkbox" id="p4"><span>Ask about a clinical trial</span></label>
+          <label><input type="checkbox" id="p1"><span>PET scan and brain MRI</span></label>
+          <label><input type="checkbox" id="p2"><span>Gene tests and PD-L1 on the tumor</span></label>
+          <label><input type="checkbox" id="p3"><span>See a lung surgeon</span></label>
+          <label><input type="checkbox" id="p4"><span>See a radiation doctor</span></label>
+          <label><input type="checkbox" id="p5"><span>Breathing tests</span></label>
+          <label><input type="checkbox" id="p6"><span>Help to stop smoking</span></label>
         </div>
       </div>
       <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
-        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Start date:
-Blood tests:
-First scans in:</textarea></label>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Tests:
+Appointments:
+Start date:</textarea></label>
       <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
         <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
       <div class="call">
         <h3>Call us right away if you have</h3>
         <ul>
-          <li>Diarrhea 4 or more times a day above your usual, or blood or mucus in your stool</li>
-          <li>A new cough, shortness of breath or chest pain (call 911 if severe)</li>
-          <li>Yellow skin or eyes, dark urine, or pain on the right side of your belly</li>
-          <li>Severe tiredness, headaches, dizziness, or feeling very thirsty</li>
           <li>A fever of 100.4°F (38°C) or higher</li>
-          <li>Blood pressure above the level your team gave you, or a severe headache</li>
-          <li>A rash with blisters, or sores in your mouth that stop you eating or drinking</li>
+          <li>A new or worse cough, shortness of breath or chest pain (call 911 if severe)</li>
+          <li>Pain on swallowing that stops you eating or drinking</li>
+          <li>Diarrhea 4 or more times a day above your usual, or blood in your stool</li>
+          <li>Coughing up blood</li>
+          <li>Yellow skin or eyes, or dark urine</li>
+          <li>Severe tiredness, headaches or dizziness</li>
         </ul>
         <p class="note">Immune side effects can start even months after the last dose. Tell any doctor or emergency room that you have had immunotherapy.</p>
         <div class="callrow">
@@ -214,14 +205,14 @@ First scans in:</textarea></label>
   </section>
 
   <footer>
-    <p>Numbers come from large studies of people with clear cell kidney cancer that had spread. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <p>Numbers come from large studies of people with stage II or III non-small cell lung cancer. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
     <ol id="refs">
-      <li>Choueiri TK et al. Nivolumab plus ipilimumab vs sunitinib in advanced renal cell carcinoma (CheckMate 214): final analysis. Ann Oncol 2026;37:960. Tannir NM et al. 8-year follow-up. Ann Oncol 2024;35:1026.</li>
-      <li>Regan MM et al. Treatment-free survival after nivolumab plus ipilimumab vs sunitinib (CheckMate 214). Clin Cancer Res 2021;27:6687.</li>
-      <li>Rini BI et al. Pembrolizumab plus axitinib vs sunitinib (KEYNOTE-426): 5-year analysis. Nat Med 2025;31:3475.</li>
-      <li>Motzer RJ et al. Nivolumab plus cabozantinib vs sunitinib (CheckMate 9ER): final analysis. Ann Oncol 2026;37:33.</li>
-      <li>Motzer RJ et al. Lenvatinib plus pembrolizumab vs sunitinib (CLEAR): final overall survival. J Clin Oncol 2024;42:1222.</li>
-      <li>Heng DYC et al. Prognostic factors for overall survival with targeted therapy in metastatic RCC (IMDC). J Clin Oncol 2009;27:5794.</li>
-      <li>Powles T et al. ESMO Clinical Practice Guideline: renal cell carcinoma. Ann Oncol 2024;35:692. NCCN Guidelines, Kidney Cancer, 2026. Opdivo US prescribing information, 2026.</li>
+      <li>Antonia SJ et al. Durvalumab after chemoradiotherapy in stage III non-small-cell lung cancer (PACIFIC). N Engl J Med 2017;377:1919. Spigel DR et al. Five-year survival outcomes from PACIFIC. J Clin Oncol 2022;40:1301. Imfinzi US prescribing information.</li>
+      <li>Forde PM et al. Neoadjuvant nivolumab plus chemotherapy in resectable lung cancer (CheckMate 816). N Engl J Med 2022;386:1973. Forde PM et al. Overall survival with neoadjuvant nivolumab plus chemotherapy. N Engl J Med 2025.</li>
+      <li>Wakelee H et al. Perioperative pembrolizumab for early-stage non-small-cell lung cancer (KEYNOTE-671). N Engl J Med 2023;389:491. Spicer JD et al. Overall survival in KEYNOTE-671. Lancet 2024;404:1240. 5-year update, ESMO 2025.</li>
+      <li>Heymach JV et al. Perioperative durvalumab for resectable non-small-cell lung cancer (AEGEAN). N Engl J Med 2023;389:1672.</li>
+      <li>Cascone T et al. Perioperative nivolumab in resectable lung cancer (CheckMate 77T). N Engl J Med 2024;390:1756.</li>
+      <li>Lu S et al. Osimertinib after chemoradiotherapy in stage III EGFR-mutated NSCLC (LAURA). N Engl J Med 2024;391:585. Naidoo J et al. PACIFIC EGFR subgroup. J Thorac Oncol 2023. Tsuboi M et al. ADAURA overall survival. N Engl J Med 2023;389:137. Wu YL et al. Alectinib in resected ALK-positive NSCLC (ALINA). N Engl J Med 2024;390:1265.</li>
+      <li>Bradley JD et al. Standard-dose vs high-dose conformal radiotherapy with concurrent chemotherapy (RTOG 0617). Lancet Oncol 2015;16:187. Society of Thoracic Surgeons General Thoracic Surgery Database. Liberman M et al. Surgical outcomes in KEYNOTE-671. Ann Thorac Surg 2026. NCCN Guidelines, Non-Small Cell Lung Cancer, 2026.</li>
     </ol>
   </footer>
