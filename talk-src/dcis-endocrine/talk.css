@@ -1,0 +1,26 @@
+/* DCIS talk: duct drawing, MSK calculator inputs, four pill choices */
+.mchips { display: inline-flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mchips .chip { padding: 2px 10px; font-size: 14px; }
+.factgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+@media (max-width: 720px) { .factgrid { grid-template-columns: 1fr; } }
+.msk { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between;
+  border-top: 1.5px dashed var(--rule); padding-top: 12px; }
+.msk .q { font-weight: 700; min-width: 0; flex: 1 1 280px; }
+.msk .fill.num { font-size: 1.4em; width: 2.4em; }
+.later2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.later2 .panel { display: grid; gap: 8px; align-content: start; }
+@media (max-width: 720px) { .later2 { grid-template-columns: 1fr; } }
+.callout { border: 2px solid var(--red); border-radius: 12px; padding: 12px 16px; display: grid; gap: 4px; }
+.callout strong { color: var(--red); }
+.opt.dim { opacity: .62; }
+.opt .tag { margin-bottom: -2px; }
+.basis { font-size: 15px; color: var(--muted); }
+@media print {
+  .factgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .later2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opt.dim { opacity: .75; }
+  .msk, .callout { break-inside: avoid; }
+  .msk { break-after: avoid; } /* keep the MSK number with the note on where it comes from */
+}
+body.blankprint .opt.dim { opacity: 1; }
+body.blankprint .callout { display: none; }

@@ -1,0 +1,197 @@
+  <header class="top">
+    <div class="eyebrow">HER2-positive, ER-positive breast cancer that has spread · first treatment</div>
+    <h1>Triple-positive breast cancer: choosing the first treatment</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <div class="two">
+      <div class="panel facts">
+        <div class="eyebrow">Your cancer</div>
+        <label class="fact"><span>Where it has spread</span><span><input class="fill wide" id="sites" autocomplete="off"></span></label>
+        <label class="fact"><span>Estrogen / progesterone receptors</span><span><input class="fill wide" id="erpr" style="width:7em" autocomplete="off"></span></label>
+        <label class="fact"><span>HER2 test</span><span><input class="fill wide" id="her2" style="width:7em" autocomplete="off"></span></label>
+        <label class="fact"><span>Earlier breast cancer treatment</span><span><input class="fill wide" id="prior" autocomplete="off"></span></label>
+        <label class="fact"><span>Heart pumping strength (EF)</span><span><input class="fill num" id="ef" inputmode="numeric"> %</span></label>
+        <div class="fact"><span>Menopause</span><span class="mchips" id="menoChips"><button class="chip" data-v="pre" aria-pressed="false">Not yet</button><button class="chip" data-v="post" aria-pressed="false">Past menopause</button></span></div>
+      </div>
+      <div style="display:grid;gap:12px;min-width:0">
+        <p class="lede">The cancer has spread beyond the breast. It has <mark>two drivers</mark> we can target: <strong>HER2</strong>, an accelerator, and <strong>estrogen</strong>, a fuel. That is why it is called triple-positive.</p>
+        <p class="lede">Cancer that has spread usually can't be cured. It can often be <span class="hand">controlled for years</span>. The goal is to keep it under control as long as possible while you feel as well as possible.</p>
+        <p class="note">In the study that set today's standard, CLEOPATRA, about 37 in 100 people were still alive 8 years later. Treatments have improved since then.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>How these medicines work</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 440 280" role="img" aria-label="Drawing of a cancer cell with HER2 antennas on its surface. Two antibodies block the antennas; a third antibody carries a chemo package inside the cell. Estrogen flows in from below and an aromatase inhibitor cuts it off. Palbociclib puts a brake on the cell's center.">
+          <circle cx="220" cy="150" r="80" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+          <circle cx="232" cy="160" r="26" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 5"/>
+          <path d="M168.6 88.7 L158.3 76.5 M158.3 76.5 L157.5 67.5 M158.3 76.5 L149.6 74.1 M220.0 70.0 L220.0 54.0 M220.0 54.0 L225.2 46.6 M220.0 54.0 L214.8 46.6 M271.4 88.7 L281.7 76.5 M281.7 76.5 L290.4 74.1 M281.7 76.5 L282.5 67.5" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M140.9 55.8 L148.0 64.2 M148.0 64.2 L158.5 65.8 M148.0 64.2 L147.8 74.8" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="137.7" cy="51.9" r="5.5" fill="var(--red)" stroke="var(--ink)" stroke-width="1.2"/>
+          <path d="M172.6 94.7 L200.9 130.4" stroke="var(--red)" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+          <g fill="var(--red)"><circle cx="200.9" cy="130.4" r="2.6"/><circle cx="208.9" cy="134.4" r="2.6"/><circle cx="197.9" cy="139.4" r="2.6"/><circle cx="206.9" cy="124.4" r="2.6"/><circle cx="210.9" cy="142.4" r="2.6"/></g>
+          <path d="M220.0 27.0 L220.0 38.0 M220.0 38.0 L227.0 46.0 M220.0 38.0 L213.0 46.0" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M299.1 55.8 L292.0 64.2 M292.0 64.2 L292.2 74.8 M292.0 64.2 L281.5 65.8" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <text x="8" y="26" style="fill:var(--red)">T-DXd carries</text>
+          <text x="8" y="44" style="fill:var(--red)">chemo inside</text>
+          <path d="M104 38 C 116 44, 124 48, 130 50" fill="none" stroke="var(--red)" stroke-width="1.5"/>
+          <text x="306" y="24" style="fill:var(--blue)">trastuzumab +</text>
+          <text x="306" y="42" style="fill:var(--blue)">pertuzumab block</text>
+          <text x="8" y="104">HER2 antennas</text>
+          <text x="8" y="122">(the accelerator)</text>
+          <path d="M112 96 C 132 92, 146 86, 156 80" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+          <g fill="var(--green)"><circle cx="58" cy="226" r="6"/><circle cx="88" cy="214" r="6"/><circle cx="118" cy="202" r="6"/><circle cx="168" cy="186" r="6"/></g>
+          <path d="M46 214 L70 238 M70 214 L46 238" stroke="var(--red)" stroke-width="3.5" stroke-linecap="round"/>
+          <text x="8" y="186" style="fill:var(--green)">estrogen (fuel)</text>
+          <text x="8" y="264" style="fill:var(--red)">aromatase inhibitor cuts it</text>
+          <path d="M248 150 L262 172" stroke="var(--red)" stroke-width="5" stroke-linecap="round"/>
+          <text x="306" y="198" style="fill:var(--red)">palbociclib:</text>
+          <text x="306" y="216" style="fill:var(--red)">a brake on</text>
+          <text x="306" y="234" style="fill:var(--red)">dividing</text>
+          <path d="M304 194 C 290 186, 276 176, 266 170" fill="none" stroke="var(--red)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <p class="lede"><strong>Trastuzumab</strong> (Herceptin) and <strong>pertuzumab</strong> (Perjeta) are antibodies that block HER2 from two sides. Together they are called <span class="hand">HP</span>. They can be given in a vein or as one shot under the skin (Phesgo).</p>
+        <p class="lede"><strong>Taxane chemo</strong> (docetaxel or paclitaxel) shrinks the cancer quickly. With HP it is called <span class="hand">THP</span>.</p>
+        <p class="lede"><strong>T-DXd</strong> (trastuzumab deruxtecan, Enhertu) is trastuzumab with chemo attached. It carries the chemo straight into HER2 cells.</p>
+        <p class="lede">An <strong>aromatase inhibitor</strong> (letrozole, anastrozole or exemestane) lowers estrogen. <strong>Palbociclib</strong> (Ibrance) is a pill that slows cell division.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the timeline below and in the side-effect table.</p>
+    <div class="opts three" id="opts"></div>
+    <p class="note" id="menoNote">Before menopause, an aromatase inhibitor is given with a monthly shot that turns off the ovaries.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>How long the cancer stayed under control</h2></div>
+    <p class="note">Each bar ends at the point where half the people in the study had their cancer start growing again. The other half were still under control, many for much longer.</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="panel timeline" id="timeline" aria-label="Months until the cancer grew in each study">
+      <div class="tlkey"><span><i style="background:var(--blue)"></i>Cancer under control (half the people)</span><span><i style="background:repeating-linear-gradient(135deg, var(--muted) 0 2px, transparent 2px 6px);border:1.5px solid var(--muted)"></i>Chemo before PATINA started counting</span></div>
+    </div>
+    <p class="say" id="say"></p>
+    <div class="panel">
+      <div class="eyebrow" style="margin-bottom:6px">Reading this chart</div>
+      <ul class="reading">
+        <li>No study has compared all three plans with each other. Each pair of bars comes from its own study.</li>
+        <li>PATINA started counting <strong>after</strong> 4 to 8 doses of chemo (about 3 to 6 months), and only for people whose cancer was controlled by the chemo. DESTINY-Breast09 started counting on the first day of treatment. So the PATINA bars sit later and can't be lined up exactly with the others.</li>
+        <li>The DESTINY-Breast09 bars show the people whose cancer was ER-positive, like yours.</li>
+        <li>We don't know yet whether either newer plan helps people live longer. Those results are still being collected.</li>
+      </ul>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="note" id="drNote">PATINA (Metzger, NEJM 2026): investigator-assessed PFS from randomization after induction, 44.3 vs 29.1 months, HR 0.75 (95% CI 0.59–0.96); OS immature, HR 0.86 (0.61–1.23). DESTINY-Breast09 (Tolaney, NEJM 2026): PFS by blinded central review, 40.7 vs 26.9 months overall, HR 0.56 (0.44–0.71); HR-positive subgroup 38.0 vs 27.7 months, HR 0.61 (0.44–0.84) (Loibl, ESMO 2025). Endocrine therapy was allowed in DB-09 after 6 cycles of T-DXd or after the taxane stopped, and was used by 13.5% vs 38.3% of HR-positive patients. Interim OS HR 0.84 (0.59–1.19) at 16% maturity. PFS2 (investigator, ASCO 2025) HR 0.60 (0.45–0.79), immature; only about 10% of the THP arm had received T-DXd second line by then. Fatal adverse events 3.4% with T-DXd + pertuzumab (label). Side-effect table: Enhertu label (DB-09) and Ibrance label (PATINA); neuropathy 11.3% vs 28.5% is investigator-attributed (ASCO 2025 slides).</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="tablewrap"><table id="fx" class="narrow"></table></div>
+    <p class="note">Numbers are how many people out of 100 had each side effect, at any level, in DESTINY-Breast09 (T-DXd + pertuzumab or THP) and in PATINA after chemo (with or without palbociclib). Most were mild to moderate. Tell us early about any side effect: a lower dose or a break usually helps.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>If the first treatment stops working</h2></div>
+    <div class="next">
+      <div class="panel">
+        <h3>After chemo + HP</h3>
+        <p>T-DXd is usually next. In DESTINY-Breast03, given after trastuzumab and a taxane, it kept the cancer under control for a median of about 29 months, versus about 7 months with the older drug T-DM1.</p>
+      </div>
+      <div class="panel">
+        <h3>After T-DXd + pertuzumab</h3>
+        <p>Good options remain, such as tucatinib with trastuzumab and capecitabine, T-DM1, or chemo with HP. How well they work after T-DXd is still being studied.</p>
+        <p class="note">Early results from DESTINY-Breast09 show the cancer also stayed under control longer through the next treatment when T-DXd + pertuzumab came first.</p>
+      </div>
+    </div>
+    <p class="note">Most people with this cancer go on to have several lines of treatment. Choosing the first one is partly choosing the order.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Keeping the cancer under control for as long as possible</span></label>
+      <label><input type="checkbox" id="v2"><span>Having a break from chemo</span></label>
+      <label><input type="checkbox" id="v3"><span>Keeping my hair</span></label>
+      <label><input type="checkbox" id="v4"><span>Avoiding numbness in my hands and feet</span></label>
+      <label><input type="checkbox" id="v5"><span>Avoiding the lung risk of T-DXd</span></label>
+      <label><input type="checkbox" id="v6"><span>Fewer clinic visits and blood tests</span></label>
+      <label><input type="checkbox" id="v7"><span>Choosing the plan with the longest track record</span></label>
+      <label><input type="checkbox" id="v8"><span>Keeping strong options for later</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" data-step="8" id="s8">
+    <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The first treatment we chose</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Also</div>
+        <div class="checks">
+          <label><input type="checkbox" id="p1"><span>Heart scan (echocardiogram) before starting and every few months</span></label>
+          <label><input type="checkbox" id="p2"><span>Shot to turn off the ovaries (before menopause)</span></label>
+          <label><input type="checkbox" id="p3"><span>Bone-strengthening medicine (cancer in the bones)</span></label>
+          <label><input type="checkbox" id="p4"><span>Brain MRI</span></label>
+        </div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">First treatment date:
+Heart scan:
+Scans to see how it is working, every:     months</textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>A fever of 100.4°F (38°C) or higher, or chills</li>
+          <li>A new or worse cough, shortness of breath, or chest pain (call 911 if severe)</li>
+          <li>Diarrhea 4 or more times a day, or you can't keep fluids down</li>
+          <li>Swelling in your legs, or trouble breathing when lying flat</li>
+          <li>New headaches, confusion, weakness, or trouble with balance</li>
+        </ul>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers come from large studies of people with HER2-positive breast cancer that had spread, and describe groups of people. They cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol>
+      <li>Swain SM et al. Pertuzumab, trastuzumab and docetaxel for HER2-positive metastatic breast cancer (CLEOPATRA): end-of-study results. Lancet Oncol 2020;21:519.</li>
+      <li>Metzger O et al. Palbociclib for hormone-receptor–positive, HER2-positive advanced breast cancer (PATINA). N Engl J Med 2026;394:451.</li>
+      <li>Tolaney SM et al. Trastuzumab deruxtecan plus pertuzumab for HER2-positive metastatic breast cancer (DESTINY-Breast09). N Engl J Med 2026;394:551. Loibl S et al. Subgroup analyses, ESMO 2025, LBA18.</li>
+      <li>Hurvitz SA et al. Lancet 2023;401:105. Cortés J et al. Nat Med 2024;30:2208. Trastuzumab deruxtecan vs trastuzumab emtansine (DESTINY-Breast03).</li>
+      <li>Rimawi M et al. Pertuzumab and trastuzumab with an aromatase inhibitor (PERTAIN). J Clin Oncol 2018;36:2826. Giordano SH et al. ASCO guideline update, HER2-positive advanced breast cancer. J Clin Oncol 2022;40:2612.</li>
+      <li>US prescribing information: Enhertu (2025), Ibrance (2026), Perjeta (2026).</li>
+    </ol>
+  </footer>

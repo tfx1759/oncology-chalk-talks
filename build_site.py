@@ -43,7 +43,7 @@ def card(t, src):
     </article>'''
 
 
-def main():
+def main(OUT=OUT):
     talks = json.loads((SRC / "talks.json").read_text())
     if OUT.exists():
         shutil.rmtree(OUT)

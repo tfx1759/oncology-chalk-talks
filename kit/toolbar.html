@@ -1,0 +1,26 @@
+<div class="bar" role="toolbar" aria-label="Chalk talk tools">
+  <div class="grp">
+    <button class="btn" id="penBtn" aria-pressed="false" title="Draw on the page with a marker">Marker</button>
+    <button class="swatch" data-c="blue" aria-pressed="true" aria-label="Blue marker" style="background:var(--blue)"></button>
+    <button class="swatch" data-c="red" aria-pressed="false" aria-label="Red marker" style="background:var(--red)"></button>
+    <button class="swatch" data-c="green" aria-pressed="false" aria-label="Green marker" style="background:var(--green)"></button>
+    <button class="btn" id="undoBtn">Undo</button>
+    <button class="btn" id="clearBtn" title="Erase the marker and everything typed or ticked on this page">Clear ink</button>
+  </div>
+  <div class="grp">
+    <button class="btn" id="walkBtn" aria-pressed="false" title="Show one part at a time, like building a chalk talk">Step by step</button>
+    <button class="btn" id="backBtn" hidden>Back</button>
+    <button class="btn" id="nextBtn" hidden>Next</button>
+    <span class="steplabel" id="stepLabel" hidden></span>
+  </div>
+  <div class="grp">
+    <button class="btn" id="editBtn" hidden title="Change any wording or number on this page">Edit</button>
+    <button class="btn" id="saveBtn" hidden>Save changes</button>
+    <button class="btn" id="cancelBtn" hidden>Cancel</button>
+    <span class="steplabel" id="editStatus" aria-live="polite"></span>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn" id="libLink" href="../index.html" hidden>All talks</a>
+  <button class="btn" id="printBlankBtn" hidden title="Print an empty copy to fill in by hand">Print blank</button>
+  <button class="btn" id="printBtn" hidden title="Print this page as filled in">Print filled</button>
+</div>

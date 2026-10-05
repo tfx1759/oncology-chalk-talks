@@ -214,6 +214,23 @@ footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   table { min-width: 0; }
 }
+/* Shared components used by several talks */
+.opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .opts.three { grid-template-columns: 1fr; } }
+.facts { display: grid; gap: 8px; }
+.fact { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; border-bottom: 1px dotted var(--rule); padding-bottom: 4px; }
+.fact > span:first-child { color: var(--muted); font-size: 15px; }
+.opt.trial { cursor: default; }
+.opt.trial.dim { opacity: .62; }
+.tag { justify-self: start; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; border: 1.5px solid; }
+.tag.yes { color: var(--blue); border-color: var(--blue); }
+.tag.no { color: var(--muted); border-color: var(--rule); }
+.mini { height: 12px; border-radius: 3px; background: var(--rule); display: flex; overflow: hidden; }
+.mini span { width: var(--w); background: var(--free); }
+.mini span.add { background: var(--blue); }
+table.narrow { min-width: 520px; }
+.verdict { border-top: 1.5px dashed var(--rule); padding-top: 10px; }
+@media print { .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } .opt.trial.dim { opacity: .75; } }
 /* Edit mode */
 body.editing .ek { outline: 1.5px dashed color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 3px; cursor: text; border-radius: 2px; }
 body.editing .ek:focus { outline: 2px solid var(--blue); background: color-mix(in srgb, var(--hi) 60%, transparent); }
@@ -484,6 +501,8 @@ Start date: </textarea></label>
 
   /* ---------- state ---------- */
   const DEFAULT_BASE = { get low() { return CFG.baseLow; }, get high() { return CFG.baseHigh; } };
+  // What Clear ink and Print blank reset (typed fields and ticks are reset separately).
+  const BLANK = { plan: null };
   const S = { risk: 'low', base: CFG.baseLow, sel: 'capox3', plan: null };
 
   function hr(id) {
@@ -639,7 +658,6 @@ Start date: </textarea></label>
   ink.addEventListener('pointermove', e => { if (!live) return; live.pts.push(pt(e)); redraw(); });
   const end = () => { if (live) { strokes.push(live); live = null; redraw(); } };
   ink.addEventListener('pointerup', end); ink.addEventListener('pointercancel', end);
-
   $('#penBtn').onclick = () => {
     const on = !document.body.classList.contains('pen');
     document.body.classList.toggle('pen', on); $('#penBtn').setAttribute('aria-pressed', on);
@@ -653,19 +671,17 @@ Start date: </textarea></label>
   new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   window.addEventListener('beforeprint', () => { steps.forEach(s => s.classList.remove('later')); $('footer').hidden = false; autosize(); requestAnimationFrame(sizeInk); });
   window.addEventListener('afterprint', showSteps);
-
-  // printing works when this file is opened directly in a browser
   // Printing works when the page is opened directly (the website or a saved copy), not inside the artifact viewer.
   // Everything written on the page: typed fields, ticks, the chosen plan and marker ink.
   // wipe() empties it and returns a function that puts it all back.
   function wipe(keep = []) {
     const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
-    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), plan = S.plan, inkWas = strokes;
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), was = { ...S }, inkWas = strokes;
     els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
-    S.plan = null; strokes = []; render(); redraw();
+    Object.assign(S, BLANK); strokes = []; render(); redraw();
     return () => {
       els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
-      S.plan = plan; strokes = inkWas; render(); redraw();
+      Object.assign(S, was); strokes = inkWas; render(); redraw();
     };
   }
   // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
@@ -693,7 +709,7 @@ Start date: </textarea></label>
     const ED = { btn: $('#editBtn'), save: $('#saveBtn'), cancel: $('#cancelBtn'), msg: $('#editStatus') };
     const say = t => { ED.msg.textContent = t; };
     const SEL = 'h1,h2,h3,p,li,th,td,.how,.eyebrow,.note,.lg span,.checks label > span,.fact > span:first-child';
-    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict') && !el.closest('svg') &&
+    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict,[data-live]') && !el.querySelector('[data-live]') && !el.closest('svg') &&
       !el.querySelector('input,textarea,button,select') && el.textContent.trim());
     els = els.filter(el => !els.some(o => o !== el && o.contains(el)));
 

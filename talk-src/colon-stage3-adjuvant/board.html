@@ -1,0 +1,160 @@
+  <header class="top">
+    <div class="eyebrow">Stage III colon cancer · after surgery</div>
+    <h1>Should I have chemotherapy after surgery?</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 420 270" role="img" aria-label="Drawing of the colon with the tumor removed and nearby lymph nodes, some containing cancer">
+          <path d="M30 70 C 90 40, 150 46, 210 62 S 330 92, 392 64" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 116 C 90 88, 150 94, 210 110 S 330 140, 392 112" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M196 68 C 214 62, 236 70, 238 88 C 240 104, 218 112, 202 104 C 188 96, 184 74, 196 68 Z" fill="var(--red)" fill-opacity=".85" stroke="var(--red)" stroke-width="2"/>
+          <path d="M128 30 L 128 160 M 300 46 L 300 176" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 6"/>
+          <text x="136" y="28">part removed by surgery</text>
+          <path d="M214 112 C 210 150, 180 170, 150 200 M 214 112 C 230 150, 250 168, 280 196" fill="none" stroke="var(--muted)" stroke-width="2"/>
+          <circle cx="186" cy="152" r="9" fill="var(--red)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="160" cy="186" r="9" fill="var(--red)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="238" cy="154" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="264" cy="182" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="212" cy="176" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <text x="24" y="232">lymph nodes</text>
+          <path d="M100 226 C 120 214, 140 204, 150 194" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+          <g fill="var(--red)">
+            <circle cx="338" cy="210" r="2.6"/><circle cx="356" cy="198" r="2.2"/><circle cx="372" cy="220" r="2.6"/><circle cx="350" cy="230" r="2"/>
+          </g>
+          <text x="226" y="258">tiny cells? too small to see</text>
+          <text x="244" y="58" style="font-size:15px;fill:var(--red)">tumor</text>
+        </svg>
+      </div>
+      <div style="display:grid;gap:12px;min-width:0">
+        <p class="lede">Surgery removed the part of your colon with the tumor and the lymph nodes near it.</p>
+        <p class="lede">Cancer was found in <input class="fill num" id="nodesPos" inputmode="numeric" aria-label="Number of lymph nodes with cancer"> of <input class="fill num" id="nodesTot" inputmode="numeric" aria-label="Number of lymph nodes checked"> lymph nodes. That makes it <mark>stage III</mark>.</p>
+        <p class="note">Lymph nodes are small filters along the colon's drainage. Cancer in the nodes tells us cells had started to travel.</p>
+        <div>
+          <div class="eyebrow" style="margin-bottom:6px">Your risk group</div>
+          <div class="chips" id="riskChips">
+            <button class="chip" data-risk="low" aria-pressed="true">Lower-risk stage III<small>T1–T3 and 1–3 nodes (N1)</small></button>
+            <button class="chip" data-risk="high" aria-pressed="false">Higher-risk stage III<small>T4, or 4 or more nodes (N2)</small></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>Why we talk about chemo</h2></div>
+    <div class="panel" style="display:grid;gap:10px">
+      <p class="lede">Surgery took out all the cancer we can see. Sometimes a few cancer cells have already slipped away. They are too small to show on any scan.</p>
+      <p class="lede">Chemo after surgery is a <span class="hand">clean-up crew</span>. Its job is to kill those hidden cells before they grow into a new tumor.</p>
+      <p class="lede">We can't tell who has hidden cells and who doesn't. Some people are already cured by surgery. So we talk in <mark>chances out of 100</mark>.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the side-effect table.</p>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 people like you</h2></div>
+    <p class="note">Five years from now, how many have the cancer come back?</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="note blank-only">Example numbers. Your doctor will mark the ones that fit you.</p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg free"><b id="nFree">0</b><span>cancer-free with surgery alone. They did not need chemo, but we can't know who they are.</span></div>
+        <div class="lg ben"><b id="nBen">0</b><span><strong>cancer-free because of chemo.</strong> These are the people chemo helps.</span></div>
+        <div class="lg rec"><b id="nRec">0</b><span>have the cancer come back even with this treatment.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel compare" id="compare" aria-label="All choices compared">
+      <div class="eyebrow">All choices side by side · people helped out of 100</div>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="row">
+        <label for="base">Chance the cancer comes back within 5 years with surgery alone</label>
+        <input type="range" id="base" min="15" max="80" step="1" value="40">
+        <output id="baseOut" for="base">40%</output>
+      </div>
+      <div class="note">Defaults: 40% lower-risk, 60% higher-risk. Adjust for this patient. Chemo effects use these relative reductions in recurrence: fluoropyrimidine alone about 30% (hazard ratio 0.70); adding oxaliplatin a further 20% (0.80); 3 months of CAPOX matches 6 months in the lower-risk group and is modeled slightly weaker (×1.12) in the higher-risk group.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="tablewrap"><table id="fx"></table></div>
+    <p class="note">Most side effects fade after chemo ends. Numbness from oxaliplatin is the one that can last, which is why the shorter course matters. Before starting a 5-FU-type drug, we may check a blood test for DPD deficiency, a rare cause of severe reactions.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Lowering the chance of the cancer coming back as much as I can</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding lasting numbness in my hands and feet</span></label>
+      <label><input type="checkbox" id="v3"><span>Finishing treatment sooner</span></label>
+      <label><input type="checkbox" id="v4"><span>Taking pills at home instead of IV treatment</span></label>
+      <label><input type="checkbox" id="v5"><span>Keeping up with work, family, or hobbies</span></label>
+      <label><input type="checkbox" id="v6"><span>Fewer trips to the clinic</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The choice we made together</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Port placement (if needed)
+Blood tests before first treatment
+Start date: </textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>A fever of 100.4°F (38°C) or higher, or chills</li>
+          <li>Diarrhea 4 or more times a day, or you can't keep fluids down</li>
+          <li>Mouth sores that stop you from eating or drinking</li>
+          <li>Red, peeling, or painful hands or feet that make it hard to walk or use them</li>
+          <li>Chest pain or trouble breathing (call 911)</li>
+        </ul>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers are estimates for people with stage III colon cancer, drawn from large trials and adjusted by your doctor for your situation. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol>
+      <li>Moertel CG et al. 5-FU and levamisole after resection of stage III colon cancer. NEJM 1990;322:352.</li>
+      <li>Twelves C et al. Capecitabine vs 5-FU/LV as adjuvant treatment (X-ACT). NEJM 2005;352:2696.</li>
+      <li>André T et al. Oxaliplatin, 5-FU and LV as adjuvant treatment (MOSAIC). NEJM 2004;350:2343; JCO 2009;27:3109.</li>
+      <li>Haller DG et al. Capecitabine plus oxaliplatin vs 5-FU/LV (NO16968). JCO 2011;29:1465.</li>
+      <li>Grothey A et al. Duration of adjuvant chemotherapy for stage III colon cancer (IDEA). NEJM 2018;378:1177.</li>
+      <li>McCleary NJ et al. Impact of age on oxaliplatin benefit (ACCENT pooled analysis). JCO 2013;31:2600.</li>
+    </ol>
+  </footer>

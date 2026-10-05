@@ -1,0 +1,218 @@
+  <header class="top">
+    <div class="eyebrow">Prostate cancer that has spread · still sensitive to hormone therapy · first treatment</div>
+    <h1>Prostate cancer that has spread: choosing the first treatment</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <p class="lede">The cancer has spread beyond the prostate, most often to the bones or lymph nodes. It still responds to lowering <mark>testosterone</mark>, the hormone that fuels it, so doctors call it <strong>hormone-sensitive</strong>.</p>
+    <p class="lede">Treatment usually can't cure it, but it can keep it under control for years. The goal is to help you <span class="hand">live longer and feel well</span>.</p>
+    <div class="panel facts">
+      <div class="eyebrow">Your cancer</div>
+      <div class="factgrid">
+        <label class="fact"><span>Where it has spread</span><span><input class="fill wide" id="sites" autocomplete="off"></span></label>
+        <label class="fact"><span>PSA when the spread was found</span><span><input class="fill num" id="psa" inputmode="decimal" style="width:4em"> ng/mL</span></label>
+        <label class="fact"><span>Gleason score or grade group</span><span><input class="fill wide" id="gleason" style="width:6em" autocomplete="off"></span></label>
+        <div class="fact"><span>When it was found</span><span class="mchips" data-k="timing"><button class="chip" data-v="syn" aria-pressed="false">At diagnosis</button><button class="chip" data-v="meta" aria-pressed="false">After earlier treatment</button></span></div>
+        <label class="fact"><span>Bone spots on CT and bone scans</span><span><input class="fill num" id="bones" inputmode="numeric"></span></label>
+        <div class="fact"><span>Any outside the spine and pelvis</span><span class="mchips" data-k="beyond"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+        <div class="fact"><span>Spread to organs such as the liver or lungs</span><span class="mchips" data-k="organ"><button class="chip" data-v="yes" aria-pressed="false">Yes</button><button class="chip" data-v="no" aria-pressed="false">No</button></span></div>
+      </div>
+      <div class="volrow">
+        <span class="q">Amount of cancer</span>
+        <span class="tag no" id="volTag" data-live>Fill in the scans to check</span>
+        <span class="blank-only">High volume &nbsp;/&nbsp; Low volume</span>
+      </div>
+      <p class="note">High volume means spread to organs such as the liver or lungs, or 4 or more bone spots with at least 1 outside the spine and pelvis. Everything else is low volume. This is how the studies sorted men, using CT and bone scans.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>How these medicines work</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 460 290" role="img" aria-label="Testosterone, the fuel, comes mostly from the testicles and a little from the adrenal glands. ADT shuts off the testicles. Abiraterone blocks the rest of the production. Enzalutamide, apalutamide and darolutamide block the receptor on the cancer cell. Docetaxel chemo stops the cells from dividing.">
+          <g fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5"><ellipse cx="44" cy="80" rx="15" ry="19"/><ellipse cx="76" cy="84" rx="15" ry="19"/></g>
+          <path d="M40 214 Q 52 190 64 214 Z M66 214 Q 78 194 90 214 Z" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M94 84 C 150 92, 200 108, 254 132" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 5"/>
+          <path d="M94 210 C 150 204, 200 190, 254 170" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 5"/>
+          <g fill="var(--green)"><circle cx="112" cy="87" r="6"/><circle cx="196" cy="108" r="6"/><circle cx="226" cy="119" r="6"/><circle cx="112" cy="208" r="6"/><circle cx="200" cy="191" r="6"/><circle cx="228" cy="181" r="6"/></g>
+          <path d="M142 82 L162 102 M162 82 L142 102" stroke="var(--red)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M142 194 L162 214 M162 194 L142 214" stroke="var(--red)" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="330" cy="152" r="72" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+          <circle cx="344" cy="160" r="24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="5 5"/>
+          <path d="M268 126 l0 14 q0 8 8 8 l6 0 q8 0 8 -8 l0 -14 M268 162 l0 14 q0 8 8 8 l6 0 q8 0 8 -8 l0 -14" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="273" y="126" width="12" height="17" rx="4" fill="var(--blue)"/>
+          <rect x="273" y="162" width="12" height="17" rx="4" fill="var(--blue)"/>
+          <path d="M330 150 l8 8 l-6 4 l10 10" fill="none" stroke="var(--red)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="14" y="42">testicles</text>
+          <text x="14" y="262">adrenal glands</text>
+          <text x="110" y="62" style="fill:var(--red)">ADT shuts this off</text>
+          <text x="110" y="244" style="fill:var(--red)">abiraterone blocks this</text>
+          <text x="104" y="146" style="fill:var(--green)">testosterone</text>
+          <text x="118" y="164" style="fill:var(--green)">(the fuel)</text>
+          <text x="238" y="22" style="fill:var(--blue)">enzalutamide, apalutamide</text>
+          <text x="238" y="40" style="fill:var(--blue)">or darolutamide block</text>
+          <text x="238" y="58" style="fill:var(--blue)">the receptor</text>
+          <path d="M300 64 C 290 84, 282 104, 280 122" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+          <text x="300" y="252" style="fill:var(--red)">docetaxel (chemo)</text>
+          <text x="300" y="270" style="fill:var(--red)">stops cells dividing</text>
+          <path d="M352 238 C 350 214, 346 196, 340 176" fill="none" stroke="var(--red)" stroke-width="1.5"/>
+          <text x="330" y="112" text-anchor="middle" style="font-size:14px;fill:var(--muted)">cancer cell</text>
+        </svg>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <p class="lede"><strong>ADT</strong> (androgen deprivation therapy) turns off testosterone from the testicles. It is a shot every 1 to 6 months, or a daily pill. Everyone gets it, and it continues long term.</p>
+        <p class="lede"><strong>Abiraterone</strong> (Zytiga) blocks the testosterone still made by the adrenal glands and the cancer itself. It is taken with <strong>prednisone</strong>, a steroid.</p>
+        <p class="lede"><strong>Enzalutamide</strong> (Xtandi), <strong>apalutamide</strong> (Erleada) and <strong>darolutamide</strong> (Nubeqa) block the receptor, the lock testosterone uses to switch the cancer on.</p>
+        <p class="lede"><strong>Docetaxel</strong> is chemo, given in a vein every 3 weeks for 6 doses.</p>
+        <p class="note">ADT plus one more medicine is called a <span class="hand">doublet</span>. ADT plus chemo plus a pill is a <span class="hand">triplet</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the side-effect table.</p>
+    <div class="opts three" id="opts"></div>
+    <p class="note">If genetic tests find a BRCA2 change, a PARP inhibitor (niraparib) can be added to abiraterone; the FDA approved this in December 2025. It is not part of this comparison.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 men like you</h2></div>
+    <p class="note">Five years from now, how many are alive?</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="basis" id="basis" data-live></p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg free"><b id="nFree">0</b><span>alive at 5 years with ADT alone. They would have been alive either way.</span></div>
+        <div class="lg ben"><b id="nBen">0</b><span><strong>alive at 5 years because of the added treatment.</strong> These are the men it helps.</span></div>
+        <div class="lg rec"><b id="nRec">0</b><span>died within 5 years, even with this treatment.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel compare" id="compare" aria-label="All choices compared">
+      <div class="eyebrow">All choices side by side · extra men alive at 5 years, out of 100</div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow" style="margin-bottom:6px">Reading this picture</div>
+      <ul class="reading">
+        <li>No study compared all six. Each pill was tested against ADT alone in its own study, so small differences between the pills may be chance.</li>
+        <li>The triplet was tested against ADT + chemo. Its number here comes from a 2026 analysis that combined the studies.</li>
+        <li>Darolutamide without chemo has the least certain number, because its survival result is not yet proven.</li>
+        <li>Cancer that came back after earlier treatment usually does better than these numbers, so your doctor may adjust the starting point.</li>
+      </ul>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="row">
+        <label for="s0">Chance of being alive at 5 years with ADT alone</label>
+        <input type="range" id="s0" min="5" max="90" step="1" value="35">
+        <output id="s0Out" for="s0">35%</output>
+      </div>
+      <div class="note" id="drNote">Model: S = S0^HR. S0, 5-year OS with ADT alone: STOPCaP model-based (Vale, Lancet Oncol 2023) high-volume 26% synchronous / 28% metachronous, low-volume 52% synchronous / 72% metachronous; STAMPEDE docetaxel M1 control arm 24% high-volume, 57% low-volume (Clarke, Ann Oncol 2019). HRs vs ADT: abiraterone, LATITUDE final 0.66 (0.56–0.78); enzalutamide, ARCHES 5-year 0.70 (0.58–0.85) (ENZAMET 8-year 0.73, vs NSAA); apalutamide, TITAN final 0.65 (0.53–0.79); darolutamide, ARANOTE 0.78 (0.58–1.05), not significant (US label 2026). Triplet: Riaz, Eur Urol 2026 NMA, synchronous high-volume triplet vs ARPI doublet 0.71 (0.53–0.97), times ~0.66 for ARPI vs ADT, so 0.48; synchronous low-volume triplet vs ARPI 1.08 (0.65–1.79), so set equal to a doublet, 0.66. ARASENS overall OS HR 0.68 vs ADT + docetaxel; PEACE-1 0.75 (high-volume 0.72).</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="panel">
+      <h3>Everyone on ADT</h3>
+      <p>Hot flashes, tiredness, less interest in sex and erection problems, thinner bones, less muscle and more belly fat, and higher blood sugar and cholesterol. Exercise, including strength training, helps with many of these.</p>
+    </div>
+    <div class="tablewrap"><table id="fx"></table></div>
+    <p class="note">Each cell is the extra effect of that medicine on top of ADT: men out of 100 with the medicine vs with a placebo, in LATITUDE (abiraterone, severe events), ARCHES (enzalutamide), TITAN (apalutamide) and ARANOTE (darolutamide). The triplet column compares ARASENS with ADT + chemo alone. Tell us early about any side effect: a dose change often helps.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Living as long as possible</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding chemo</span></label>
+      <label><input type="checkbox" id="v3"><span>Keeping my memory and thinking sharp</span></label>
+      <label><input type="checkbox" id="v4"><span>Avoiding falls and broken bones</span></label>
+      <label><input type="checkbox" id="v5"><span>Avoiding a daily steroid, or blood pressure and sugar problems</span></label>
+      <label><input type="checkbox" id="v6"><span>Fewer blood tests and clinic visits</span></label>
+      <label><input type="checkbox" id="v7"><span>Fewer clashes with my other medicines</span></label>
+      <label><input type="checkbox" id="v8"><span>Cost and what my insurance covers</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>Also part of your care</h2></div>
+    <div class="also">
+      <div class="panel"><h3>Genetic testing</h3><p>Guidelines advise testing every man whose prostate cancer has spread: a blood or saliva test, and a test of the tumor. It can open extra options and matters for your family.</p></div>
+      <div class="panel"><h3>Radiation to the prostate</h3><p>For low-volume cancer found at diagnosis, radiation to the prostate helped men live longer in the STAMPEDE study. Ask whether it fits you.</p></div>
+      <div class="panel"><h3>Bones and heart</h3><p>ADT thins bones and raises blood sugar and cholesterol. Calcium, vitamin D, exercise and a bone density scan help, and so do regular checkups with your primary doctor.</p></div>
+      <div class="panel"><h3>If the cancer grows later</h3><p>Other treatments remain, including chemo, radioactive PSMA treatment and clinical trials. Switching to another of these pills usually helps little.</p></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" data-step="8" id="s8">
+    <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The first treatment we chose</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Also</div>
+        <div class="checks">
+          <label><input type="checkbox" id="p1"><span>Genetic testing (blood or saliva, and the tumor)</span></label>
+          <label><input type="checkbox" id="p2"><span>Bone density scan, calcium and vitamin D</span></label>
+          <label><input type="checkbox" id="p3"><span>Radiation to the prostate</span></label>
+          <label><input type="checkbox" id="p4"><span>Exercise plan, including strength training</span></label>
+        </div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Start date:
+PSA and blood tests in:
+Next scans:</textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us right away if you have</h3>
+        <ul>
+          <li>New or worse bone pain, especially in your back</li>
+          <li>Weakness or numbness in your legs, or trouble controlling your bladder or bowels (go to the emergency room)</li>
+          <li>A fever of 100.4°F (38°C) or higher during chemo</li>
+          <li>Chest pain or trouble breathing (call 911)</li>
+          <li>Dizziness, swelling or muscle cramps on abiraterone</li>
+          <li>A fall, a seizure, or a rash that is spreading</li>
+        </ul>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers come from large studies of men with prostate cancer that had spread and still responded to hormone therapy. They describe groups of men and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol>
+      <li>Fizazi K et al. Abiraterone plus prednisone in metastatic castration-sensitive prostate cancer (LATITUDE): final overall survival. Lancet Oncol 2019;20:686. Fizazi K et al. N Engl J Med 2017;377:352.</li>
+      <li>Attard G et al. Abiraterone acetate plus prednisolone with or without enzalutamide (STAMPEDE). Lancet Oncol 2023;24:443.</li>
+      <li>Armstrong AJ et al. Enzalutamide with ADT (ARCHES): final overall survival. J Clin Oncol 2022;40:1616; 5-year update, ASCO 2025 abstract 5005. Sweeney CJ et al. ENZAMET. Lancet Oncol 2023;24:323.</li>
+      <li>Chi KN et al. Apalutamide in metastatic castration-sensitive prostate cancer (TITAN): final survival. J Clin Oncol 2021;39:2294. Chi KN et al. N Engl J Med 2019;381:13.</li>
+      <li>Saad F et al. Darolutamide in combination with ADT (ARANOTE). J Clin Oncol 2024;42:4271. Nubeqa US prescribing information, 2026.</li>
+      <li>Smith MR et al. Darolutamide and survival in metastatic hormone-sensitive prostate cancer (ARASENS). N Engl J Med 2022;386:1132. Fizazi K et al. PEACE-1. Lancet 2022;399:1695.</li>
+      <li>Riaz IB et al. Treatment selection by disease volume and timing: network meta-analysis. Eur Urol 2026;89:31. Vale CL et al. Docetaxel by volume and timing (STOPCaP). Lancet Oncol 2023;24:783.</li>
+      <li>Attard G et al. Niraparib and abiraterone in HRR-altered mHSPC (AMPLITUDE). Nat Med 2025;31:4109. Parker CC et al. Radiotherapy to the prostate (STAMPEDE). Lancet 2018;392:2353.</li>
+    </ol>
+  </footer>

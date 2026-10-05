@@ -215,7 +215,7 @@ footer ol { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   table { min-width: 0; }
 }
-/* Breast talk additions */
+/* Shared components used by several talks */
 .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 860px) { .opts.three { grid-template-columns: 1fr; } }
 .facts { display: grid; gap: 8px; }
@@ -545,6 +545,8 @@ Plan for: 5 years</textarea></label>
   ];
 
   /* ---------- state ---------- */
+  // What Clear ink and Print blank reset (typed fields and ticks are reset separately).
+  const BLANK = { plan: null };
   const S = { base: CFG.base, sel: 'ai', plan: null };
   const RR = { none: 1, get tam() { return CFG.tam; }, get ai() { return CFG.tam * CFG.aiVsTam; } };
   function outcome(id) {
@@ -715,12 +717,12 @@ Plan for: 5 years</textarea></label>
   // wipe() empties it and returns a function that puts it all back.
   function wipe(keep = []) {
     const els = $$('input, textarea', board).filter(el => !el.closest('.dr') && !keep.includes(el.id));
-    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), plan = S.plan, inkWas = strokes;
+    const saved = els.map(el => el.type === 'checkbox' ? el.checked : el.value), was = { ...S }, inkWas = strokes;
     els.forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'TEXTAREA') el.value = el.defaultValue; else el.value = ''; });
-    S.plan = null; strokes = []; render(); redraw();
+    Object.assign(S, BLANK); strokes = []; render(); redraw();
     return () => {
       els.forEach((el, i) => { if (el.type === 'checkbox') el.checked = saved[i]; else el.value = saved[i]; });
-      S.plan = plan; strokes = inkWas; render(); redraw();
+      Object.assign(S, was); strokes = inkWas; render(); redraw();
     };
   }
   // Clear ink starts a fresh page (today's date stays); Undo right after brings it all back.
@@ -748,7 +750,7 @@ Plan for: 5 years</textarea></label>
     const ED = { btn: $('#editBtn'), save: $('#saveBtn'), cancel: $('#cancelBtn'), msg: $('#editStatus') };
     const say = t => { ED.msg.textContent = t; };
     const SEL = 'h1,h2,h3,p,li,th,td,.how,.eyebrow,.note,.lg span,.checks label > span,.fact > span:first-child';
-    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict') && !el.closest('svg') &&
+    let els = $$(SEL, board).filter(el => !el.matches('#say,#verdict,[data-live]') && !el.querySelector('[data-live]') && !el.closest('svg') &&
       !el.querySelector('input,textarea,button,select') && el.textContent.trim());
     els = els.filter(el => !els.some(o => o !== el && o.contains(el)));
 

@@ -1,0 +1,211 @@
+  <header class="top">
+    <div class="eyebrow">ER-positive, HER2-negative breast cancer · after surgery</div>
+    <h1>Hormone pills after breast cancer: which one, and do I need more?</h1>
+    <div class="who">
+      <label>For <input class="fill wide" id="ptName" placeholder="name" autocomplete="off"></label>
+      <label>Date <input class="fill wide" id="visitDate" style="width:8em" autocomplete="off"></label>
+      <label>With <input class="fill wide" id="drName" placeholder="Dr." autocomplete="off"></label>
+    </div>
+  </header>
+
+  <!-- 1 -->
+  <section class="step" data-step="1" id="s1">
+    <div class="sh"><span class="n">1</span><h2>What we found</h2></div>
+    <div class="two">
+      <div class="panel facts">
+        <div class="eyebrow">Your cancer</div>
+        <label class="fact"><span>Tumor size</span><span><input class="fill num" id="size" inputmode="decimal"> cm</span></label>
+        <label class="fact"><span>Lymph nodes with cancer</span><span><input class="fill num" id="nodes" inputmode="numeric"> of <input class="fill num" id="nodesTot" inputmode="numeric" aria-label="Lymph nodes checked"></span></label>
+        <label class="fact"><span>Grade (1 slow – 3 fast)</span><span><input class="fill num" id="grade" inputmode="numeric"></span></label>
+        <label class="fact"><span>Ki-67 (how fast cells divide)</span><span><input class="fill num" id="ki67" inputmode="numeric"> %</span></label>
+        <label class="fact"><span>Tumor gene test score (Oncotype DX)</span><span><input class="fill num" id="rs" inputmode="numeric"></span></label>
+        <div class="fact"><span>Estrogen receptor (ER)</span><span class="hand">positive</span></div>
+        <div class="fact"><span>HER2</span><span class="hand">negative</span></div>
+      </div>
+      <div style="display:grid;gap:12px;min-width:0">
+        <p class="lede">Surgery removed the cancer. Your cancer is <mark>hormone-sensitive</mark>: it uses estrogen to grow.</p>
+        <p class="lede" id="rsLine">Your tumor gene test score is low. For women past menopause, a score of 25 or lower means <strong>chemo would not add benefit</strong>.</p>
+        <p class="lede">So the <span class="hand">hormone pill is your main treatment</span>. It lowers the chance the cancer comes back.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="step" data-step="2" id="s2">
+    <div class="sh"><span class="n">2</span><h2>How hormone pills work</h2></div>
+    <div class="two">
+      <div class="panel diagram">
+        <svg viewBox="0 0 420 260" role="img" aria-label="Drawing: estrogen made in body fat by the aromatase enzyme travels to the cancer cell and fits its estrogen receptor. Aromatase inhibitors stop the making; tamoxifen blocks the receptor.">
+          <ellipse cx="80" cy="150" rx="58" ry="46" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="3 5"/>
+          <text x="40" y="92">body fat</text>
+          <text x="44" y="156" style="font-size:15px">aromatase</text>
+          <text x="54" y="174" style="font-size:15px">(factory)</text>
+          <path d="M140 140 C 180 120, 220 120, 256 136" fill="none" stroke="var(--ink)" stroke-width="2" marker-end="url(#arr)"/>
+          <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--ink)"/></marker></defs>
+          <g fill="var(--green)"><circle cx="176" cy="114" r="7"/><circle cx="210" cy="110" r="7"/></g>
+          <text x="160" y="96" style="fill:var(--green)">estrogen (fuel)</text>
+          <circle cx="330" cy="150" r="66" fill="var(--paper)" stroke="var(--ink)" stroke-width="3"/>
+          <text x="290" y="156">cancer cell</text>
+          <path d="M268 126 l-10 -6 m10 6 l-4 10" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M276 196 a9 9 0 1 1 -14 -10" stroke="var(--blue)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M350 86 a9 9 0 1 1 14 6" stroke="var(--blue)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <text x="330" y="70" style="fill:var(--blue);font-size:15px">receptor (lock)</text>
+          <path d="M60 196 L100 224 M100 196 L60 224" stroke="var(--red)" stroke-width="3.5" stroke-linecap="round"/>
+          <text x="8" y="250" style="fill:var(--red);font-size:15px">aromatase inhibitor shuts the factory</text>
+          <rect x="248" y="112" width="16" height="16" rx="3" fill="var(--red)"/>
+          <text x="268" y="250" style="fill:var(--red);font-size:15px">tamoxifen plugs the lock</text>
+          <path d="M290 238 C 270 210, 258 160, 256 132" fill="none" stroke="var(--red)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <p class="lede">Estrogen is <span class="hand">fuel</span> for this cancer. After menopause, the ovaries stop, and most estrogen is made in body fat by an enzyme called aromatase.</p>
+        <p class="lede"><strong>Aromatase inhibitors</strong> (anastrozole, letrozole, exemestane) shut down that factory, so there is less fuel.</p>
+        <p class="lede"><strong>Tamoxifen</strong> lets estrogen be made but blocks it from plugging into the cancer cell.</p>
+        <p class="note">Either way, any hidden cancer cells are starved of the signal they need to grow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="step" data-step="3" id="s3">
+    <div class="sh"><span class="n">3</span><h2>Your choices</h2></div>
+    <p class="note noprint">Tap a choice to see it in the picture below and in the side-effect table.</p>
+    <div class="opts three" id="opts"></div>
+    <p class="note">How long: usually 5 years. For higher-risk cancers we sometimes continue to 7–10 years. Starting with tamoxifen for 2–3 years and then switching to an aromatase inhibitor works about as well as an aromatase inhibitor alone.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="step" data-step="4" id="s4">
+    <div class="sh"><span class="n">4</span><h2>Out of 100 women like you</h2></div>
+    <p class="note">Ten years from now, how many have the breast cancer come back?</p>
+    <div class="tabs" id="tabs"></div>
+    <p class="note blank-only">Example numbers. Your doctor will mark the ones that fit you.</p>
+    <div class="panel arraywrap">
+      <svg id="people" viewBox="0 0 340 340" role="img" aria-labelledby="peopleDesc"><desc id="peopleDesc"></desc></svg>
+      <div class="legend" style="min-width:0">
+        <div class="lg free"><b id="nFree">0</b><span>free of cancer with surgery alone. They did not need the pill, but we can't know who they are.</span></div>
+        <div class="lg ben"><b id="nBen">0</b><span><strong>free of cancer because of the pill.</strong> These are the women it helps.</span></div>
+        <div class="lg rec"><b id="nRec">0</b><span>have the cancer come back even with this treatment.</span></div>
+        <p class="say" id="say"></p>
+      </div>
+    </div>
+    <div class="panel compare" id="compare" aria-label="All choices compared">
+      <div class="eyebrow">All choices side by side · women helped out of 100</div>
+    </div>
+    <div class="dr noprint" id="drPanel">
+      <div class="eyebrow">For your doctor</div>
+      <div class="row">
+        <label for="base">Chance of recurrence or new breast cancer within 10 years with no endocrine therapy</label>
+        <input type="range" id="base" min="5" max="45" step="1" value="15">
+        <output id="baseOut" for="base">15%</output>
+      </div>
+      <div class="note">Default 15% is a placeholder for a node-negative, low-genomic-risk tumor; set it for this patient. Effects modeled as relative reductions in 10-year recurrence: tamoxifen 5 years about 40% (RR 0.60, EBCTCG 2011); an aromatase inhibitor a further 20% versus tamoxifen (RR 0.80, EBCTCG 2015), so 0.48 overall.</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="step" data-step="5" id="s5">
+    <div class="sh"><span class="n">5</span><h2>Schedule and side effects</h2></div>
+    <div class="tablewrap"><table id="fx" class="narrow"></table></div>
+    <p class="note">Numbers are rough, over 5 years, from the large trials comparing these pills (ATAC, BIG 1-98). “Added risk” means on top of the usual risk for someone your age. Most side effects ease after the first few months. If one pill doesn't suit you, switching to another aromatase inhibitor or to tamoxifen often helps, so tell us rather than stopping. The pill only works if it is taken.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="step" data-step="6" id="s6">
+    <div class="sh"><span class="n">6</span><h2>Should we add a CDK4/6 inhibitor?</h2></div>
+    <div class="panel" style="display:grid;gap:10px">
+      <p class="lede">CDK4/6 inhibitors are pills that put the brakes on cell division. Added to a hormone pill, they lower the chance of recurrence <strong>for cancers with a higher risk</strong>, mostly when lymph nodes are involved.</p>
+      <p class="lede verdict" id="verdict"></p>
+    </div>
+    <div class="opts" id="cdk">
+      <div class="opt trial" id="tNat">
+        <div class="tag" id="tagNat"></div>
+        <h3>Ribociclib (Kisqali), 3 years</h3>
+        <div class="how">NATALEE trial. Taken with an aromatase inhibitor; 3 weeks on, 1 week off.</div>
+        <ul>
+          <li class="fit"><span>Who was in it: stage II–III. Any lymph node with cancer, or no nodes but a tumor over 5 cm, or 2–5 cm and grade 3, or grade 2 with Ki-67 20% or more or a high gene score.</span></li>
+          <li class="pro"><span>At 5 years, 85.5 of 100 were cancer-free versus 81.0 with the hormone pill alone: <strong>about 4 to 5 more per 100</strong>.</span></li>
+          <li class="con"><span>Low white blood counts, liver test changes, heart rhythm check (ECG), tiredness. Blood tests every month at first.</span></li>
+        </ul>
+        <div class="mini" aria-hidden="true"><span style="--w:81%"></span><span class="add" style="--w:4.5%"></span></div>
+      </div>
+      <div class="opt trial" id="tMon">
+        <div class="tag" id="tagMon"></div>
+        <h3>Abemaciclib (Verzenio), 2 years</h3>
+        <div class="how">monarchE trial. Taken twice a day with any hormone pill.</div>
+        <ul>
+          <li class="fit"><span>Who was in it: 4 or more lymph nodes with cancer, or 1–3 nodes plus a tumor 5 cm or larger or grade 3.</span></li>
+          <li class="pro"><span>At 7 years, 77.4 of 100 were cancer-free versus 70.9: <strong>about 6 to 7 more per 100</strong>. Also about 2 more per 100 alive (86.8 versus 85.0).</span></li>
+          <li class="con"><span>Diarrhea in most people, usually early and manageable. Low blood counts, tiredness, blood clots in about 2–3 in 100.</span></li>
+        </ul>
+        <div class="mini" aria-hidden="true"><span style="--w:70.9%"></span><span class="add" style="--w:6.5%"></span></div>
+      </div>
+    </div>
+    <p class="note">The benefits above are for the higher-risk women in those trials. When the risk of recurrence is lower, the benefit is smaller, while the side effects stay the same.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="step" data-step="7" id="s7">
+    <div class="sh"><span class="n">7</span><h2>What matters most to you</h2></div>
+    <div class="panel checks" id="vals">
+      <label><input type="checkbox" id="v1"><span>Lowering the chance of the cancer coming back as much as I can</span></label>
+      <label><input type="checkbox" id="v2"><span>Avoiding joint and muscle aches</span></label>
+      <label><input type="checkbox" id="v3"><span>Protecting my bones</span></label>
+      <label><input type="checkbox" id="v4"><span>Avoiding blood clots or uterine problems</span></label>
+      <label><input type="checkbox" id="v5"><span>Keeping hot flashes and sleep problems down</span></label>
+      <label><input type="checkbox" id="v6"><span>Fewer blood tests and clinic visits</span></label>
+    </div>
+    <textarea class="lines" id="valNotes" rows="2" placeholder="Anything else that matters to you…" aria-label="Other things that matter"></textarea>
+  </section>
+
+  <!-- 8 -->
+  <section class="step" data-step="8" id="s8">
+    <div class="sh"><span class="n">8</span><h2>Our plan</h2></div>
+    <div class="panel plan">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">The hormone pill we chose</div>
+        <div class="pick chips" id="planPick"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Also</div>
+        <div class="checks">
+          <label><input type="checkbox" id="p1"><span>Add ribociclib for 3 years</span></label>
+          <label><input type="checkbox" id="p2"><span>Add abemaciclib for 2 years</span></label>
+          <label><input type="checkbox" id="p3"><span>Bone density scan (DEXA)</span></label>
+          <label><input type="checkbox" id="p4"><span>Calcium, vitamin D and exercise</span></label>
+        </div>
+      </div>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Next steps</span>
+        <textarea class="lines" id="steps" rows="3" aria-label="Next steps">Start date:
+Check-in visit in 3 months to see how the pill is going
+Plan for: 5 years</textarea></label>
+      <label style="display:grid;gap:2px"><span class="eyebrow">Questions to ask next time</span>
+        <textarea class="lines" id="qs" rows="2" aria-label="Questions"></textarea></label>
+      <div class="call">
+        <h3>Call us if you have</h3>
+        <ul>
+          <li>Pain, swelling or redness in one leg, or sudden shortness of breath or chest pain (call 911)</li>
+          <li>Vaginal bleeding or spotting after menopause</li>
+          <li>Side effects that make you want to stop the pill. We can usually help</li>
+          <li>A new lump, or bone pain that does not go away</li>
+          <li>If on a CDK4/6 inhibitor: fever of 100.4°F (38°C) or higher, diarrhea that loperamide doesn't control, yellow skin or eyes, or a new cough or shortness of breath</li>
+        </ul>
+        <div class="callrow">
+          <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
+          <label>After hours <input class="fill wide" id="phoneNight" placeholder="phone" autocomplete="off"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Numbers are estimates for women past menopause with ER-positive, HER2-negative early breast cancer, drawn from large trials and adjusted by your doctor for your situation. They describe groups of people and cannot predict exactly what will happen to you. This sheet goes with your conversation with your care team and does not replace it.</p>
+    <ol>
+      <li>EBCTCG. Relevance of breast cancer hormone receptors and other factors to the efficacy of adjuvant tamoxifen. Lancet 2011;378:771.</li>
+      <li>EBCTCG. Aromatase inhibitors versus tamoxifen in early breast cancer. Lancet 2015;386:1341.</li>
+      <li>Cuzick J et al. ATAC 10-year analysis. Lancet Oncol 2010;11:1135. BIG 1-98 Collaborative Group. NEJM 2009;361:766.</li>
+      <li>Sparano JA et al. TAILORx. NEJM 2018;379:111. Kalinsky K et al. RxPONDER. NEJM 2021;385:2336.</li>
+      <li>Slamon D et al. Ribociclib plus endocrine therapy in early breast cancer (NATALEE). NEJM 2024;390:1080; 5-year update, 2025.</li>
+      <li>Johnston SRD et al. monarchE. JCO 2020;38:3987. Overall survival with abemaciclib in early breast cancer. Ann Oncol 2025.</li>
+    </ol>
+  </footer>
