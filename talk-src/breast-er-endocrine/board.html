@@ -112,12 +112,13 @@
 
   <!-- 6 -->
   <section class="step" data-step="6" id="s6">
-    <div class="sh"><span class="n">6</span><h2>Should we add a CDK4/6 inhibitor?</h2></div>
+    <div class="sh"><span class="n">6</span><h2>For higher-risk cancers: newer options</h2></div>
     <div class="panel" style="display:grid;gap:10px">
       <p class="lede">CDK4/6 inhibitors are pills that put the brakes on cell division. Added to a hormone pill, they lower the chance of recurrence <strong>for cancers with a higher risk</strong>, mostly when lymph nodes are involved.</p>
+      <p class="lede"><strong>Giredestrant</strong> is a newer kind of hormone pill. Instead of only blocking the estrogen receptor, it breaks the receptor down. In a large study it worked better than the usual hormone pill for medium- and high-risk cancers. <mark>It is not yet approved by the FDA</mark>; a decision is expected by November 30, 2026.</p>
       <p class="lede verdict" id="verdict"></p>
     </div>
-    <div class="opts" id="cdk">
+    <div class="opts three" id="cdk">
       <div class="opt trial" id="tNat">
         <div class="tag" id="tagNat"></div>
         <h3>Ribociclib (Kisqali), 3 years</h3>
@@ -140,8 +141,24 @@
         </ul>
         <div class="mini" aria-hidden="true"><span style="--w:70.9%"></span><span class="add" style="--w:6.5%"></span></div>
       </div>
+      <div class="opt trial" id="tGir">
+        <div class="tag" id="tagGir"></div>
+        <h3>Giredestrant, 5 years <small class="note">not yet FDA approved</small></h3>
+        <div class="how">lidERA trial. One pill a day <strong>instead of</strong> the usual hormone pill, not on top of it.</div>
+        <ul>
+          <li class="fit"><span>Who was in it: stage I–III. Any lymph node with cancer, or no nodes but a tumor over 1 cm that is grade 3, has Ki-67 of 20% or more, or has a high gene score.</span></li>
+          <li class="pro"><span>For women past menopause, at 3 years 91.3 of 100 were cancer-free versus 88.3 with the usual hormone pill: <strong>about 3 more per 100</strong>. Too early to know about living longer.</span></li>
+          <li class="pro"><span>Joint aches and hot flashes about as common as with the usual pill. Fewer people stopped because of side effects: about 5 in 100 versus 8 in 100.</span></li>
+          <li class="con"><span>A slower heart rate in about 1 in 10, usually mild and without symptoms. Longer-term effects on bones and the uterus have not been reported yet.</span></li>
+        </ul>
+        <div class="mini" aria-hidden="true"><span style="--w:88.3%"></span><span class="add" style="--w:3%"></span></div>
+      </div>
     </div>
-    <p class="note">The benefits above are for the higher-risk women in those trials. When the risk of recurrence is lower, the benefit is smaller, while the side effects stay the same.</p>
+    <p class="note">The benefits above are for the higher-risk women in those trials. When the risk of recurrence is lower, the benefit is smaller, while the side effects stay the same. The three studies followed women for different lengths of time (3, 5 and 7 years) and were never compared with each other. Giredestrant was not studied together with ribociclib or abemaciclib.</p>
+    <div class="dr noprint">
+      <div class="eyebrow">For your doctor · lidERA</div>
+      <div class="note">Giredestrant 30 mg daily × 5 years vs investigator's-choice endocrine therapy (84% AI, 16% tamoxifen), n = 4,170, stage I–III, about 59% postmenopausal; OFS required for premenopausal women and men. ITT iDFS HR 0.70 (95% CI 0.57–0.87), 3-year iDFS 92.4% vs 89.6%; DRFI HR 0.69. Postmenopausal subgroup (shown on the card) HR 0.74 (0.57–0.96), 3-year iDFS 91.3% vs 88.3%. OS immature, HR 0.79 (0.56–1.12). Median follow-up 32 months. Bradycardia mostly grade 1, no grade 3–4; discontinuation for AEs 5.3% vs 8.2%. No placebo arm: side effects are compared with standard endocrine therapy. Eligibility tag uses Oncotype 26 or higher as the "high gene score"; the trial did not publish a single cutoff. Primary results presented at SABCS 2025 (GS1-10); no full journal paper yet. FDA priority review, PDUFA date November 30, 2026.</div>
+    </div>
   </section>
 
   <!-- 7 -->
@@ -171,6 +188,7 @@
         <div class="checks">
           <label><input type="checkbox" id="p1"><span>Add ribociclib for 3 years</span></label>
           <label><input type="checkbox" id="p2"><span>Add abemaciclib for 2 years</span></label>
+          <label><input type="checkbox" id="p5"><span>Giredestrant instead of the usual pill, once approved</span></label>
           <label><input type="checkbox" id="p3"><span>Bone density scan (DEXA)</span></label>
           <label><input type="checkbox" id="p4"><span>Calcium, vitamin D and exercise</span></label>
         </div>
@@ -189,6 +207,7 @@ Plan for: 5 years</textarea></label>
           <li>Side effects that make you want to stop the pill. We can usually help</li>
           <li>A new lump, or bone pain that does not go away</li>
           <li>If on a CDK4/6 inhibitor: fever of 100.4°F (38°C) or higher, diarrhea that loperamide doesn't control, yellow skin or eyes, or a new cough or shortness of breath</li>
+          <li>If on giredestrant: dizziness, fainting, or a heartbeat that feels very slow</li>
         </ul>
         <div class="callrow">
           <label>Clinic <input class="fill wide" id="phoneDay" placeholder="phone" autocomplete="off"></label>
@@ -207,5 +226,6 @@ Plan for: 5 years</textarea></label>
       <li>Sparano JA et al. TAILORx. NEJM 2018;379:111. Kalinsky K et al. RxPONDER. NEJM 2021;385:2336.</li>
       <li>Slamon D et al. Ribociclib plus endocrine therapy in early breast cancer (NATALEE). NEJM 2024;390:1080; 5-year update, 2025.</li>
       <li>Johnston SRD et al. monarchE. JCO 2020;38:3987. Overall survival with abemaciclib in early breast cancer. Ann Oncol 2025.</li>
+      <li>Bardia A, Schmid P, Martín M et al. Giredestrant vs standard endocrine therapy as adjuvant treatment for ER+, HER2− early breast cancer (lidERA). SABCS 2025, abstract GS1-10. Schmid P et al. lidERA by menopausal status. J Clin Oncol 2026;44(suppl 16):502. Roche: FDA accepts giredestrant application under Priority Review, June 2, 2026.</li>
     </ol>
   </footer>

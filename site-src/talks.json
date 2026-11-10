@@ -29,7 +29,7 @@
     "source": "talks/breast-er-endocrine.html",
     "title": "Hormone pills after breast cancer: which one, and do I need more?",
     "topic": "Breast cancer · ER+, HER2−, postmenopausal",
-    "summary": "Tamoxifen versus an aromatase inhibitor for low genomic risk disease, and when to add ribociclib (NATALEE) or abemaciclib (monarchE).",
+    "summary": "Tamoxifen versus an aromatase inhibitor for low genomic risk disease, and for higher-risk cancers when to add ribociclib (NATALEE) or abemaciclib (monarchE), or consider giredestrant (lidERA, not yet FDA approved).",
     "tags": [
       "breast",
       "endocrine",
@@ -52,9 +52,13 @@
       "arthralgia",
       "osteoporosis",
       "hot flashes",
-      "breast cancer"
+      "breast cancer",
+      "giredestrant",
+      "lidERA",
+      "SERD",
+      "oral SERD"
     ],
-    "updated": "2026-10-04"
+    "updated": "2026-11-10"
   },
   {
     "slug": "dcis-endocrine",

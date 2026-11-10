@@ -99,7 +99,12 @@
     const size = num('size'), n = num('nodes'), g = num('grade'), ki = num('ki67'), rs = num('rs');
     const natalee = n >= 1 || size > 5 || (size > 2 && (g >= 3 || (g === 2 && (ki >= 20 || rs >= 26))));
     const monarch = n >= 4 || (n >= 1 && (g >= 3 || size >= 5));
-    return { natalee, monarch, rs, known: size !== null && n !== null && g !== null };
+    // lidERA: any positive node, or node-negative over 1 cm with grade 3, Ki-67 20% or more, or a high gene score (Oncotype 26+).
+    const lidera = n >= 1 || (size > 1 && (g >= 3 || ki >= 20 || rs >= 26));
+    const known = size !== null && n !== null && g !== null;
+    // Node-negative, over 1 cm, not grade 3: lidERA needs Ki-67 or the gene score to decide.
+    const lideraKnown = known && (lidera || !(n === 0 && size > 1 && g < 3 && (ki === null || rs === null)));
+    return { natalee, monarch, lidera, lideraKnown, rs, known };
   }
 
   function render() {
@@ -125,17 +130,21 @@
     });
 
     const t = trials();
-    const tag = (el, ok) => {
-      el.textContent = !t.known ? 'Fill in part 1 to check' : ok ? 'Matches who was in this study' : 'You would not have qualified';
-      el.className = 'tag ' + (ok && t.known ? 'yes' : 'no');
+    const tag = (el, ok, known = t.known) => {
+      el.textContent = !t.known ? 'Fill in part 1 to check' : !known ? 'Add Ki-67 or gene score to check' : ok ? 'Matches who was in this study' : 'You would not have qualified';
+      el.className = 'tag ' + (ok && known ? 'yes' : 'no');
     };
-    tag($('#tagNat'), t.natalee); tag($('#tagMon'), t.monarch);
+    tag($('#tagNat'), t.natalee); tag($('#tagMon'), t.monarch); tag($('#tagGir'), t.lidera, t.lideraKnown);
     $('#tNat').classList.toggle('dim', t.known && !t.natalee); $('#tMon').classList.toggle('dim', t.known && !t.monarch);
+    $('#tGir').classList.toggle('dim', t.lideraKnown && !t.lidera);
     $('#verdict').innerHTML = !t.known
       ? 'Fill in the tumor size, lymph nodes and grade in part 1 to see whether these studies apply to your cancer.'
-      : !t.natalee && !t.monarch
-      ? 'For your cancer: <span class="hand">a hormone pill alone is the standard.</span> Your cancer is lower risk than the women in these studies.'
-      : `For your cancer: <span class="hand">this is worth discussing.</span> Your cancer matches who was in ${t.natalee && t.monarch ? 'both studies' : t.natalee ? 'the ribociclib study' : 'the abemaciclib study'}.`;
+      : !t.natalee && !t.monarch && !t.lidera
+      ? (t.lideraKnown
+        ? 'For your cancer: <span class="hand">a hormone pill alone is the standard.</span> Your cancer is lower risk than the women in these studies.'
+        : 'For your cancer: the CDK4/6 studies do not apply. Add the Ki-67 or gene score in part 1 to check the giredestrant study.')
+      : `For your cancer: <span class="hand">this is worth discussing.</span> Your cancer matches who was in ${
+        [t.natalee && 'the ribociclib study', t.monarch && 'the abemaciclib study', t.lidera && 'the giredestrant study (not yet FDA approved)'].filter(Boolean).join(t.natalee + t.monarch + t.lidera > 2 ? ', ' : ' and ').replace(/, (?=[^,]*$)/, ', and ')}.`;
     $('#rsLine').hidden = t.rs !== null && t.rs > 25;
     autosize();
   }
