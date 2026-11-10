@@ -29,7 +29,7 @@
   const FX = [
     ['How it is taken', ['Nothing to take', 'One pill daily', 'One pill daily']],
     ['Hot flashes', [['lo', 'Usual after menopause'], ['md', 'Common; somewhat more than with an aromatase inhibitor'], ['md', 'Common']]],
-    ['Joint and muscle aches', [['lo', 'Usual for age'], ['lo', 'No added risk'], ['hi', 'Common; up to half notice new or worse aches']]],
+    ['Joint and muscle aches', [['lo', 'Usual for age'], ['lo', 'No added risk'], ['md', 'About 5 more in 100 (51 vs 46 on placebo)']]],
     ['Bone thinning, fractures', [['lo', 'Usual for age'], ['lo', 'Protects bones'], ['hi', 'Increased bone loss']]],
     ['Blood clots', [['lo', 'Usual for age'], ['hi', 'Small added risk, about 2 more in 100'], ['lo', 'No added risk']]],
     ['Uterine cancer', [['lo', 'Usual for age'], ['hi', 'Small added risk, under 1 in 100'], ['lo', 'No added risk']]],

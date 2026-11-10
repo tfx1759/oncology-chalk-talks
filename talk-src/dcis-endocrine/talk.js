@@ -45,7 +45,7 @@
     ['Joint and muscle aches', [['lo', 'Common at this age'], ['lo', 'No added risk'], ['lo', 'No added risk'], ['md', 'About 5 more in 100 (51 vs 46)']]],
     ['Blood clots', [['lo', 'Usual for age'], ['md', 'About 1 more in 100 over 5 years'], ['lo', 'No clear added risk; 1 clot in each group'], ['lo', 'No added risk']]],
     ['Uterine cancer', [['lo', 'Usual for age'], ['md', 'After 50, about 1 more in 100 over 5 years; little or none before 50'], ['lo', '1 case vs none among 500 women'], ['lo', 'No added risk']]],
-    ['Bones', [['lo', 'Usual for age'], ['lo', 'Helps bones after menopause'], ['lo', 'Not well studied'], ['md', 'Bone loss; fractures 9 vs 8 in 100']]],
+    ['Bones', [['lo', 'Usual for age'], ['lo', 'Helps bones after menopause'], ['lo', 'Not well studied'], ['md', 'Increased bone loss']]],
     ['Vaginal changes', [['lo', 'Usual'], ['md', 'Discharge in about 20 more in 100 (55 vs 35)'], ['lo', 'No more dryness than placebo'], ['md', 'Dryness in about 3 more in 100 (19 vs 16)']]],
   ];
 
